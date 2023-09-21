@@ -1,8 +1,8 @@
 // pages/index.js
-
+"use client";
 import React from "react";
 import Navbar from "./components/Navbar";
-
+import { useSession } from "next-auth/react";
 // A simple ProductCard component for displaying product information
 function ProductCard({ image, title, price, location }) {
   return (
@@ -17,6 +17,8 @@ function ProductCard({ image, title, price, location }) {
 }
 
 export default function Home() {
+  const { data: session } = useSession();
+  console.log({ session });
   return (
     <div className="container">
       <Navbar />
