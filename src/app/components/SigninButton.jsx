@@ -5,20 +5,30 @@ import React from "react";
 
 const SignInButton = () => {
   const { data: session } = useSession();
-  console.log({ session });
+  console.log(session);
+  console.log(session?.user?.username);
 
-  if (session && session.user)
+  if (session && session.user) {
+    // Check if session is loading or user is not authenticated
+    if (!session) {
+      return null;
+    }
+
+    // Check if session.user.username is available
+    const username = session.user?.username;
+
     return (
       <div className="flex gap-4 ml-auto">
-        <p className="text-sky-600">{session.user.name}</p>
+        {username && <p className="text-sky-600">{username}</p>}
         <Link
-          href={"/api/auth/signout"}
+          href="/api/auth/signout"
           className="flex gap-4 ml-auto text-red-600"
         >
           Sign Out
         </Link>
       </div>
     );
+  }
 
   return (
     <div className="flex gap-4 ml-auto items-center">

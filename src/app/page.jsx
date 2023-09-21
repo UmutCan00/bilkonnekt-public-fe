@@ -18,7 +18,8 @@ function ProductCard({ image, title, price, location }) {
 
 export default function Home() {
   const { data: session } = useSession();
-  console.log({ session });
+  console.log("session", session);
+  console.log("user", session?.user?.username);
   return (
     <div className="container">
       <Navbar />
