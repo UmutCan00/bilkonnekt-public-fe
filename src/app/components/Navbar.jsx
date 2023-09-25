@@ -1,6 +1,6 @@
 import Link from "next/link";
 import React from "react";
-import SignInButton from "./SignInButton";
+import SignInButton from "./SigninButton";
 
 const Navbar = () => {
   return (
