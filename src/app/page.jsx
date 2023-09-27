@@ -3,14 +3,15 @@
 import React from "react";
 import Navbar from "./components/Navbar";
 import { useSession } from "next-auth/react";
+import mockdata from "./mockdata/productdata";
 // A simple ProductCard component for displaying product information
-function ProductCard({ image, title, price, location }) {
+function ProductCard({ seller, title, price, location }) {
   return (
     <div className="product-card">
-      <img src={image} alt={title} />
       <h2>{title}</h2>
       <p>Price: ${price}</p>
       <p>Location: {location}</p>
+      <p>Seller: {seller}</p>
       <button>Contact Seller</button>
     </div>
   );
@@ -20,6 +21,8 @@ export default function Home() {
   const { data: session } = useSession();
   console.log("session", session);
   console.log("user", session?.user?.username);
+  const products = mockdata.productdata;
+  console.log("data", products);
   return (
     <div className="container">
       <Navbar />
@@ -34,20 +37,20 @@ export default function Home() {
 
       <main>
         <section className="product-list">
-          {/* Example ProductCards */}
-          <ProductCard
-            image="product1.jpg"
-            title="Product Title 1"
-            price="50"
-            location="City, State 1"
-          />
-          <ProductCard
-            image="product2.jpg"
-            title="Product Title 2"
-            price="75"
-            location="City, State 2"
-          />
-          {/* Add more ProductCard components as needed */}
+          {products.map(
+            (
+              product,
+              index // .map for loop gibi içindeki her obje için alttaki fonksiyonu çağırır
+            ) => (
+              <ProductCard
+                key={index}
+                seller={product.sellerid}
+                title={product.title}
+                price={product.price}
+                location={product.address}
+              />
+            )
+          )}
         </section>
       </main>
 
