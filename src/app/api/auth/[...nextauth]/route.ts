@@ -1,10 +1,11 @@
 // Original filename: [...nextauth].ts  
+import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 const Backend_URL = "http://localhost:3500";
 
 
-export const authOptions = {
+export const authOptions : NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
