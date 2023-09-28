@@ -1,5 +1,5 @@
-export default {
-	productdata: [
+
+const	productData = [
         {
           price: 49.99,
           address: '123 Main Street, City, State',
@@ -81,4 +81,5 @@ export default {
           category: 'Art & Craft',
         },
     ]
-};
+
+export default productData ;

@@ -3,7 +3,7 @@
 import React from "react";
 import Navbar from "./components/Navbar";
 import { useSession } from "next-auth/react";
-import mockdata from "./mockdata/productdata";
+import productdata from "./mockdata/productdata";
 // A simple ProductCard component for displaying product information
 function ProductCard({ seller, title, price, location }) {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
   const { data: session } = useSession();
   console.log("session", session);
   console.log("user", session?.user?.username);
-  const products = mockdata.productdata;
+  const products = productdata;
   console.log("data", products);
   return (
     <div className="container">
