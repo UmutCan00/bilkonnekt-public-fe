@@ -16,12 +16,27 @@
   }
 }
 
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px;
+  
+}
+
+header {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to right, #f6d365, #944bf3);
 }
