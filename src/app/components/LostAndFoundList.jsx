@@ -14,7 +14,7 @@ const LostAndFoundList = ({ items }) => {
         borderColor: "black",
         display:"inline-block",
         width:"33%",
-
+        
         color:"black"
     };
     return (
@@ -33,7 +33,7 @@ const LostAndFoundList = ({ items }) => {
                 </div>
             ))}
         </ul>
-
+        
     );
 };
 
