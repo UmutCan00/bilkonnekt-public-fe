@@ -24,41 +24,42 @@ export default function Home() {
   const products = productdata;
   console.log("data", products);
   return (
-    <div className="container">
+    <div>
       <Navbar />
-      <header>
-        <h1>Welcome to Our Marketplace</h1>
-        <p>Find great deals on items near you</p>
-        <div className="search-bar">
-          <input type="text" placeholder="Search for items..." />
-          <button>Search</button>
-        </div>
-      </header>
+      <div className="container">
+        <header>
+          <h1>Welcome to Our Marketplace</h1>
+          <p>Find great deals on items near you</p>
+          <div className="search-bar">
+            <input type="text" placeholder="Search for items..." />
+            <button>Search</button>
+          </div>
+        </header>
 
-      <main>
-        <section className="product-list">
-          {products.map(
-            (
-              product,
-              index // .map for loop gibi içindeki her obje için alttaki fonksiyonu çağırır
-            ) => (
-              <ProductCard
-                key={index}
-                seller={product.sellerid}
-                title={product.title}
-                price={product.price}
-                location={product.address}
-              />
-            )
-          )}
-        </section>
-      </main>
+        <main>
+          <section className="product-list">
+            {products.map(
+              (
+                product,
+                index // .map for loop gibi içindeki her obje için alttaki fonksiyonu çağırır
+              ) => (
+                <ProductCard
+                  key={index}
+                  seller={product.sellerid}
+                  title={product.title}
+                  price={product.price}
+                  location={product.address}
+                />
+              )
+            )}
+          </section>
+        </main>
 
-      <footer>
-        <p>&copy; {new Date().getFullYear()} Our Marketplace</p>
-      </footer>
+        <footer>
+          <p>&copy; {new Date().getFullYear()} Our Marketplace</p>
+        </footer>
 
-      <style>{`
+        <style>{`
         .container {
           max-width: 960px;
           margin: 0 auto;
@@ -117,6 +118,7 @@ export default function Home() {
           margin-top: 20px;
         }
       `}</style>
+      </div>
     </div>
   );
 }

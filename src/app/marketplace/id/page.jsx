@@ -5,37 +5,35 @@ import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
 import productdata from "../../mockdata/productdata.js";
 
-
-function productInfo(products) {  
+function productInfo(products) {
   return (
-    <div >
-    <div class="productInfo">
+    <div>
+      <div class="productInfo">
         <h2>Price</h2>
         <p>{products[0].price}</p>
-    </div>
-    <div class="productInfo">
+      </div>
+      <div class="productInfo">
         <h2>Description</h2>
         <p>{products[0].description}</p>
-    </div>
-    <div class="productInfo">
+      </div>
+      <div class="productInfo">
         <h2>Seller ID</h2>
         <p>{products[0].sellerid}</p>
-    </div>
-    <div class="productInfo">
+      </div>
+      <div class="productInfo">
         <h2>Address</h2>
         <p>{products[0].address}</p>
-    </div>
-    <div class="productInfo">
+      </div>
+      <div class="productInfo">
         <h2>Category</h2>
         <p>{products[0].category}</p>
+      </div>
     </div>
-</div>
   );
 }
 
-function imageSpace(){
-
-  return(
+function imageSpace() {
+  return (
     <div>
       <div class="imageSpace">
         <p>Product Image Resides Here</p>
@@ -44,36 +42,32 @@ function imageSpace(){
   );
 }
 
-
 export default function PostPage() {
-  const { data: session } = useSession(); 
-  let products=productdata;
+  const { data: session } = useSession();
+  let products = productdata;
   return (
-    <div className="container">
+    <div>
       <Navbar />
-      <header>
-        <h1 align="left"> {products[1].title}</h1>
-      </header>
+      <div className="container">
+        <header>
+          <h1 align="left"> {products[1].title}</h1>
+        </header>
 
-      <main>
-              <imageSpace>{imageSpace()}</imageSpace>
-             <productInfo>{productInfo(products)}</productInfo> 
-            
-          
-        
-      </main>
+        <main>
+          <imageSpace>{imageSpace()}</imageSpace>
+          <productInfo>{productInfo(products)}</productInfo>
+        </main>
 
-      <footer>
-        <p>&copy; {new Date().getFullYear()} Our Marketplace</p>
-      </footer>
+        <footer>
+          <p>&copy; {new Date().getFullYear()} Our Marketplace</p>
+        </footer>
 
-      <style>{`
+        <style>{`
         .container {
           display:block;
-          max-width: 960px;
           margin: 0 auto;
-          padding: 20px;
           background: #aaa;
+          height: 800px
         }
 
         header {
@@ -105,8 +99,8 @@ export default function PostPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 600px;
-          height: 350px;
+          width: 1000px;
+          height: 500px;
           float:left;
           color: black;          
           border-radius: 2px;          
@@ -130,6 +124,7 @@ export default function PostPage() {
           margin-top: 20px;
         }
       `}</style>
+      </div>
     </div>
   );
 }
