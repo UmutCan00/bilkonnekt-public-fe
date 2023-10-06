@@ -38,7 +38,7 @@ const	productData = [
           title: 'Laptop Bag',
           category: 'Accessories',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-1',
         },
         {
           price: 199.99,
@@ -48,7 +48,7 @@ const	productData = [
           title: 'Leather Wristwatch',
           category: 'Fashion',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-2',
         },
         {
           price: 29.95,
@@ -58,7 +58,7 @@ const	productData = [
           title: 'Glass Tumbler Set',
           category: 'Kitchen',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-3',
         },
         {
           price: 399.99,
@@ -68,7 +68,7 @@ const	productData = [
           title: 'Smartphone',
           category: 'Electronics',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-4',
         },
         {
           price: 79.99,
@@ -78,7 +78,7 @@ const	productData = [
           title: 'Office Chair',
           category: 'Furniture',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-5',
         },
         {
           price: 149.95,
@@ -88,7 +88,7 @@ const	productData = [
           title: 'Cookware Set',
           category: 'Kitchen',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-6',
         },
         {
           price: 9.99,
@@ -98,7 +98,7 @@ const	productData = [
           title: 'Book Set',
           category: 'Books',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-7',
         },
         {
           price: 59.99,
@@ -108,7 +108,7 @@ const	productData = [
           title: 'Throw Blanket',
           category: 'Home Decor',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-8',
         },
         {
           price: 49.99,
@@ -118,7 +118,7 @@ const	productData = [
           title: 'Headphones',
           category: 'Electronics',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-9',
         },
         {
           price: 19.99,
@@ -128,7 +128,7 @@ const	productData = [
           title: 'Art Supplies Set',
           category: 'Art & Craft',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-10',
         },
         {
           price: 19.99,
@@ -138,7 +138,7 @@ const	productData = [
           title: 'Art Supplies Set',
           category: 'Art & Craft',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-11',
         },
         {
           price: 19.99,
@@ -148,7 +148,7 @@ const	productData = [
           title: 'Art Supplies Set',
           category: 'Art & Craft',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-12',
         },
         {
           price: 49.99,
@@ -158,7 +158,7 @@ const	productData = [
           title: 'Laptop Bag',
           category: 'Accessories',
           type: 'selling',
-          uuid: '1e8e48d6-7f7e-4a29-a0e1-08f7cacf925f',
+          uuid: 'unique-uuid-13',
         },
         {
           price: 199.99,
@@ -168,7 +168,7 @@ const	productData = [
           title: 'Leather Wristwatch',
           category: 'Fashion',
           type: 'donating',
-          uuid: 'b743d6a0-334c-49a1-a0e2-5b50dabf0df0',
+          uuid: 'unique-uuid-14',
         },
         {
           price: 29.95,
@@ -178,7 +178,7 @@ const	productData = [
           title: 'Glass Tumbler Set',
           category: 'Kitchen',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-15',
         },
         {
           price: 49.99,
@@ -188,7 +188,7 @@ const	productData = [
           title: 'Laptop Bag',
           category: 'Accessories',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-16',
         },
         {
           price: 199.99,
@@ -198,7 +198,7 @@ const	productData = [
           title: 'Leather Wristwatch',
           category: 'Fashion',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-17',
         },
         {
           price: 29.95,
@@ -208,7 +208,7 @@ const	productData = [
           title: 'Glass Tumbler Set',
           category: 'Kitchen',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-18',
         },
         {
           price: 399.99,
@@ -218,7 +218,7 @@ const	productData = [
           title: 'Smartphone',
           category: 'Electronics',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-19',
         },
         {
           price: 79.99,
@@ -228,7 +228,7 @@ const	productData = [
           title: 'Office Chair',
           category: 'Furniture',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-20',
         },
         {
           price: 149.95,
@@ -238,7 +238,7 @@ const	productData = [
           title: 'Cookware Set',
           category: 'Kitchen',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-21',
         },
         {
           price: 9.99,
@@ -248,7 +248,7 @@ const	productData = [
           title: 'Book Set',
           category: 'Books',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-22',
         },
         {
           price: 59.99,
@@ -258,7 +258,7 @@ const	productData = [
           title: 'Throw Blanket',
           category: 'Home Decor',
           type: 'borrowing',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-23',
         },
         {
           price: 49.99,
@@ -268,7 +268,7 @@ const	productData = [
           title: 'Headphones',
           category: 'Electronics',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-24',
         },
         {
           price: 19.99,
@@ -278,7 +278,7 @@ const	productData = [
           title: 'Art Supplies Set',
           category: 'Art & Craft',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-25',
         },
         {
           price: 19.99,
@@ -288,7 +288,7 @@ const	productData = [
           title: 'Art Supplies Set',
           category: 'Art & Craft',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-26',
         },
         {
           price: 19.99,
@@ -298,7 +298,7 @@ const	productData = [
           title: 'Art Supplies Set',
           category: 'Art & Craft',
           type: 'selling',
-          uuid: 'c845d84c-2c0c-4a6b-a0e3-1b51bdcf6b62',
+          uuid: 'unique-uuid-27',
         },
     ]
 
