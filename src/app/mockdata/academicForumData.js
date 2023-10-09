@@ -1,0 +1,60 @@
+const	academicPostData = [
+    {
+        uuid: 'unique-id-1',
+        description: "desc1 asdasdasdsdasdasdasdasdadasdasd",
+        location: "Location",
+        date: "9.10.2023",
+        status: "Pending",
+        ownerId: "owner-id-1",
+    },
+    {
+        uuid: 'unique-id-2',
+        description: "desc1 asdasdasdsdasdasdasdasdadasdasd",
+        location: "Location",
+        date: "9.9.2023",
+        status: "Pending",
+        ownerId: "owner-id-1",
+    },
+    {
+        uuid: 'unique-id-3',
+        description: "desc1 asdasdasdsdasdasdasdasdadasdasd",
+        location: "Location",
+        date: "9.10.2023",
+        status: "Pending",
+        ownerId: "owner-id-2",
+    },
+    {
+        uuid: 'unique-id-4',
+        description: "desc1 asdasdasdsdasdasdasdasdadasdasd",
+        location: "Location",
+        date: "9.8.2023",
+        status: "Pending",
+        ownerId: "owner-id-2",
+    },
+    {
+        uuid: 'unique-id-5',
+        description: "desc1 asdasdasdsdasdasdasdasdadasdasd",
+        location: "Location",
+        date: "9.10.2023",
+        status: "Pending",
+        ownerId: "owner-id-2",
+    },
+    {
+        uuid: 'unique-id-6',
+        description: "desc1 asdasdasdsdasdasdasdasdadasdasd",
+        location: "Location",
+        date: "9.10.2023",
+        status: "Pending",
+        ownerId: "owner-id-2",
+    },
+    {
+        uuid: 'unique-id-7',
+        description: "desc1 asdasdasdsdasdasdasdasdadasdasd",
+        location: "Location",
+        date: "9.10.2023",
+        status: "Pending",
+        ownerId: "owner-id-2",
+    },
+]
+
+export default academicPostData ;
