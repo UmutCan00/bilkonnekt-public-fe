@@ -167,7 +167,7 @@ export default function Home() {
             {/* Center-align the content */}
             <header className="text-center">
               <h1>Welcome to Bilkonnekt Social</h1>
-              <p>Don't Miss Anything on Campus</p>
+              <p>Don&apos;t Miss Anything on Campus</p>
             </header>
 
             <div className="search-bar">
