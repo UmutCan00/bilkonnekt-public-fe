@@ -144,6 +144,12 @@ export default function Home() {
                     <Form.Label>Price</Form.Label>
                     <Form.Control
                       type="number"
+                      min={0}
+                      onKeyPress={(event) => {
+                        if (/[-]/.test(event.key)) {
+                          event.preventDefault();
+                        }
+                      }}
                       placeholder="Enter price"
                       value={newProductPrice}
                       onChange={(e) => setNewProductPrice(e.target.value)}

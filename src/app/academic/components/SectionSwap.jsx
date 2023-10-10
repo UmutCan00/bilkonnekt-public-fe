@@ -51,6 +51,12 @@ const SectionSwap = ({showModal, closeModal, posts, setSWPost}) => {
                         <Form.Label>Initial section</Form.Label>
                         <Form.Control
                             type="number"
+                            min={1}
+                            onKeyPress={(event) => {
+                                if (!/[0-9]/.test(event.key)) {
+                                    event.preventDefault();
+                                }
+                            }}
                             placeholder="Enter your current section number"
                             value={newSWInitialSection}
                             onChange={(e) => setNewSWInitialSection(e.target.value)}
@@ -60,6 +66,12 @@ const SectionSwap = ({showModal, closeModal, posts, setSWPost}) => {
                         <Form.Label>Requested section</Form.Label>
                         <Form.Control
                             type="number"
+                            min={1}
+                            onKeyPress={(event) => {
+                                if (!/[0-9]/.test(event.key)) {
+                                    event.preventDefault();
+                                }
+                            }}
                             placeholder="Enter the section number you want"
                             value={newSWRequestedSection}
                             onChange={(e) => setNewSWRequestedSection(e.target.value)}
