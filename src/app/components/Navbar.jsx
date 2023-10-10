@@ -14,6 +14,9 @@ const Navbar = () => {
       >
         <span className="text-black">DashBoard</span>
       </Link>
+        <Link className="transition-colors hover:text-blue-500" href={"/academic"}>
+            <span className="text-black">Academic</span>
+        </Link>
 
       <SignInButton />
     </header>
