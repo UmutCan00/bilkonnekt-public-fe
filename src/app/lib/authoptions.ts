@@ -1,6 +1,6 @@
 import type { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials";
-const Backend_URL = "http://localhost:3500";
+const Backend_URL = "https://fine-ruby-moth-wig.cyclic.app";
 
 export const authOptions : NextAuthOptions = {
     providers: [

@@ -34,7 +34,7 @@ export default function Signup() {
       } else if (step === 2) {
         // Step 2: Complete registration
         const response = await fetch(
-          "http://localhost:3500/api/auth/register",
+          "https://fine-ruby-moth-wig.cyclic.app/api/auth/register",
           {
             method: "POST",
             headers: {
