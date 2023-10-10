@@ -40,6 +40,46 @@ const	academicPostData = [
         type: "sectionSwap",
         uuid: '1e8e48d6-7f7e-4a29-a0e1-08f7cacf925f5',
     },
+    {
+        postCreaterID: "postCreator2",
+        courseCode: "CS342",
+        initialSection: 1,
+        requestedSection: 4,
+        type: "sectionSwap",
+        uuid: '1e8e48d6-7f7e-4a29-a0e1-08f7cacf925f6',
+    },
+    {
+        postCreaterID: "postCreator6",
+        courseCode: "CS319",
+        initialSection: 3,
+        requestedSection: 1,
+        type: "sectionSwap",
+        uuid: '1e8e48d6-7f7e-4a29-a0e1-08f7cacf925f7',
+    },
+    {
+        postCreaterID: "postCreator1",
+        courseCode: "MATH102",
+        initialSection: 2,
+        requestedSection: 3,
+        type: "sectionSwap",
+        uuid: '1e8e48d6-7f7e-4a29-a0e1-08f7cacf925f8',
+    },
+    {
+        postCreaterID: "postCreator1",
+        courseCode: "ENG102",
+        initialSection: 7,
+        requestedSection: 9,
+        type: "sectionSwap",
+        uuid: '1e8e48d6-7f7e-4a29-a0e1-08f7cacf925f9',
+    },
+    {
+        postCreaterID: "postCreator7",
+        courseCode: "CS101",
+        initialSection: 1,
+        requestedSection: 4,
+        type: "sectionSwap",
+        uuid: '1e8e48d6-7f7e-4a29-a0e1-08f7cacf925f10',
+    },
 ]
 
 export default academicPostData ;
