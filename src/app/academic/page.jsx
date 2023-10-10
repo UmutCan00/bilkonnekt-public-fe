@@ -92,6 +92,8 @@ export default function Home() {
                                 maxWidth: "200px",
                                 maxHeight: "70px",
                                 marginTop: "20px",
+                                position: "sticky",
+                                top: "480px",
                             }}
                         >
                             Section Swap
@@ -113,7 +115,7 @@ export default function Home() {
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                             />
-                            <button className="btn btn-primary">Search</button>
+                            <button className="btn btn-primary" style={{  marginLeft: "15px" }}>Search</button>
                         </div>
 
                         <main style={{ marginTop: "20px" }}>
@@ -164,6 +166,9 @@ export default function Home() {
           width: 200px;
           height: 300px;
           margin-top: 160px;
+          
+          position: sticky;
+          top: 160px;
         }
 
         .sidebar h3 {
