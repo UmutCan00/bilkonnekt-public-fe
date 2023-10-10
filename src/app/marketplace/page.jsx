@@ -146,7 +146,7 @@ export default function Home() {
                       type="number"
                       min={0}
                       onKeyPress={(event) => {
-                        if (/[-]/.test(event.key)) {
+                        if (!/[0-9.]/.test(event.key)) {
                           event.preventDefault();
                         }
                       }}
