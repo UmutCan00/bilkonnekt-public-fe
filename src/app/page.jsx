@@ -78,7 +78,9 @@ export default function Home() {
             <div className="container-fluid card bg-custom1 m-2">
               <div className="intro-card ">
                 <h1>Go to Bilkent Social</h1>
-                <button className="btn btn-primary">  Search</button>
+                <Link href="/social">
+                    <button className="btn btn-primary">  Search</button>
+                  </Link>
               </div>
 
               <div className="list">
@@ -104,7 +106,9 @@ export default function Home() {
             <div className="container-fluid card bg-custom1 m-2">
               <div className="intro-card ">
                 <h1>Go to Bilkent Academic</h1>
-                <button className="btn btn-primary">  Search</button>
+                <Link href="/academic">
+                    <button className="btn btn-primary">  Search</button>
+                  </Link>
               </div>
 
             </div>  
@@ -112,7 +116,9 @@ export default function Home() {
             <div className="container-fluid card bg-custom1 m-2">
               <div className="intro-card ">
                 <h1>Go to Lost & Found</h1>
-                <button className="btn btn-primary">  Search</button>
+                <Link href="/lostfound">
+                    <button className="btn btn-primary">  Search</button>
+                  </Link>
               </div>
 
             </div>  

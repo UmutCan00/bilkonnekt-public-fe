@@ -14,8 +14,17 @@ const Navbar = () => {
       >
         <span className="text-black">DashBoard</span>
       </Link>
+        <Link className="transition-colors hover:text-blue-500" href={"/marketplace"}>
+            <span className="text-black">Marketplace</span>
+        </Link>
+        <Link className="transition-colors hover:text-blue-500" href={"/social"}>
+            <span className="text-black">Social</span>
+        </Link>
         <Link className="transition-colors hover:text-blue-500" href={"/academic"}>
             <span className="text-black">Academic</span>
+        </Link>
+        <Link className="transition-colors hover:text-blue-500" href={"/lostfound"}>
+            <span className="text-black">Lost & Found</span>
         </Link>
 
       <SignInButton />
