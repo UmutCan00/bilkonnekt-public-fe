@@ -149,13 +149,15 @@ function ProfilePage({ params }) {
                 <button type="button" className="btn bg-warning btn-lg ms-5">
                   Go to Their Shop!
                 </button>
-                <button
-                  type="button"
-                  className="btn bg-warning btn-lg ms-5"
-                  onClick={() => setShowDeleteUser(true)}
-                >
-                  Delete User
-                </button>
+                {session?.user?._id === params.slug && (
+                  <button
+                    type="button"
+                    className="btn bg-warning btn-lg ms-5"
+                    onClick={() => setShowDeleteUser(true)}
+                  >
+                    Delete User
+                  </button>
+                )}
                 {showDeleteUser && (
                   <div className="modal">
                     <div className="modal-content">
@@ -193,13 +195,15 @@ function ProfilePage({ params }) {
                     </div>
                   </div>
                 )}
-                <button
-                  type="button"
-                  className="btn bg-warning btn-lg ms-5"
-                  onClick={() => setShowChangePassword(true)}
-                >
-                  Change Password
-                </button>
+                {session?.user?._id === params.slug && (
+                  <button
+                    type="button"
+                    className="btn bg-warning btn-lg ms-5"
+                    onClick={() => setShowChangePassword(true)}
+                  >
+                    Change Password
+                  </button>
+                )}
                 {showChangePassword && (
                   <div className="modal">
                     <div className="modal-content">
