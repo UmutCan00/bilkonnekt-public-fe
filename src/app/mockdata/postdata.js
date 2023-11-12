@@ -2,14 +2,14 @@
 const	postData = [
     {
       sharer: 'Serhan',
-      content: 'Mescit otoparkta arabamı çizen oe kim?',
+      content: 'Mescit otoparkta arabamı çizen kisi kim?',
       title: 'Arabam çizildi!!',
       type: 'feed',
     },
     {
         sharer: 'Bilkent YES',
         content: 'Cuma 15.30 A binası.',
-        title: 'Andrew Tate geliyor!',
+        title: 'Girisimci ... geliyor!',
         type: 'clubPage',
     },
     {
