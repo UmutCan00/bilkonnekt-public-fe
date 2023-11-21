@@ -14,18 +14,15 @@ export default function Signup() {
     try {
       if (step === 1) {
         // Step 1: Initiate email verification
-        const response = await fetch(
-          "https://fine-ruby-moth-wig.cyclic.app/api/auth/prereg",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_email: email,
-            }),
-          }
-        );
+        const response = await fetch("http://localhost:3500/api/auth/prereg", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_email: email,
+          }),
+        });
 
         if (response.ok) {
           // Verification email sent successfully
@@ -37,7 +34,7 @@ export default function Signup() {
       } else if (step === 2) {
         // Step 2: Complete registration
         const response = await fetch(
-          "https://fine-ruby-moth-wig.cyclic.app/api/auth/register",
+          "http://localhost:3500/api/auth/register",
           {
             method: "POST",
             headers: {

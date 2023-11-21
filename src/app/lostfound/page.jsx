@@ -56,7 +56,7 @@ export default function Login() {
     console.log("token: ", token);
     try {
       const response = await fetch(
-        "https://fine-ruby-moth-wig.cyclic.app/api/lostandfound/createItem",
+        "http://localhost:3500/api/lostandfound/createItem",
         {
           method: "POST",
           headers: {
@@ -89,7 +89,7 @@ export default function Login() {
     console.log("token: ", token);
     try {
       const response = await fetch(
-        "https://fine-ruby-moth-wig.cyclic.app/api/lostandfound/getItems",
+        "http://localhost:3500/api/lostandfound/getItems",
         {
           method: "GET",
           headers: {

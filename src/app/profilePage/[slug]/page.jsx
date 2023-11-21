@@ -49,7 +49,7 @@ function ProfilePage({ params }) {
     console.log("New Password:", newPassword);
 
     const response = await fetch(
-      "https://fine-ruby-moth-wig.cyclic.app/api/auth/changePassword",
+      "http://localhost:3500/api/auth/changePassword",
       {
         method: "POST",
         headers: {
@@ -70,19 +70,16 @@ function ProfilePage({ params }) {
   };
   const handleDeleteUser = async () => {
     console.log("Email to delete:", deleteUserEmail);
-    const response = await fetch(
-      "https://fine-ruby-moth-wig.cyclic.app/api/auth/deleteUser",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.backendTokens?.accessToken}`,
-        },
-        body: JSON.stringify({
-          id: session?.user?._id,
-        }),
-      }
-    );
+    const response = await fetch("http://localhost:3500/api/auth/deleteUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.backendTokens?.accessToken}`,
+      },
+      body: JSON.stringify({
+        id: session?.user?._id,
+      }),
+    });
     setDeleteUserEmail("");
     setShowDeleteUser(false);
   };
@@ -90,7 +87,7 @@ function ProfilePage({ params }) {
     const handleFetch = async () => {
       try {
         const response = await fetch(
-          "https://fine-ruby-moth-wig.cyclic.app/api/auth/getProfile",
+          "http://localhost:3500/api/auth/getProfile",
           {
             method: "POST",
             headers: {
