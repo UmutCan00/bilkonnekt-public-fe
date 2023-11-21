@@ -14,13 +14,15 @@
     "bootstrap-icons": "^1.11.1",
     "eslint": "8.49.0",
     "eslint-config-next": "13.5.1",
+    "firebase": "^10.6.0",
     "next": "^13.5.3",
     "next-auth": "^4.23.1",
-    "postcss": "8.4.30",
+    "postcss": "^8.4.31",
     "react": "18.2.0",
     "react-bootstrap": "^2.9.0",
     "react-dom": "18.2.0",
-    "tailwindcss": "3.3.3"
+    "tailwindcss": "3.3.3",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "20.6.3",
