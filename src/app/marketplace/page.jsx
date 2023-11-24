@@ -47,7 +47,7 @@ export default function Home() {
   const [newProductTitle, setNewProductTitle] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
   const [newProductAddress, setNewProductAddress] = useState("");
-  const [newProductType, setNewProductType] = useState("");
+  const [newProductType, setNewProductType] = useState("selling");
   const [newProductDescription, setNewProductDescription] = useState("");
 
   const [imageUpload, setImageUpload] = useState(null);
