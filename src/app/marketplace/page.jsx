@@ -12,7 +12,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 import { useEffect } from "react";
-import {v4} from 'uuid';
+import { v4 } from "uuid";
 import { storage } from "../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 
@@ -22,41 +22,12 @@ export default function Home() {
   const [productdata, setproductdata] = useState([]);
   const [initialProducts, setinitialProducts] = useState([]);
 
-  const getProducts= async ()=>{
-    try {
-      console.log("deneme")
-      const response = await fetch(
-        "http://localhost:3500/api/product/getProducts",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setproductdata( await response.json());
-      setinitialProducts (productdata);
-      // if (response.ok) {
-      //   const data = await response.json();
-      //   return data;
-      //   //console.log("data: ", data)
-      //  // productdata = transformData(data);
-      //   console.log("Product Items get successful");
-      // } else {
-      //   console.error("Product Items get failed");
-      // }
-      console.log("get basarili")
-    } catch (error) {
-      console.log("get basarisiz")
-    }
-  }
-  console.log('initialProducts',initialProducts);
+  console.log("initialProducts", initialProducts);
   // State for search input, selected type, and products
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [products, setProducts] = useState(initialProducts);
-  console.log("products: ", products)
+  console.log("products: ", products);
   // Function to filter products based on search and type
   const filteredProducts = products?.filter((product) => {
     const matchesSearch =
@@ -79,37 +50,62 @@ export default function Home() {
   const [newProductType, setNewProductType] = useState("");
   const [newProductDescription, setNewProductDescription] = useState("");
 
-
   const [imageUpload, setImageUpload] = useState(null);
-  const [imageList,setImageList] = useState([]);
-  const imageListRef = ref(storage, "images/")
-    
+  const [imageList, setImageList] = useState([]);
+  const imageListRef = ref(storage, "images/");
 
-  let imgURL = "foo"
-  let uploadedImageURL="false";
-  
-  const uploadImageFirst = async ()=>{
+  let imgURL = "foo";
+  let uploadedImageURL = "false";
+
+  const uploadImageFirst = async () => {
     try {
       uploadedImageURL = await uploadImage();
     } catch (error) {
       console.log("error");
     }
-  } 
+  };
 
-  useEffect(()=>{
-    getProducts();
-    listAll(imageListRef).then((response)=>{
-        response.items.forEach((item)=>{
-            getDownloadURL(item).then((url)=>{
-                setImageList((prev)=>[...prev,url]);
-            })
-        })
-    })
-  }, [])
+  useEffect(() => {
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageList((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3500/api/product/getProducts",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const re = await response.json();
+          setinitialProducts(re); // Update initialProducts when data is fetched successfully
+          setProducts(re); // Update products too
+        } else {
+          console.error("Failed to fetch products");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
     getProducts();
-  }, products)
+  }, [token]); // Fetch data only when token changes
+
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
 
   // Function to handle the modal open
   const openModal = () => {
@@ -151,44 +147,41 @@ export default function Home() {
     );
   }
 
-  const uploadImage = async ()=>{
-    if(imageUpload==null)return;
-    const imageRef=ref(storage, `images/${imageUpload.name+v4()}`)
+  const uploadImage = async () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
     uploadBytes(imageRef, imageUpload)
       .then(() => {
         return getDownloadURL(imageRef);
       })
       .then((downloadURL) => {
         uploadedImageURL = downloadURL;
-        console.log('Image URL:', uploadedImageURL);
-        alert('Image uploaded');
+        console.log("Image URL:", uploadedImageURL);
+        alert("Image uploaded");
         return downloadURL;
-      }).then(()=>{
-        fetch(
-          "http://localhost:3500/api/product/createProduct",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              title: newProductTitle,
-              price: parseFloat(newProductPrice),
-              address: newProductAddress,
-              type: newProductType,
-              description: newProductDescription,
-              imageURL: uploadedImageURL,
-            }),
-          }
-        );
+      })
+      .then(() => {
+        fetch("http://localhost:3500/api/product/createProduct", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: newProductTitle,
+            price: parseFloat(newProductPrice),
+            address: newProductAddress,
+            type: newProductType,
+            description: newProductDescription,
+            imageURL: uploadedImageURL,
+          }),
+        });
       })
       .catch((error) => {
-        console.error('Error uploading image:', error);
+        console.error("Error uploading image:", error);
       });
     closeModal();
-  }
-
+  };
 
   return (
     <div>
@@ -294,9 +287,12 @@ export default function Home() {
                     />
                   </Form.Group>
                 </Form>
-                  <input type="file" onChange={(event)=>{
+                <input
+                  type="file"
+                  onChange={(event) => {
                     setImageUpload(event.target.files[0]);
-                  }}/>
+                  }}
+                />
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={closeModal}>
