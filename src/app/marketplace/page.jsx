@@ -336,6 +336,7 @@ export default function Home() {
                           location={product.address}
                           type={product.type}
                           description={product.description}
+                          imageURL={product.imageURL}
                         />
                       </div>
                     ))}
