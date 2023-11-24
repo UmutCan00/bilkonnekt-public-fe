@@ -7,7 +7,7 @@ import {v4} from 'uuid';
 import { storage } from "../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 import Form from "react-bootstrap/Form";
-import productdata from "../mockdata/productdata";
+//import productdata from "../mockdata/productdata";
 import SaleProductCard from "../components/SaleProductCard";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -24,8 +24,38 @@ export default function Login() {
     const [showModal, setShowModal] = useState(false);
     const { data: session } = useSession();
     const token = session?.backendTokens?.accessToken;
+    let productdata;
+    const getPorducts= async ()=>{
+      try {
+        const response = await fetch(
+          "http://localhost:3500/api/lostandfound/getItems",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          productdata = transformData(data);
+          console.log("Product Items get successful");
+        } else {
+          console.error("Product Items get failed");
+        }
+        console.log("get basarili")
+      } catch (error) {
+        console.log("get basarisiz")
+      }
+    }
+    
     let imgURL = "foo"
     let uploadedImageURL;
+
+
+
+
     const closeModal = () => {
       setShowModal(false);
     };

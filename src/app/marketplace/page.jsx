@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import productdata from "../mockdata/productdata";
+//import productdata from "../mockdata/productdata";
 import Navbar from "../components/Navbar";
 import SaleProductCard from "../components/SaleProductCard";
 import Modal from "react-bootstrap/Modal";
@@ -18,15 +18,47 @@ import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 
 export default function Home() {
   const { data: session } = useSession();
-  const initialProducts = productdata;
+  const token = session?.backendTokens?.accessToken;
+  const [productdata, setproductdata] = useState([]);
+  const [initialProducts, setinitialProducts] = useState([]);
 
+  const getProducts= async ()=>{
+    try {
+      console.log("deneme")
+      const response = await fetch(
+        "http://localhost:3500/api/product/getProducts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setproductdata( await response.json());
+      setinitialProducts (productdata);
+      // if (response.ok) {
+      //   const data = await response.json();
+      //   return data;
+      //   //console.log("data: ", data)
+      //  // productdata = transformData(data);
+      //   console.log("Product Items get successful");
+      // } else {
+      //   console.error("Product Items get failed");
+      // }
+      console.log("get basarili")
+    } catch (error) {
+      console.log("get basarisiz")
+    }
+  }
+  console.log('initialProducts',initialProducts);
   // State for search input, selected type, and products
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [products, setProducts] = useState(initialProducts);
-
+  console.log("products: ", products)
   // Function to filter products based on search and type
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = products?.filter((product) => {
     const matchesSearch =
       product.title.toLowerCase().includes(searchInput.toLowerCase()) ||
       product.description.toLowerCase().includes(searchInput.toLowerCase());
@@ -52,7 +84,7 @@ export default function Home() {
   const [imageList,setImageList] = useState([]);
   const imageListRef = ref(storage, "images/")
     
-  const token = session?.backendTokens?.accessToken;
+
   let imgURL = "foo"
   let uploadedImageURL="false";
   
@@ -65,6 +97,7 @@ export default function Home() {
   } 
 
   useEffect(()=>{
+    getProducts();
     listAll(imageListRef).then((response)=>{
         response.items.forEach((item)=>{
             getDownloadURL(item).then((url)=>{
@@ -73,6 +106,10 @@ export default function Home() {
         })
     })
   }, [])
+
+  useEffect(()=>{
+    getProducts();
+  }, products)
 
   // Function to handle the modal open
   const openModal = () => {
