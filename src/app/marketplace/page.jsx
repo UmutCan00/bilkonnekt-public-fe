@@ -11,6 +11,11 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
+import { useEffect } from "react";
+import {v4} from 'uuid';
+import { storage } from "../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+
 export default function Home() {
   const { data: session } = useSession();
   const initialProducts = productdata;
@@ -42,6 +47,33 @@ export default function Home() {
   const [newProductType, setNewProductType] = useState("");
   const [newProductDescription, setNewProductDescription] = useState("");
 
+
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageList,setImageList] = useState([]);
+  const imageListRef = ref(storage, "images/")
+    
+  const token = session?.backendTokens?.accessToken;
+  let imgURL = "foo"
+  let uploadedImageURL="false";
+  
+  const uploadImageFirst = async ()=>{
+    try {
+      uploadedImageURL = await uploadImage();
+    } catch (error) {
+      console.log("error");
+    }
+  } 
+
+  useEffect(()=>{
+    listAll(imageListRef).then((response)=>{
+        response.items.forEach((item)=>{
+            getDownloadURL(item).then((url)=>{
+                setImageList((prev)=>[...prev,url]);
+            })
+        })
+    })
+  }, [])
+
   // Function to handle the modal open
   const openModal = () => {
     setShowModal(true);
@@ -53,7 +85,7 @@ export default function Home() {
   };
 
   // Function to handle the form submission
-  const handleSubmit = () => {
+  /*const handleSubmit = () => {
     // Create a new product object with the entered values
     const newProduct = {
       sellerid: "new-seller-id",
@@ -69,7 +101,7 @@ export default function Home() {
 
     // Close the modal
     closeModal();
-  };
+  };*/
 
   const numColumns = 4;
   const itemsPerColumn = Math.ceil(filteredProducts.length / numColumns);
@@ -81,6 +113,45 @@ export default function Home() {
       filteredProducts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
+
+  const uploadImage = async ()=>{
+    if(imageUpload==null)return;
+    const imageRef=ref(storage, `images/${imageUpload.name+v4()}`)
+    uploadBytes(imageRef, imageUpload)
+      .then(() => {
+        return getDownloadURL(imageRef);
+      })
+      .then((downloadURL) => {
+        uploadedImageURL = downloadURL;
+        console.log('Image URL:', uploadedImageURL);
+        alert('Image uploaded');
+        return downloadURL;
+      }).then(()=>{
+        fetch(
+          "http://localhost:3500/api/product/createProduct",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              title: newProductTitle,
+              price: parseFloat(newProductPrice),
+              address: newProductAddress,
+              type: newProductType,
+              description: newProductDescription,
+              imageURL: uploadedImageURL,
+            }),
+          }
+        );
+      })
+      .catch((error) => {
+        console.error('Error uploading image:', error);
+      });
+    closeModal();
+  }
+
 
   return (
     <div>
@@ -186,12 +257,15 @@ export default function Home() {
                     />
                   </Form.Group>
                 </Form>
+                  <input type="file" onChange={(event)=>{
+                    setImageUpload(event.target.files[0]);
+                  }}/>
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={closeModal}>
                   Close
                 </Button>
-                <Button variant="primary" onClick={handleSubmit}>
+                <Button variant="primary" onClick={uploadImageFirst}>
                   Add Product
                 </Button>
               </Modal.Footer>
