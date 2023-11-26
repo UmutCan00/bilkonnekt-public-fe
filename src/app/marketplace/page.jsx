@@ -4,24 +4,32 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import productdata from "../mockdata/productdata";
+//import productdata from "../mockdata/productdata";
 import Navbar from "../components/Navbar";
 import SaleProductCard from "../components/SaleProductCard";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
+import { useEffect } from "react";
+import { v4 } from "uuid";
+import { storage } from "../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+
 export default function Home() {
   const { data: session } = useSession();
-  const initialProducts = productdata;
+  const token = session?.backendTokens?.accessToken;
+  const [productdata, setproductdata] = useState([]);
+  const [initialProducts, setinitialProducts] = useState([]);
 
+  console.log("initialProducts", initialProducts);
   // State for search input, selected type, and products
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [products, setProducts] = useState(initialProducts);
-
+  console.log("products: ", products);
   // Function to filter products based on search and type
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = products?.filter((product) => {
     const matchesSearch =
       product.title.toLowerCase().includes(searchInput.toLowerCase()) ||
       product.description.toLowerCase().includes(searchInput.toLowerCase());
@@ -39,8 +47,65 @@ export default function Home() {
   const [newProductTitle, setNewProductTitle] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
   const [newProductAddress, setNewProductAddress] = useState("");
-  const [newProductType, setNewProductType] = useState("");
+  const [newProductType, setNewProductType] = useState("selling");
   const [newProductDescription, setNewProductDescription] = useState("");
+
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageList, setImageList] = useState([]);
+  const imageListRef = ref(storage, "images/");
+
+  let imgURL = "foo";
+  let uploadedImageURL = "false";
+
+  const uploadImageFirst = async () => {
+    try {
+      uploadedImageURL = await uploadImage();
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
+  useEffect(() => {
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageList((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3500/api/product/getProducts",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const re = await response.json();
+          setinitialProducts(re); // Update initialProducts when data is fetched successfully
+          setProducts(re); // Update products too
+        } else {
+          console.error("Failed to fetch products");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    getProducts();
+  }, [token]); // Fetch data only when token changes
+
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
 
   // Function to handle the modal open
   const openModal = () => {
@@ -53,7 +118,7 @@ export default function Home() {
   };
 
   // Function to handle the form submission
-  const handleSubmit = () => {
+  /*const handleSubmit = () => {
     // Create a new product object with the entered values
     const newProduct = {
       sellerid: "new-seller-id",
@@ -69,7 +134,7 @@ export default function Home() {
 
     // Close the modal
     closeModal();
-  };
+  };*/
 
   const numColumns = 4;
   const itemsPerColumn = Math.ceil(filteredProducts.length / numColumns);
@@ -81,6 +146,42 @@ export default function Home() {
       filteredProducts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
+
+  const uploadImage = async () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload)
+      .then(() => {
+        return getDownloadURL(imageRef);
+      })
+      .then((downloadURL) => {
+        uploadedImageURL = downloadURL;
+        console.log("Image URL:", uploadedImageURL);
+        alert("Image uploaded");
+        return downloadURL;
+      })
+      .then(() => {
+        fetch("http://localhost:3500/api/product/createProduct", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: newProductTitle,
+            price: parseFloat(newProductPrice),
+            address: newProductAddress,
+            type: newProductType,
+            description: newProductDescription,
+            imageURL: uploadedImageURL,
+          }),
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
+    closeModal();
+  };
 
   return (
     <div>
@@ -186,12 +287,18 @@ export default function Home() {
                     />
                   </Form.Group>
                 </Form>
+                <input
+                  type="file"
+                  onChange={(event) => {
+                    setImageUpload(event.target.files[0]);
+                  }}
+                />
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={closeModal}>
                   Close
                 </Button>
-                <Button variant="primary" onClick={handleSubmit}>
+                <Button variant="primary" onClick={uploadImageFirst}>
                   Add Product
                 </Button>
               </Modal.Footer>
@@ -229,6 +336,7 @@ export default function Home() {
                           location={product.address}
                           type={product.type}
                           description={product.description}
+                          imageURL={product.imageURL}
                         />
                       </div>
                     ))}
