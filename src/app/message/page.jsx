@@ -49,6 +49,16 @@ const MessagingPage = () => {
       fetchData(token);
     }
   }, [token]);
+  useEffect(() => {
+    let intervalId;
+    if (currentChat) {
+      intervalId = setInterval(() => {
+        fetchmessage(currentChat._id); // Fetch messages every 2 seconds
+      }, 2000);
+    }
+
+    return () => clearInterval(intervalId); // Clear the interval on component unmount
+  }, [currentChat]);
 
   const handleChatClick = (chatId) => {
     console.log("all chats", chats);
