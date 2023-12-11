@@ -124,8 +124,7 @@ const MessagingPage = () => {
 
   const handleMessageSend = (chatId) => {
     if (currentChat && inputValue.trim() !== "") {
-      sendmessage(chatId);
-      fetchmessage(chatId);
+      sendmessage(chatId).then(fetchmessage(chatId));
       setInputValue("");
     }
   };
