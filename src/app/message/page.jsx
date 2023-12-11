@@ -17,6 +17,7 @@ const MessagingPage = () => {
   const [chats, setChats] = useState([]);
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
+  const currentuserid = session?.user?._id;
   useEffect(() => {
     const fetchData = async (token) => {
       try {
@@ -173,7 +174,8 @@ const MessagingPage = () => {
               <div
                 key={message._id}
                 style={{
-                  textAlign: message.senderId === "me" ? "right" : "left",
+                  textAlign:
+                    message.senderId === currentuserid ? "right" : "left",
                   marginBottom: "10px",
                 }}
               >
@@ -183,8 +185,10 @@ const MessagingPage = () => {
                     padding: "8px 12px",
                     borderRadius: "8px",
                     backgroundColor:
-                      message.senderId === "me" ? "#4CAF50" : "#e5e5ea",
-                    color: message.senderId === "me" ? "#fff" : "#000",
+                      message.senderId === currentuserid
+                        ? "#4CAF50"
+                        : "#e5e5ea",
+                    color: message.senderId === currentuserid ? "#fff" : "#000",
                     maxWidth: "70%",
                   }}
                 >
