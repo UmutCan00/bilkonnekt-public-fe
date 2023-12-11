@@ -182,20 +182,17 @@ export default function Home() {
             </div>
 
             <main style={{ marginTop: "20px" }}>
-              {/* Product grid */}
-              <div className="product-grid">
-                {columns.map((column, columnIndex) => (
-                  <div key={columnIndex} className="column">
-                    {column.map((post, index) => (
-                      <div key={index} className="socialpost-card">
-                        <SocialPostCard
-                          sharer={post.sharer}
-                          title={post.title}
-                          type={post.type}
-                          content={post.content}
-                        />
-                      </div>
-                    ))}
+              {/* Social post container */}
+              <div className="social-post-container">
+                {filteredPosts.map((post, index) => (
+                  <div key={index} className="socialpost-card">
+                    <SocialPostCard
+                      id={post.id}
+                      sharer={post.sharer}
+                      title={post.title}
+                      type={post.type}
+                      content={post.content}
+                    />
                   </div>
                 ))}
               </div>
@@ -214,9 +211,18 @@ export default function Home() {
           gap: 20px;
         }
 
-        .socialpost-card {
+        .social-post-container {
           display: flex;
           flex-direction: column;
+          align-items: center;
+        }
+      
+        .socialpost-card {
+          width: 100%; 
+          max-width: 600px;
+          margin-bottom: 20px; 
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+          overflow: hidden;
         }
         .socialpost-card:hover {
           cursor: pointer;
@@ -266,3 +272,4 @@ export default function Home() {
     </div>
   );
 }
+
