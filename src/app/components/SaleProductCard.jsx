@@ -1,7 +1,9 @@
 "use client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { useRouter } from "next/navigation";
 import React from "react";
+import { useSession } from "next-auth/react";
 
 const SaleProductCard = ({
   seller,
@@ -10,8 +12,41 @@ const SaleProductCard = ({
   location,
   description,
   type,
-  imageURL, // Add imageURL as a prop
+  imageURL,
+  productid,
 }) => {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
+
+  const handleContactSeller = async (sellerDetails) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/dialog/createDialog",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sellerDetails.token}`,
+          },
+          body: JSON.stringify({
+            itemId: sellerDetails.productid,
+            sellerId: sellerDetails.seller,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Created!");
+        router.push("/message"); // Redirect to /message upon successful response
+      } else {
+        console.error("Failed to create dialog");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="card mb-3">
       {/* Display the cropped image */}
@@ -42,7 +77,13 @@ const SaleProductCard = ({
         <p className="card-text">Seller: {seller}</p>
         <p className="card-text">Type: {type}</p>
         <p className="card-text">Description: {description}</p>
-        <button className="btn btn-primary">Contact Seller</button>
+        {/* Assign the function to the onClick event */}
+        <button
+          className="btn btn-primary"
+          onClick={() => handleContactSeller({ productid, seller, token })}
+        >
+          Contact Seller
+        </button>
       </div>
     </div>
   );
