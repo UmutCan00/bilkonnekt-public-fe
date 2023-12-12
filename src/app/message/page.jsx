@@ -7,10 +7,13 @@ const MessagingPage = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
+  const prevMessagesLength = useRef(0);
   // Function to scroll to the bottom of the messages container
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  const currentDate = new Date();
+
   useEffect(() => {
     scrollToBottom(); // Scroll to the bottom when messages change
   }, [messages]);
@@ -92,7 +95,10 @@ const MessagingPage = () => {
         const data = await response.json();
         console.log("Loaded message!");
         console.log(data);
-        setMessages(data);
+        if (data.length > prevMessagesLength.current) {
+          setMessages(data);
+          prevMessagesLength.current = data.length; // Update previous message length
+        }
       } else {
         console.error("Failed to load");
       }
@@ -146,6 +152,35 @@ const MessagingPage = () => {
     setMessages([]);
   };
 
+  const getTimeString = (timeString) => {
+    if (!timeString) return "";
+    const options = {
+      weekday: "short",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    const messageDate = new Date(timeString);
+
+    if (
+      messageDate.getMonth() !== currentDate.getMonth() ||
+      messageDate.getDate() !== currentDate.getDate()
+    ) {
+      // Different month or day, display month and day
+      return messageDate.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      });
+    } else {
+      // Same day, only display time
+      return messageDate.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+      });
+    }
+  };
+
   if (currentChat) {
     return (
       <div>
@@ -190,18 +225,38 @@ const MessagingPage = () => {
               >
                 <div
                   style={{
-                    display: "inline-block",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    backgroundColor:
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems:
                       message.senderId === currentuserid
-                        ? "#4CAF50"
-                        : "#e5e5ea",
-                    color: message.senderId === currentuserid ? "#fff" : "#000",
-                    maxWidth: "70%",
+                        ? "flex-end"
+                        : "flex-start",
                   }}
                 >
-                  {message.description}
+                  <div
+                    style={{
+                      backgroundColor:
+                        message.senderId === currentuserid
+                          ? "#4CAF50"
+                          : "#e5e5ea",
+                      color:
+                        message.senderId === currentuserid ? "#fff" : "#000",
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      maxWidth: "70%",
+                    }}
+                  >
+                    {message.description}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "10px",
+                      color: "#999",
+                      marginTop: "0px",
+                    }}
+                  >
+                    {getTimeString(message.updated_at)}{" "}
+                  </div>
                 </div>
               </div>
             ))}
