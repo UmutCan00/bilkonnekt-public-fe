@@ -64,13 +64,10 @@ const MessagingPage = () => {
   }, [currentChat]);
 
   const handleChatClick = (chatId) => {
+    prevMessagesLength.current = 0;
     console.log("all chats", chats);
     const selectedChat = chats.find((chat) => chat._id === chatId);
     setCurrentChat(selectedChat);
-    setMessages([
-      { id: 1, text: "Hello!", sender: "friend" },
-      { id: 2, text: "How are you?", sender: "friend" },
-    ]);
 
     fetchmessage(chatId);
   };
@@ -182,6 +179,7 @@ const MessagingPage = () => {
   };
 
   if (currentChat) {
+    console.log("current chat", messages);
     return (
       <div>
         <Navbar />
@@ -214,52 +212,56 @@ const MessagingPage = () => {
               padding: "20px",
             }}
           >
-            {messages.map((message) => (
-              <div
-                key={message._id}
-                style={{
-                  textAlign:
-                    message.senderId === currentuserid ? "right" : "left",
-                  marginBottom: "10px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems:
-                      message.senderId === currentuserid
-                        ? "flex-end"
-                        : "flex-start",
-                  }}
-                >
+            {messages.length !== 0
+              ? messages.map((message) => (
                   <div
+                    key={message._id}
                     style={{
-                      backgroundColor:
-                        message.senderId === currentuserid
-                          ? "#4CAF50"
-                          : "#e5e5ea",
-                      color:
-                        message.senderId === currentuserid ? "#fff" : "#000",
-                      borderRadius: "8px",
-                      padding: "8px 12px",
-                      maxWidth: "70%",
+                      textAlign:
+                        message.senderId === currentuserid ? "right" : "left",
+                      marginBottom: "10px",
                     }}
                   >
-                    {message.description}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems:
+                          message.senderId === currentuserid
+                            ? "flex-end"
+                            : "flex-start",
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor:
+                            message.senderId === currentuserid
+                              ? "#4CAF50"
+                              : "#e5e5ea",
+                          color:
+                            message.senderId === currentuserid
+                              ? "#fff"
+                              : "#000",
+                          borderRadius: "8px",
+                          padding: "8px 12px",
+                          maxWidth: "70%",
+                        }}
+                      >
+                        {message.description}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "10px",
+                          color: "#999",
+                          marginTop: "0px",
+                        }}
+                      >
+                        {getTimeString(message.updated_at)}{" "}
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      color: "#999",
-                      marginTop: "0px",
-                    }}
-                  >
-                    {getTimeString(message.updated_at)}{" "}
-                  </div>
-                </div>
-              </div>
-            ))}
+                ))
+              : null}
             <div ref={messagesEndRef} /> {/* Reference for scrolling */}
           </div>
           <div style={{ borderTop: "1px solid #ccc", padding: "20px" }}>
@@ -300,7 +302,17 @@ const MessagingPage = () => {
     <div>
       <Navbar />
       <div style={{ padding: "20px" }}>
-        <h2>Chats</h2>
+        <div
+          style={{
+            fontSize: "32px",
+            color: "black",
+            marginTop: "0px",
+            marginBottom: "10px",
+          }}
+        >
+          {"Chats"}
+        </div>
+
         {chats.map((chat) => (
           <button
             key={chat._id}
