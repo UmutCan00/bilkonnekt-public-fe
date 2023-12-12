@@ -14,6 +14,7 @@ import Form from "react-bootstrap/Form";
 
 export default function Home() {
   const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
   const initialPosts = postdata;
 
   // State for search input, selected type, and products
@@ -52,14 +53,40 @@ export default function Home() {
   };
 
   // Function to handle the form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Create a new post object with the entered values
+    const title= newPostTitle;
+    const content= newPostContent;
+    try {
+      console.log("token: ", token)
+      const response = await fetch(
+        "http://localhost:3500/api/social/createSocialPost",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: title,
+            content: content
+          }),
+        }
+      );
+      if (response.ok) {
+        console.log("Post create successful");
+      } else {
+        console.error("Post create failed");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
     const newPost = {
       sharer: "new-sharer-id",
       title: newPostTitle,
-      type: newPostType,
       content: newPostContent,
     };
+    
 
     // Add the new product to the products array
     setPosts([...posts, newPost]);
@@ -131,17 +158,6 @@ export default function Home() {
                       value={newPostTitle}
                       onChange={(e) => setNewPostTitle(e.target.value)}
                     />
-                  </Form.Group>
-                  <Form.Group controlId="type">
-                    <Form.Label>Type</Form.Label>
-                    <Form.Control
-                      as="select"
-                      value={newPostType}
-                      onChange={(e) => setNewPostType(e.target.value)}
-                    >
-                      <option value="feed">Feed</option>
-                      <option value="clubPage">Club Page</option>
-                    </Form.Control>
                   </Form.Group>
                   <Form.Group controlId="description">
                     <Form.Label>Content</Form.Label>
