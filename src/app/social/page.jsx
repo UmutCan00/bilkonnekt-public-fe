@@ -1,25 +1,47 @@
 // pages/index.js
 "use client";
+import Link from 'next/link';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import postdata from "../mockdata/postdata";
+
 import Navbar from "../components/Navbar";
 import SocialPostCard from "../components/SocialPostCard";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
+import { v4 } from "uuid";
+import { storage } from "../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+
 export default function Home() {
   const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
+  const [productdata, setproductdata] = useState([]);
+  const [initialProducts, setinitialProducts] = useState([]);
   const initialPosts = postdata;
+
+
+
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageList, setImageList] = useState([]);
+  const imageListRef = ref(storage, "images/");
 
   // State for search input, selected type, and products
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [products, setProducts] = useState(initialProducts);
+  console.log("products: ", products);
   const [posts, setPosts] = useState(initialPosts);
 
+  const [newProductTitle, setNewProductTitle] = useState("");
+  const [newProductPrice, setNewProductPrice] = useState("");
+  const [newProductAddress, setNewProductAddress] = useState("");
+  const [newProductType, setNewProductType] = useState("selling");
+  const [newProductDescription, setNewProductDescription] = useState("");
   // Function to filter products based on search and type
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
@@ -50,20 +72,59 @@ export default function Home() {
     setShowModal(false);
   };
 
+  let imgURL = "foo";
+  let uploadedImageURL = "false";
+  
   // Function to handle the form submission
-  const handleSubmit = () => {
-    // Create a new post object with the entered values
-    const newPost = {
-      sharer: "new-sharer-id",
-      title: newPostTitle,
-      type: newPostType,
-      content: newPostContent,
-    };
+  const handleSubmit = async () => {
+    try {
+      uploadedImageURL = await uploadImage();
+    } catch (error) {
+      console.log("firebase error: ", error);
+    }
+  };
 
-    // Add the new product to the products array
-    setPosts([...posts, newPost]);
+  useEffect(() => {
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageList((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
 
-    // Close the modal
+  const uploadImage = async () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload)
+      .then(() => {
+        return getDownloadURL(imageRef);
+      })
+      .then((downloadURL) => {
+        uploadedImageURL = downloadURL;
+        console.log("Image URL:", uploadedImageURL);
+        alert("Image uploaded");
+        return downloadURL;
+      })
+      .then(() => {
+        fetch("http://localhost:3500/api/social/createSocialPost",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: newProductTitle,
+            content: newProductDescription,
+            imageURL: uploadedImageURL,
+          }),
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
     closeModal();
   };
 
@@ -118,45 +179,38 @@ export default function Home() {
             </button>
             <Modal show={showModal} onHide={closeModal}>
               <Modal.Header closeButton>
-                <Modal.Title>Share a Post</Modal.Title>
+                <Modal.Title>Add New Product</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Form>
                   <Form.Group controlId="title">
-                    <Form.Label>Title</Form.Label>
+                    <Form.Label>Header</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Enter title"
-                      value={newPostTitle}
-                      onChange={(e) => setNewPostTitle(e.target.value)}
+                      value={newProductTitle}
+                      onChange={(e) => setNewProductTitle(e.target.value)}
                     />
                   </Form.Group>
-                  <Form.Group controlId="type">
-                    <Form.Label>Type</Form.Label>
-                    <Form.Control
-                      as="select"
-                      value={newPostType}
-                      onChange={(e) => setNewPostType(e.target.value)}
-                    >
-                      <option value="feed">Feed</option>
-                      <option value="clubPage">Club Page</option>
-                    </Form.Control>
-                  </Form.Group>
+                  
                   <Form.Group controlId="description">
                     <Form.Label>Content</Form.Label>
                     <Form.Control
                       as="textarea"
-                      placeholder="What's happening?"
-                      value={newPostContent}
-                      onChange={(e) => setNewPostContent(e.target.value)}
+                      placeholder="Enter description"
+                      value={newProductDescription}
+                      onChange={(e) => setNewProductDescription(e.target.value)}
                     />
                   </Form.Group>
                 </Form>
+                <input
+                  type="file"
+                  onChange={(event) => {
+                    setImageUpload(event.target.files[0]);
+                  }}
+                />
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={closeModal}>
-                  Close
-                </Button>
                 <Button variant="primary" onClick={handleSubmit}>
                   Share
                 </Button>
@@ -182,21 +236,20 @@ export default function Home() {
             </div>
 
             <main style={{ marginTop: "20px" }}>
-              {/* Product grid */}
-              <div className="product-grid">
-                {columns.map((column, columnIndex) => (
-                  <div key={columnIndex} className="column">
-                    {column.map((post, index) => (
-                      <div key={index} className="socialpost-card">
-                        <SocialPostCard
-                          sharer={post.sharer}
-                          title={post.title}
-                          type={post.type}
-                          content={post.content}
-                        />
-                      </div>
-                    ))}
-                  </div>
+              {/* Social post container */}
+              <div className="social-post-container">
+                {filteredPosts.map((post, index) => (
+                  <Link key={index} href={`/feed/${post.id}`} passHref>
+                    <div className="socialpost-card">
+                      <SocialPostCard
+                        id={post.id}
+                        sharer={post.sharer}
+                        title={post.title}
+                        type={post.type}
+                        content={post.content}
+                      />
+                    </div>
+                  </Link>
                 ))}
               </div>
             </main>
@@ -208,15 +261,29 @@ export default function Home() {
         </div>
       </div>
       <style jsx>{`
+
+        a {
+          text-decoration: none;
+        }
+
         .product-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 20px;
         }
 
-        .socialpost-card {
+        .social-post-container {
           display: flex;
           flex-direction: column;
+          align-items: center;
+        }
+      
+        .socialpost-card {
+          width: 100%; 
+          max-width: 600px;
+          margin-bottom: 20px; 
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+          overflow: hidden;
         }
         .socialpost-card:hover {
           cursor: pointer;
@@ -266,3 +333,4 @@ export default function Home() {
     </div>
   );
 }
+
