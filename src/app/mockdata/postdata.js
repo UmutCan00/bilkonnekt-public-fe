@@ -1,7 +1,7 @@
 
 const	postData = [
     {
-        id: 1,
+     id: 1,
       sharer: 'Serhan',
       content: 'Mescit otoparkta arabamı çizen kisi kim?',
       title: 'Arabam çizildi!!',

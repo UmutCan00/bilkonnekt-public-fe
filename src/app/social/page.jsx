@@ -1,5 +1,6 @@
 // pages/index.js
 "use client";
+import Link from 'next/link';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import React, { useState, useEffect } from "react";
@@ -238,15 +239,17 @@ export default function Home() {
               {/* Social post container */}
               <div className="social-post-container">
                 {filteredPosts.map((post, index) => (
-                  <div key={index} className="socialpost-card">
-                    <SocialPostCard
-                      id={post.id}
-                      sharer={post.sharer}
-                      title={post.title}
-                      type={post.type}
-                      content={post.content}
-                    />
-                  </div>
+                  <Link key={index} href={`/feed/${post.id}`} passHref>
+                    <div className="socialpost-card">
+                      <SocialPostCard
+                        id={post.id}
+                        sharer={post.sharer}
+                        title={post.title}
+                        type={post.type}
+                        content={post.content}
+                      />
+                    </div>
+                  </Link>
                 ))}
               </div>
             </main>
@@ -258,6 +261,11 @@ export default function Home() {
         </div>
       </div>
       <style jsx>{`
+
+        a {
+          text-decoration: none;
+        }
+
         .product-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
