@@ -11,16 +11,20 @@ const SocialPostCard = ({
   type,
 }) => {
   return (
-    <div className="card bg-white ">
+    <>
+    <style jsx global>{`
+      /* Global styles to remove underlines from links */
+      a {
+        text-decoration: none;
+      }
+  `}</style>
+
+    <div className="card bg-white " style={{ width: '400px' }}>
       <div className="card-body">
         <h5 className="card-title">{title}</h5>
         <p className="card-text">Sharer: {sharer}</p>
         <p className="card-text">Content: {content}</p>
         <div className="card-body">
-          <button className="btn btn-primary mr-2">
-            <i className="bi bi-eye"></i> <Link href={`/feed/${id}`}>
-              See the Post
-            </Link></button>
           <button className="btn btn-primary mr-2">
             <i className="bi bi-chat"></i> Comment
           </button>
@@ -30,6 +34,7 @@ const SocialPostCard = ({
         </div>
       </div>
     </div>
+    </>
   );
 };
 

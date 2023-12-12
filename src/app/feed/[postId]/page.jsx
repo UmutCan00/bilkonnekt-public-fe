@@ -1,43 +1,50 @@
 // pages/index.js
 "use client";
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import postdata from "../mockdata/postdata";
-import Navbar from "../components/Navbar";
-import SocialPostCard from "../components/SocialPostCard";
+import postdata from "../../mockdata/postdata";
+import Navbar from "../../components/Navbar";
+import SocialPostCard from "../../components/SocialPostCard";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-export default function Home() {
+export default function Home({params}) {
   const { data: session } = useSession();
-
+const router = useRouter()
   const [post, setPost] = useState(null);
 
   useEffect(() => {
     const fetchPost = async () => {
-      const postId = router.query.postId;
+      const postId = params.postId;
 
-      if (postId) {
+      // Use try-catch to handle errors during data fetching
+      try {
         const post = await getPostById(postId);
         setPost(post);
+      } catch (error) {
+        console.error("Error fetching post:", error);
       }
     };
 
     fetchPost();
-  }, [router.query.postId]);
+  }, [params.postId]); // Add params.postId as a dependency
 
   const getPostById = async (postId) => {
     // Simulate fetching data from a database or API
-    const post = postdata.find((post) => post.id === postId);
-  
-    // Simulate an asynchronous delay (replace with actual async fetch)
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  
-    return post;
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const post = postdata.find((post) => post.id == postId);
+        if (post) {
+          resolve(post);
+        } else {
+          reject(new Error("Post not found"));
+        }
+      }, 1000); // Simulating an asynchronous delay (replace with actual async fetch)
+    });
   };
 
   return (
@@ -56,14 +63,16 @@ export default function Home() {
             <main style={{ marginTop: "20px" }}>
               {/* Social post container */}
               <div className="social-post-container">
-                <div key={index} className="socialpost-card">
-                  <SocialPostCard
-                    sharer={post.sharer}
-                    title={post.title}
-                    type={post.type}
-                    content={post.content}
-                  />
-                </div>
+              {post && ( // Conditionally render SocialPostCard if post is not null
+                  <div key={post.index} className="socialpost-card">
+                    <SocialPostCard
+                      sharer={post.sharer}
+                      title={post.title}
+                      type={post.type}
+                      content={post.content}
+                    />
+                  </div>
+                )}
               </div>
             </main>
 
