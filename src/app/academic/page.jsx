@@ -10,141 +10,153 @@ import SectionSwap from "./components/SectionSwap";
 import AcademicPostCard from "./components/AcademicPostCard";
 
 export default function Home() {
-    const { data: session } = useSession();
-    const initialProducts = academicPostData;
+  const { data: session } = useSession();
+  const initialProducts = academicPostData;
 
-    // State for search input, selected type, and posts
-    const [searchInput, setSearchInput] = useState("");
-    const [selectedType, setSelectedType] = useState("");
-    const [posts, setSWPost] = useState(initialProducts);
+  // State for search input, selected type, and posts
+  const [searchInput, setSearchInput] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [posts, setSWPost] = useState(initialProducts);
 
-    // Function to filter posts based on search and type
-    const filteredProducts = posts.filter((post) => {
-        const matchesSearch = post.courseCode.toLowerCase().includes(searchInput.toLowerCase());
-        const matchesType = !selectedType || post.type === selectedType;
+  // Function to filter posts based on search and type
+  const filteredProducts = posts.filter((post) => {
+    const matchesSearch = post.courseCode
+      .toLowerCase()
+      .includes(searchInput.toLowerCase());
+    const matchesType = !selectedType || post.type === selectedType;
 
-        return matchesSearch && matchesType;
-    });
+    return matchesSearch && matchesType;
+  });
 
-    // Add a new post card to the page
-    // Define a state variable to control the modal visibility
-    const [showModal, setShowModal] = useState(false);
+  // Add a new post card to the page
+  // Define a state variable to control the modal visibility
+  const [showModal, setShowModal] = useState(false);
 
-    // Function to handle the modal open
-    const openModal = () => {
-        setShowModal(true);
-    };
+  // Function to handle the modal open
+  const openModal = () => {
+    setShowModal(true);
+  };
 
-    // Function to handle the modal close
-    const closeModal = () => {
-        setShowModal(false);
-    };
+  // Function to handle the modal close
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
-    const numColumns = 4;
-    const itemsPerColumn = Math.ceil(filteredProducts.length / numColumns);
+  const numColumns = 4;
+  const itemsPerColumn = Math.ceil(filteredProducts.length / numColumns);
 
-    // Create an array to group items into columns
-    const columns = [];
-    for (let i = 0; i < numColumns; i++) {
-        columns.push(
-            filteredProducts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
-        );
-    }
+  // Create an array to group items into columns
+  const columns = [];
+  for (let i = 0; i < numColumns; i++) {
+    columns.push(
+      filteredProducts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
+    );
+  }
 
-    return (
-        <div>
-            <Navbar />
-            <div className="container-fluid">
-                <div className="row">
-                    {/* Sidebar for type filtering */}
-                    <div className="col-md-3">
-                        <div className="sidebar">
-                            <div>
-                                <h3>Filter by Type</h3>
-                                <ul>
-                                    <li>
-                                        <button onClick={() => setSelectedType("")}>
-                                            All
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button onClick={() => setSelectedType("sectionSwap")}>
-                                            Section Swap
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button onClick={() => setSelectedType("projectGroupSelection")}>
-                                            Project Group Selection
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button onClick={() => setSelectedType("todos")}>
-                                            TODOs
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <button
-                            className="btn btn-success"
-                            onClick={openModal}
-                            style={{
-                                maxWidth: "200px",
-                                maxHeight: "70px",
-                                marginTop: "20px",
-                                position: "sticky",
-                                top: "480px",
-                            }}
-                        >
-                            Section Swap
-                        </button>
-                        <SectionSwap showModal={showModal} closeModal={closeModal} posts={posts} setSWPost={setSWPost}/>
-                    </div>
-                    <div className="col-md-9" style={{ marginLeft: "-160px" }}>
-                        {/* Center-align the content */}
-                        <header className="text-center">
-                            <h1>Welcome to Bilkonnekt Academic</h1>
-                            <p>Make a post, find the most!</p>
-                        </header>
-
-                        <div className="search-bar">
-                            <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Search for posts..."
-                                value={searchInput}
-                                onChange={(e) => setSearchInput(e.target.value)}
-                            />
-                            <button className="btn btn-primary" style={{  marginLeft: "15px" }}>Search</button>
-                        </div>
-
-                        <main style={{ marginTop: "20px" }}>
-                            {/* Product grid */}
-                            <div className="product-grid">
-                                {columns.map((column, columnIndex) => (
-                                    <div key={columnIndex} className="column">
-                                        {column.map((post, index) => (
-                                            <div key={index} className="product-card">
-                                                <AcademicPostCard
-                                                    writer={post.postCreaterID}
-                                                    courseCode={post.courseCode}
-                                                    initialSection={post.initialSection}
-                                                    requestedSection={post.requestedSection}
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
-                        </main>
-
-                        <footer className="text-center mt-4">
-                            <p>&copy; {new Date().getFullYear()} Bilkonnekt Marketplace</p>
-                        </footer>
-                    </div>
-                </div>
+  return (
+    <div>
+      <Navbar />
+      <div className="container-fluid">
+        <div className="row">
+          {/* Sidebar for type filtering */}
+          <div className="col-md-3">
+            <div className="sidebar">
+              <div>
+                <h3>Filter by Type</h3>
+                <ul>
+                  <li>
+                    <button onClick={() => setSelectedType("")}>All</button>
+                  </li>
+                  <li>
+                    <button onClick={() => setSelectedType("sectionSwap")}>
+                      Section Swap
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => setSelectedType("projectGroupSelection")}
+                    >
+                      Project Group Selection
+                    </button>
+                  </li>
+                  <li>
+                    <button onClick={() => setSelectedType("todos")}>
+                      TODOs
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <style jsx>{`
+            <button
+              className="btn btn-success"
+              onClick={openModal}
+              style={{
+                maxWidth: "200px",
+                maxHeight: "70px",
+                marginTop: "20px",
+                position: "sticky",
+                top: "480px",
+              }}
+            >
+              Section Swap
+            </button>
+            <SectionSwap
+              showModal={showModal}
+              closeModal={closeModal}
+              posts={posts}
+              setSWPost={setSWPost}
+            />
+          </div>
+          <div className="col-md-9" style={{ marginLeft: "-160px" }}>
+            {/* Center-align the content */}
+            <header className="text-center">
+              <h1>Welcome to Bilkonnekt Academic</h1>
+              <p>Make a post, find the most!</p>
+            </header>
+
+            <div className="search-bar">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search for posts..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+              <button
+                className="btn btn-primary"
+                style={{ marginLeft: "15px" }}
+              >
+                Search
+              </button>
+            </div>
+
+            <main style={{ marginTop: "20px" }}>
+              {/* Product grid */}
+              <div className="product-grid">
+                {columns.map((column, columnIndex) => (
+                  <div key={columnIndex} className="column">
+                    {column.map((post, index) => (
+                      <div key={index} className="product-card">
+                        <AcademicPostCard
+                          writer={post.postCreaterID}
+                          courseCode={post.courseCode}
+                          initialSection={post.initialSection}
+                          requestedSection={post.requestedSection}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </main>
+
+            <footer className="text-center mt-4">
+              <p>&copy; {new Date().getFullYear()} Bilkonnekt Marketplace</p>
+            </footer>
+          </div>
+        </div>
+      </div>
+      <style jsx>{`
         .product-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -166,7 +178,7 @@ export default function Home() {
           width: 200px;
           height: 300px;
           margin-top: 160px;
-          
+
           position: sticky;
           top: 160px;
         }
@@ -203,6 +215,6 @@ export default function Home() {
           margin-top: 20px;
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 }

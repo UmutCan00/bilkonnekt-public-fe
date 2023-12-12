@@ -4,17 +4,18 @@
 import React, { useState } from "react";
 import { Button, Form, ListGroup } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
-import academicForumData from "../../mockdata/academicForumData";
-import Navbar from "../../components/Navbar";
+import academicForumData from "../../../../mockdata/academicForumData";
+import Navbar from "../../../../components/Navbar";
+import Link from "next/link";
 
-const MaintenanceRequest = () => {
+const MaintenanceRequest = ({ params }) => {
   const [requests, setRequests] = useState(academicForumData);
   const [newRequest, setNewRequest] = useState("");
   const [newLocation, setNewLocation] = useState("");
   const [newDate, setNewDate] = useState(new Date());
   const [filterStatus, setFilterStatus] = useState("Pending");
   const [currentUser, setCurrentUser] = useState("owner-id-1"); // TODO Replace with actual user ID from seesion
-
+  console.log("id= ", params);
   const handleSubmit = (e) => {
     e.preventDefault();
     const newRequestItem = {
@@ -76,6 +77,26 @@ const MaintenanceRequest = () => {
   return (
     <div>
       <Navbar />
+      <Link href={"/academic/group-hub/" + params.id}>
+        <button
+          style={{
+            cursor: "pointer",
+            display: "block",
+            marginBottom: "10px",
+            padding: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            backgroundColor: "#f0f0f0",
+            textAlign: "center",
+            width: "5%",
+            fontSize: "14px",
+            color: "black",
+            alignItems: "right",
+          }}
+        >
+          Back to Group Hub
+        </button>
+      </Link>
       <div className="container mt-4">
         <h1>Maintenance Requests</h1>
 
