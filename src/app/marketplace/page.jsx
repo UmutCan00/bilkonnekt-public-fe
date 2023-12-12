@@ -23,12 +23,14 @@ export default function Home() {
   const [initialProducts, setinitialProducts] = useState([]);
 
   console.log("initialProducts", initialProducts);
+
   // State for search input, selected type, and products
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [products, setProducts] = useState(initialProducts);
   console.log("products: ", products);
   // Function to filter products based on search and type
+  
   const filteredProducts = products?.filter((product) => {
     const matchesSearch =
       product.title.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -117,29 +119,9 @@ export default function Home() {
     setShowModal(false);
   };
 
-  // Function to handle the form submission
-  /*const handleSubmit = () => {
-    // Create a new product object with the entered values
-    const newProduct = {
-      sellerid: "new-seller-id",
-      title: newProductTitle,
-      price: parseFloat(newProductPrice),
-      address: newProductAddress,
-      type: newProductType,
-      description: newProductDescription,
-    };
-
-    // Add the new product to the products array
-    setProducts([...products, newProduct]);
-
-    // Close the modal
-    closeModal();
-  };*/
-
   const numColumns = 4;
   const itemsPerColumn = Math.ceil(filteredProducts.length / numColumns);
 
-  // Create an array to group items into columns
   const columns = [];
   for (let i = 0; i < numColumns; i++) {
     columns.push(

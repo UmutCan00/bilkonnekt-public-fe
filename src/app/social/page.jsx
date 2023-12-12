@@ -2,25 +2,45 @@
 "use client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import postdata from "../mockdata/postdata";
+
 import Navbar from "../components/Navbar";
 import SocialPostCard from "../components/SocialPostCard";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
+import { v4 } from "uuid";
+import { storage } from "../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+
 export default function Home() {
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
+  const [productdata, setproductdata] = useState([]);
+  const [initialProducts, setinitialProducts] = useState([]);
   const initialPosts = postdata;
+
+
+
+  const [imageUpload, setImageUpload] = useState(null);
+  const [imageList, setImageList] = useState([]);
+  const imageListRef = ref(storage, "images/");
 
   // State for search input, selected type, and products
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [products, setProducts] = useState(initialProducts);
+  console.log("products: ", products);
   const [posts, setPosts] = useState(initialPosts);
 
+  const [newProductTitle, setNewProductTitle] = useState("");
+  const [newProductPrice, setNewProductPrice] = useState("");
+  const [newProductAddress, setNewProductAddress] = useState("");
+  const [newProductType, setNewProductType] = useState("selling");
+  const [newProductDescription, setNewProductDescription] = useState("");
   // Function to filter products based on search and type
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
@@ -51,15 +71,43 @@ export default function Home() {
     setShowModal(false);
   };
 
+  let imgURL = "foo";
+  let uploadedImageURL = "false";
+  
   // Function to handle the form submission
   const handleSubmit = async () => {
-    // Create a new post object with the entered values
-    const title= newPostTitle;
-    const content= newPostContent;
     try {
-      console.log("token: ", token)
-      const response = await fetch(
-        "http://localhost:3500/api/social/createSocialPost",
+      uploadedImageURL = await uploadImage();
+    } catch (error) {
+      console.log("firebase error: ", error);
+    }
+  };
+
+  useEffect(() => {
+    listAll(imageListRef).then((response) => {
+      response.items.forEach((item) => {
+        getDownloadURL(item).then((url) => {
+          setImageList((prev) => [...prev, url]);
+        });
+      });
+    });
+  }, []);
+
+  const uploadImage = async () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload)
+      .then(() => {
+        return getDownloadURL(imageRef);
+      })
+      .then((downloadURL) => {
+        uploadedImageURL = downloadURL;
+        console.log("Image URL:", uploadedImageURL);
+        alert("Image uploaded");
+        return downloadURL;
+      })
+      .then(() => {
+        fetch("http://localhost:3500/api/social/createSocialPost",
         {
           method: "POST",
           headers: {
@@ -67,30 +115,15 @@ export default function Home() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            title: title,
-            content: content
+            title: newProductTitle,
+            content: newProductDescription,
+            imageURL: uploadedImageURL,
           }),
-        }
-      );
-      if (response.ok) {
-        console.log("Post create successful");
-      } else {
-        console.error("Post create failed");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-    const newPost = {
-      sharer: "new-sharer-id",
-      title: newPostTitle,
-      content: newPostContent,
-    };
-    
-
-    // Add the new product to the products array
-    setPosts([...posts, newPost]);
-
-    // Close the modal
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
     closeModal();
   };
 
@@ -145,34 +178,38 @@ export default function Home() {
             </button>
             <Modal show={showModal} onHide={closeModal}>
               <Modal.Header closeButton>
-                <Modal.Title>Share a Post</Modal.Title>
+                <Modal.Title>Add New Product</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Form>
                   <Form.Group controlId="title">
-                    <Form.Label>Title</Form.Label>
+                    <Form.Label>Header</Form.Label>
                     <Form.Control
                       type="text"
                       placeholder="Enter title"
-                      value={newPostTitle}
-                      onChange={(e) => setNewPostTitle(e.target.value)}
+                      value={newProductTitle}
+                      onChange={(e) => setNewProductTitle(e.target.value)}
                     />
                   </Form.Group>
+                  
                   <Form.Group controlId="description">
                     <Form.Label>Content</Form.Label>
                     <Form.Control
                       as="textarea"
-                      placeholder="What's happening?"
-                      value={newPostContent}
-                      onChange={(e) => setNewPostContent(e.target.value)}
+                      placeholder="Enter description"
+                      value={newProductDescription}
+                      onChange={(e) => setNewProductDescription(e.target.value)}
                     />
                   </Form.Group>
                 </Form>
+                <input
+                  type="file"
+                  onChange={(event) => {
+                    setImageUpload(event.target.files[0]);
+                  }}
+                />
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={closeModal}>
-                  Close
-                </Button>
                 <Button variant="primary" onClick={handleSubmit}>
                   Share
                 </Button>
