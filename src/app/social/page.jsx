@@ -1,11 +1,11 @@
 // pages/index.js
 "use client";
-import Link from 'next/link';
+import Link from "next/link";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import postdata from "../mockdata/postdata";
+//import postdata from "../mockdata/postdata"; TODO delete
 
 import Navbar from "../components/Navbar";
 import SocialPostCard from "../components/SocialPostCard";
@@ -22,9 +22,6 @@ export default function Home() {
   const token = session?.backendTokens?.accessToken;
   const [productdata, setproductdata] = useState([]);
   const [initialProducts, setinitialProducts] = useState([]);
-  const initialPosts = postdata;
-
-
 
   const [imageUpload, setImageUpload] = useState(null);
   const [imageList, setImageList] = useState([]);
@@ -35,7 +32,7 @@ export default function Home() {
   const [selectedType, setSelectedType] = useState("");
   const [products, setProducts] = useState(initialProducts);
   console.log("products: ", products);
-  const [posts, setPosts] = useState(initialPosts);
+  const [posts, setPosts] = useState([]);
 
   const [newProductTitle, setNewProductTitle] = useState("");
   const [newProductPrice, setNewProductPrice] = useState("");
@@ -74,7 +71,36 @@ export default function Home() {
 
   let imgURL = "foo";
   let uploadedImageURL = "false";
-  
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getSocialPosts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setPosts(data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, [token]);
+
   // Function to handle the form submission
   const handleSubmit = async () => {
     try {
@@ -108,8 +134,7 @@ export default function Home() {
         return downloadURL;
       })
       .then(() => {
-        fetch("http://localhost:3500/api/social/createSocialPost",
-        {
+        fetch("http://localhost:3500/api/social/createSocialPost", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -192,7 +217,7 @@ export default function Home() {
                       onChange={(e) => setNewProductTitle(e.target.value)}
                     />
                   </Form.Group>
-                  
+
                   <Form.Group controlId="description">
                     <Form.Label>Content</Form.Label>
                     <Form.Control
@@ -239,13 +264,13 @@ export default function Home() {
               {/* Social post container */}
               <div className="social-post-container">
                 {filteredPosts.map((post, index) => (
-                  <Link key={index} href={`/feed/${post.id}`} passHref>
+                  <Link key={index} href={`/feed/${post._id}`} passHref>
                     <div className="socialpost-card">
                       <SocialPostCard
-                        id={post.id}
-                        sharer={post.sharer}
+                        id={post._id}
+                        sharer={post.publisherId}
                         title={post.title}
-                        type={post.type}
+                        type={null}
                         content={post.content}
                       />
                     </div>
@@ -261,7 +286,6 @@ export default function Home() {
         </div>
       </div>
       <style jsx>{`
-
         a {
           text-decoration: none;
         }
@@ -277,12 +301,12 @@ export default function Home() {
           flex-direction: column;
           align-items: center;
         }
-      
+
         .socialpost-card {
-          width: 100%; 
+          width: 100%;
           max-width: 600px;
-          margin-bottom: 20px; 
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+          margin-bottom: 20px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           overflow: hidden;
         }
         .socialpost-card:hover {
@@ -333,4 +357,3 @@ export default function Home() {
     </div>
   );
 }
-
