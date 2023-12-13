@@ -6,6 +6,12 @@ const	postData = [
       content: 'Mescit otoparkta arabamı çizen kisi kim?',
       title: 'Arabam çizildi!!',
       type: 'feed',
+      comments : [
+        { id: 1, text: 'Great post!', user: 'User1' },
+        { id: 2, text: 'Interesting thoughts.', user: 'User2' },
+        // Add more comments as needed
+      ],
+
     },
     {
         id: 2,

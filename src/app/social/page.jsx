@@ -204,7 +204,7 @@ export default function Home() {
             </button>
             <Modal show={showModal} onHide={closeModal}>
               <Modal.Header closeButton>
-                <Modal.Title>Add New Product</Modal.Title>
+                <Modal.Title>Add New Post</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Form>
