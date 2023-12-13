@@ -55,7 +55,7 @@ const Home = ({ params }) => {
 
           console.log("data: ", data);
           setPost(data);
-
+          
         } else {
           console.error(
             "Fetch post info fetch failed, response: ",
@@ -107,7 +107,7 @@ const Home = ({ params }) => {
   };
   console.log("post.url: ",post.imageURL)
   console.log("post.title: ",post.title)
-  const SocialPostCard = ({ sharer, title, type, content, comments }) => (
+  const SocialPostCard = ({ sharer, title, type, content,  imageURL, comments, }) => (
     <>
       <style jsx global>{`
         /* Global styles to remove underlines from links */
@@ -120,6 +120,15 @@ const Home = ({ params }) => {
         <div className="card-body">
           <h5 className="card-title">{title}</h5>
           <p className="card-text">Sharer: {sharer}</p>
+          <img
+            src={post.imageURL}
+            alt="Product Image"
+            style={{
+              width: "100%", // Ensure the image covers the container width
+              objectFit: "cover", // Crop the image while maintaining aspect ratio
+              maxHeight: "100%", // Ensure the image covers the container height
+            }}
+          />
           <p className="card-text">Content: {content}</p>
           <div className="card-body">
             <Button
@@ -203,27 +212,19 @@ const Home = ({ params }) => {
                 <div className="social-post-container">
                     <div className="socialpost-card">
                       <SocialPostCard
+                        imageURL={post.imageURL}
                         id={post._id}
                         sharer={post.publisherId}
                         title={post.title}
                         type={null}
                         content={post.content}
-                        imageURL={post.imageURL}
                         comments={[
                           { id: 1, text: 'Great post!', user: 'User1' },
                           { id: 2, text: 'Interesting thoughts.', user: 'User2' },
                           // Add more comments as needed
                         ]}
                       />
-                      <img
-                        src={post.imageURL}
-                        alt="Product Image"
-                        style={{
-                          width: "100%", // Ensure the image covers the container width
-                          objectFit: "cover", // Crop the image while maintaining aspect ratio
-                          maxHeight: "100%", // Ensure the image covers the container height
-                        }}
-                      />
+                      
                     </div>
               </div>
                 }

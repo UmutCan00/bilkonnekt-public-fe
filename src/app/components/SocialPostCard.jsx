@@ -58,8 +58,8 @@ const SocialPostCard = ({
           />
         </div>
       )}
-          <p className="card-text">Content: {content}</p>
-          <div className="card-body">
+          <p className= "card-text">Content: {content}</p>
+          <div className= "card-body">
             <Button
               className="btn btn-primary mr-2"
               variant="info"
