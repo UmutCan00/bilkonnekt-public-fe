@@ -16,12 +16,7 @@ export default function Home({params}) {
   const { data: session } = useSession();
 const router = useRouter()
   const [post, setPost] = useState(null);
-<<<<<<< HEAD
   const token = session?.backendTokens?.accessToken;
-=======
-  const [newComment, setNewComment] = useState('');
-
->>>>>>> parent of 02e1a82 (Merge branch 'main' into social_page_feed)
   useEffect(() => {
     const fetchPost = async () => {
       const postId = params.postId;
