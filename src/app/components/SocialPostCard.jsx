@@ -42,24 +42,24 @@ const SocialPostCard = ({
         <h5 className="card-title">{title}</h5>
         <p className="card-text">Sharer: {sharer}</p>
         {imageURL && (
-        <div
-          className="card-img-top"
-          style={{
-            height: "200px", // Set a fixed height for uniformity
-            overflow: "hidden", // Hide overflowing content
-          }}
-        >
-          <img
-            src={imageURL}
-            alt="Product Image"
+          <div
+            className="card-img-top"
             style={{
-              width: "100%", // Ensure the image covers the container width
-              objectFit: "cover", // Crop the image while maintaining aspect ratio
-              maxHeight: "100%", // Ensure the image covers the container height
+              height: "200px", // Set a fixed height for uniformity
+              overflow: "hidden", // Hide overflowing content
             }}
-          />
-        </div>
-      )}
+          >
+            <img
+              src={imageURL}
+              alt="Product Image"
+              style={{
+                width: "100%", // Ensure the image covers the container width
+                objectFit: "cover", // Crop the image while maintaining aspect ratio
+                maxHeight: "100%", // Ensure the image covers the container height
+              }}
+            />
+          </div>
+        )}
         <p className="card-text">Content: {content}</p>
         <div className="card-body">
           <h5 className="card-title">{title}</h5>
@@ -95,6 +95,7 @@ const SocialPostCard = ({
           </Modal.Body>
         </Modal>
       </div>
+    </div>
     </>
   );
 };
