@@ -16,7 +16,10 @@ export default function Home({params}) {
   const { data: session } = useSession();
 const router = useRouter()
   const [post, setPost] = useState(null);
+
+  const [newComment, setNewComment] = useState('');
   const token = session?.backendTokens?.accessToken;
+
   useEffect(() => {
     const fetchPost = async () => {
       const postId = params.postId;
