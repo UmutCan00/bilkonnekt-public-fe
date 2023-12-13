@@ -14,26 +14,70 @@ import Form from "react-bootstrap/Form";
 const Home = ({ params }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [post, setPost] = useState(null);
+  //const [post, setPost] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const token = session?.backendTokens?.accessToken;
 
+  const [post, setPost] = useState([]);
+ 
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchInput.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchInput.toLowerCase());
+
+    const matchesType = !selectedType || post.type === selectedType;
+
+    return matchesSearch && matchesType;
+  });
   useEffect(() => {
     const fetchPost = async () => {
       const postId = params.postId;
 
+      try {
+        const response = await fetch(
+          "http://localhost:3500/api/social/getSingleSocialPost",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              postID: postId,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          console.log("Fetch post info fetch successful");
+          const data = await response.json();
+
+          console.log("data: ", data);
+          setPost(data);
+          
+        } else {
+          console.error(
+            "Fetch post info fetch failed, response: ",
+            response
+          );
+        }
+      } catch (error) {
+        console.log("fetch post info basarisiz, ", error);
+      }
       // Use try-catch to handle errors during data fetching
       try {
         const post = await getPostById(postId);
-        setPost(post);
-        setComments(post.comments || []); 
-        setLikes(post.likes || []); 
+        //setPost(post);
+        //setComments(post.comments || []); 
+        //setLikes(post.likes || []); 
       } catch (error) {
         console.error("Error fetching post:", error);
       }
     };
 
     fetchPost();
-  }, [params.postId]); // Add params.postId as a dependency
+  }, [params.postId, token]); // Add params.postId as a dependency
 
   const getPostById = async (postId) => {
     // Simulate fetching data from a database or API
@@ -43,7 +87,7 @@ const Home = ({ params }) => {
         if (post) {
           resolve(post);
         } else {
-          reject(new Error("Post not found"));
+          //reject(new Error("Post not found"));
         }
       }, 1000); // Simulating an asynchronous delay (replace with actual async fetch)
     });
@@ -61,8 +105,9 @@ const Home = ({ params }) => {
     // Close the modal after adding the comment
     handleAddCommentModalClose();
   };
-
-  const SocialPostCard = ({ sharer, title, type, content, comments }) => (
+  console.log("post.url: ",post.imageURL)
+  console.log("post.title: ",post.title)
+  const SocialPostCard = ({ sharer, title, type, content,  imageURL, comments, }) => (
     <>
       <style jsx global>{`
         /* Global styles to remove underlines from links */
@@ -75,6 +120,15 @@ const Home = ({ params }) => {
         <div className="card-body">
           <h5 className="card-title">{title}</h5>
           <p className="card-text">Sharer: {sharer}</p>
+          <img
+            src={post.imageURL}
+            alt="Product Image"
+            style={{
+              width: "100%", // Ensure the image covers the container width
+              objectFit: "cover", // Crop the image while maintaining aspect ratio
+              maxHeight: "100%", // Ensure the image covers the container height
+            }}
+          />
           <p className="card-text">Content: {content}</p>
           <div className="card-body">
             <Button
@@ -127,7 +181,16 @@ const Home = ({ params }) => {
     </>
   );
 
+  const numColumns = 1;
+  const itemsPerColumn = Math.ceil(filteredPosts.length / numColumns);
 
+  // Create an array to group items into columns
+  const columns = [];
+  for (let i = 0; i < numColumns; i++) {
+    columns.push(
+      filteredPosts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
+    );
+  }
   return (
     <div>
       <Navbar />
@@ -140,21 +203,31 @@ const Home = ({ params }) => {
               <h1>Welcome to Bilkonnekt Social</h1>
               <p>Don&apos;t Miss Anything on Campus</p>
             </header>
-
             <main style={{ marginTop: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
               {/* Social post container */}
               <div className="social-post-container">
-                {post && ( // Conditionally render SocialPostCard if post is not null
-                  <div key={post.index} className="socialpost-card">
-                    <SocialPostCard
-                      sharer={post.sharer}
-                      title={post.title}
-                      type={post.type}
-                      content={post.content}
-                      comments={post.comments}
-                    />
-                  </div>
-                )}
+                { // Conditionally render SocialPostCard if post is not null
+                  
+                
+                <div className="social-post-container">
+                    <div className="socialpost-card">
+                      <SocialPostCard
+                        imageURL={post.imageURL}
+                        id={post._id}
+                        sharer={post.publisherId}
+                        title={post.title}
+                        type={null}
+                        content={post.content}
+                        comments={[
+                          { id: 1, text: 'Great post!', user: 'User1' },
+                          { id: 2, text: 'Interesting thoughts.', user: 'User2' },
+                          // Add more comments as needed
+                        ]}
+                      />
+                      
+                    </div>
+              </div>
+                }
               </div>
             </main>
 
