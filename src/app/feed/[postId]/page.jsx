@@ -15,12 +15,39 @@ const Home = ({ params }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [post, setPost] = useState(null);
+
   const [newComment, setNewComment] = useState('');
+
+
+  const token = session?.backendTokens?.accessToken;
 
   useEffect(() => {
     const fetchPost = async () => {
-      const postId = params.postId;
-
+        const postId = params.postId;
+        try {
+          const response = await fetch(
+            "http://localhost:3500/api/social/getSingleSocialPost",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                postID: postId
+              }),
+            }
+          );
+          if (response.ok) {
+            console.log("Fetch post info fetch successful");
+            const data = await response.json();
+            console.log("data: ",data)
+          } else {
+            console.error("Fetch post info fetch failed");
+          }
+      } catch (error) {
+        console.log("fetch post info basarisiz") 
+      }
       // Use try-catch to handle errors during data fetching
       try {
         const post = await getPostById(postId);
@@ -29,9 +56,8 @@ const Home = ({ params }) => {
         setLikes(post.likes || []); 
       } catch (error) {
         console.error("Error fetching post:", error);
-      }
-    };
-
+      }  
+    }
     fetchPost();
   }, [params.postId]); // Add params.postId as a dependency
 
