@@ -24,31 +24,6 @@ const router = useRouter()
 >>>>>>> parent of 02e1a82 (Merge branch 'main' into social_page_feed)
   useEffect(() => {
     const fetchPost = async () => {
-        const postId = params.postId;
-        try {
-          const response = await fetch(
-            "http://localhost:3500/api/social/getSingleSocialPost",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                postID: postId
-              }),
-            }
-          );
-          if (response.ok) {
-            console.log("Fetch post info fetch successful");
-            const data = await response.json();
-            console.log("data: ",data)
-          } else {
-            console.error("Fetch post info fetch failed");
-          }
-      } catch (error) {
-        console.log("fetch post info basarisiz") 
-      }
       const postId = params.postId;
 
       // Use try-catch to handle errors during data fetching
@@ -57,8 +32,6 @@ const router = useRouter()
         setPost(post);
       } catch (error) {
         console.error("Error fetching post:", error);
-      }  
-    }
       }
     };
 
