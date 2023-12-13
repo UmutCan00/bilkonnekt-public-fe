@@ -16,7 +16,12 @@ export default function Home({params}) {
   const { data: session } = useSession();
 const router = useRouter()
   const [post, setPost] = useState(null);
+<<<<<<< HEAD
   const token = session?.backendTokens?.accessToken;
+=======
+  const [newComment, setNewComment] = useState('');
+
+>>>>>>> parent of 02e1a82 (Merge branch 'main' into social_page_feed)
   useEffect(() => {
     const fetchPost = async () => {
         const postId = params.postId;
@@ -44,6 +49,8 @@ const router = useRouter()
       } catch (error) {
         console.log("fetch post info basarisiz") 
       }
+      const postId = params.postId;
+
       // Use try-catch to handle errors during data fetching
       try {
         const post = await getPostById(postId);
@@ -52,6 +59,9 @@ const router = useRouter()
         console.error("Error fetching post:", error);
       }  
     }
+      }
+    };
+
     fetchPost();
   }, [params.postId]); // Add params.postId as a dependency
 

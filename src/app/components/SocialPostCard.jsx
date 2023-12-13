@@ -9,10 +9,10 @@ const SocialPostCard = ({
   title,
   content,
   type,
-  imageURL,
 }) => {
   return (
     <>
+<<<<<<< HEAD
     <style jsx global>{`
       /* Global styles to remove underlines from links */
       a {
@@ -44,6 +44,16 @@ const SocialPostCard = ({
         </div>
       )}
         <p className="card-text">Content: {content}</p>
+=======
+      <style jsx global>{`
+        /* Global styles to remove underlines from links */
+        a {
+          text-decoration: none;
+        }
+      `}</style>
+
+      <div className="card bg-white" style={{ width: '400px' }}>
+>>>>>>> parent of 02e1a82 (Merge branch 'main' into social_page_feed)
         <div className="card-body">
           <button className="btn btn-primary mr-2">
             <i className="bi bi-chat"></i> Comment
