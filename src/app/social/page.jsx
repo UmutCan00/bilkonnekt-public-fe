@@ -272,6 +272,7 @@ export default function Home() {
                         title={post.title}
                         type={null}
                         content={post.content}
+                        imageURL={post.imageURL}
                       />
                     </div>
                   </Link>
