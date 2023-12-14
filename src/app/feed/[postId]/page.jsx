@@ -17,6 +17,7 @@ const Home = ({ params }) => {
   //const [post, setPost] = useState(null);
   const [posts, setPosts] = useState([]);
   const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState([]);
   const token = session?.backendTokens?.accessToken;
 
   const [post, setPost] = useState([]);
@@ -30,6 +31,31 @@ const Home = ({ params }) => {
 
     return matchesSearch && matchesType;
   });
+
+  const fetchComments = async () => {
+    try {
+      const incomingComments = await fetch(
+        "http://localhost:3500/api/social/getPostComments",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            postId: params.postId,
+          }),
+        }
+      );
+      const data = await incomingComments.json();
+      console.log("Comment data: ", data)
+      setComments(data);
+      console.log("comments: ", comments)
+    } catch (error) {
+      console.log("fetch comments basarisiz: ", error)
+    }
+  };
+
   useEffect(() => {
     const fetchPost = async () => {
       const postId = params.postId;
@@ -57,10 +83,7 @@ const Home = ({ params }) => {
           setPost(data);
           
         } else {
-          console.error(
-            "Fetch post info fetch failed, response: ",
-            response
-          );
+          console.error("Fetch post info fetch failed, response: ",response);
         }
       } catch (error) {
         console.log("fetch post info basarisiz, ", error);
@@ -77,7 +100,8 @@ const Home = ({ params }) => {
     };
 
     fetchPost();
-  }, [params.postId, token]); // Add params.postId as a dependency
+    fetchComments();
+  }, [params.postId, token, comments]); // Add params.postId as a dependency
 
   const getPostById = async (postId) => {
     // Simulate fetching data from a database or API
@@ -101,7 +125,22 @@ const Home = ({ params }) => {
   const handleAddComment = () => {
     // Perform the action of adding a comment here
     console.log('Adding comment:', newComment);
-
+    console.log("params: ", params);
+    try {
+      fetch("http://localhost:3500/api/social/createComment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            postId: params.postId,
+            description: newComment
+          }),
+        });
+    } catch (error) {
+      console.log("error: ", error)
+    }
     // Close the modal after adding the comment
     handleAddCommentModalClose();
   };
@@ -147,7 +186,7 @@ const Home = ({ params }) => {
               {comments.map((comment) => (
                 <div key={comment.id}>
                   <p>
-                    <strong>{comment.user}:</strong> {comment.text}
+                    <strong>{comment.commenterName}:</strong> {comment.description}
                   </p>
                 </div>
               ))}
@@ -218,11 +257,7 @@ const Home = ({ params }) => {
                         title={post.title}
                         type={null}
                         content={post.content}
-                        comments={[
-                          { id: 1, text: 'Great post!', user: 'User1' },
-                          { id: 2, text: 'Interesting thoughts.', user: 'User2' },
-                          // Add more comments as needed
-                        ]}
+                        comments={comments}
                       />
                       
                     </div>
