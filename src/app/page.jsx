@@ -1,6 +1,6 @@
 // pages/index.js
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Navbar from "./components/Navbar";
@@ -13,14 +13,68 @@ import Link from "next/link";
 
 export default function Home() {
   const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
   console.log("session", session);
   console.log("user", session?.user?.username);
-  const products = productdata;
-  const posts = socialPosts;
   const [searchInput, setSearchInput] = useState("");
-  console.log("data", products);
-  const limitedData = products.slice(0, 5);
-  
+  const [posts, setPosts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getSocialPosts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setPosts([data[0], data[1], data[2]]);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, [token]);
+  console.log("pro", products);
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3500/api/product/getProducts",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const re = await response.json();
+          setProducts(re.slice(0, 4)); // Update products too
+        } else {
+          console.error("Failed to fetch products");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    getProducts();
+  }, [token]); // Fetch data only when token changes
+
   return (
     <div>
       <Navbar />
@@ -29,114 +83,91 @@ export default function Home() {
           <h1>Welcome to Bilkonnekt Marketplace</h1>
           <p>Find great deals on items near you</p>
         </header>
-        
 
-        <div className="search-bar m-2 ">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search for items..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-          <button className="btn btn-primary ">Search</button>
-        </div>
+        <main>
+          <div className="container-fluid card bg-custom1 m-2">
+            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              <h1>Go to Marketplace</h1>
+              <Link href="/marketplace">
+                <button className="btn btn-primary"> Go</button>
+              </Link>
+            </div>
 
-          <main>
-            <div className="container-fluid card bg-custom1 m-2"> 
-              <div className="intro-card ">
-                <h1>Go to Marketplace</h1>
-                  <Link href="/marketplace">
-                    <button className="btn btn-primary">  Search</button>
-                  </Link>
-              </div>
+            <div className="list">
+              {products.map((product, index) => (
+                <div key={index} className="product-card">
+                  <SaleProductCard
+                    seller={product.sellerid}
+                    productid={product._id}
+                    title={product.title}
+                    price={product.price}
+                    location={product.address}
+                    type={product.type}
+                    description={product.description}
+                    imageURL={product.imageURL}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
-              
+          <div className="container-fluid card bg-custom1 m-2">
+            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              <h1>Go to Bilkent Social</h1>
+              <Link href="/social">
+                <button className="btn btn-primary"> Go</button>
+              </Link>
+            </div>
 
-              <div className="list">
-                { 
-                  
-                  limitedData.map(
-                    (
-                      product
-                      // .map for loop gibi içindeki her obje için alttaki fonksiyonu çağırır
-                    ) => (
-                      <SaleProductCard
-                        key={product.uuid}
-                        seller={product.sellerid}
-                        title={product.title}
-                        price={product.price}
-                        location={product.address}
-                        type={product.type}
-                        description={product.description}
-                      />
-                    )
-                  )}
-              </div>
-            </div>  
-
-            <div className="container-fluid card bg-custom1 m-2">
-              <div className="intro-card ">
-                <h1>Go to Bilkent Social</h1>
-                <Link href="/social">
-                    <button className="btn btn-primary">  Search</button>
-                  </Link>
-              </div>
-
-              <div className="list">
-                {posts.map(
-                  (
-                    post,
-                    index
-                    // .map for loop gibi içindeki her obje için alttaki fonksiyonu çağırır
-                  ) => (
-                    
+            {/* Social post container */}
+            <div className="list">
+              {posts.map((post, index) => (
+                <Link key={index} href={`/feed/${post._id}`} passHref>
+                  <div className="socialpost-card">
                     <SocialPostCard
-                      key = {index}
+                      id={post._id}
+                      sharer={post.publisherId}
                       title={post.title}
-                      sharer={post.sharer}
+                      type={null}
                       content={post.content}
+                      imageURL={post.imageURL}
                     />
-                   
-                  )
-                )}
-              </div>
-            </div>  
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
 
-            <div className="container-fluid card bg-custom1 m-2">
-              <div className="intro-card ">
-                <h1>Go to Bilkent Academic</h1>
-                <Link href="/academic">
-                    <button className="btn btn-primary">  Search</button>
-                  </Link>
-              </div>
+          <div className="container-fluid card bg-custom1 m-2">
+            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              <h1 className="text-center">Go to Bilkent Academic</h1>
+              <Link href="/academic">
+                <button className="btn btn-primary">Go</button>
+              </Link>
+            </div>
+          </div>
 
-            </div>  
+          <div className="container-fluid card bg-custom1 m-2">
+            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              <h1 className="text-center">Go to Lost & Found</h1>
 
-            <div className="container-fluid card bg-custom1 m-2">
-              <div className="intro-card ">
-                <h1>Go to Lost & Found</h1>
-                <Link href="/lostfound">
-                    <button className="btn btn-primary">  Search</button>
-                  </Link>
-              </div>
+              <Link href="/lostfound">
+                <button className="btn btn-primary">Go</button>
+              </Link>
+            </div>
+          </div>
+        </main>
 
-            </div>  
+        <footer>
+          <p>
+            &copy; {new Date().getFullYear()} Bilkonnekt. A Social Marketplace
+          </p>
+        </footer>
 
-          </main>
-
-          <footer>
-            <p>&copy; {new Date().getFullYear()} Our Marketplace</p>
-          </footer>
-
-          <style>{`
+        <style>{`
           .home {
             padding-left: 80px;
             padding-right: 80px;
-          }
-
-          div {
-            padding: 10px; 
           }
           
           .bg-custom1 {
