@@ -221,6 +221,7 @@ const Home = ({ params }) => {
     }
     // Close the modal after adding the comment
     handleAddCommentModalClose();
+    window.location.reload();
   };
   console.log("post.url: ",post.imageURL)
   console.log("post.title: ",post.title)
