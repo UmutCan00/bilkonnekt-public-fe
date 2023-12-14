@@ -5,10 +5,12 @@ import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
 import "bootstrap/dist/css/bootstrap.css";
 import "../../globals.css";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function ProfilePage({ params }) {
+  const router = useRouter();
   const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
   const [userData, setUserData] = useState({
     username: "",
     fullName: "Mert Terkuran",
@@ -74,7 +76,7 @@ function ProfilePage({ params }) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.backendTokens?.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         id: session?.user?._id,
@@ -92,7 +94,7 @@ function ProfilePage({ params }) {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.backendTokens?.accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               id: params.slug,
@@ -112,7 +114,7 @@ function ProfilePage({ params }) {
       }
     };
     handleFetch();
-  }, [session]);
+  }, [token]);
 
   return (
     <div>
@@ -143,7 +145,13 @@ function ProfilePage({ params }) {
                 <button type="button" className="btn bg-success btn-lg">
                   Send a Message!
                 </button>
-                <button type="button" className="btn bg-warning btn-lg ms-5">
+                <button
+                  type="button"
+                  className="btn bg-warning btn-lg ms-5"
+                  onClick={() =>
+                    router.push("/marketplace/seller/" + params.slug)
+                  }
+                >
                   Go to Their Shop!
                 </button>
                 {session?.user?._id === params.slug && (

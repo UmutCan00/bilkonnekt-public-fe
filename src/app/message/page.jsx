@@ -331,7 +331,7 @@ const MessagingPage = () => {
               color: "black",
             }}
           >
-            {chat.buyerId}
+            {chat.sellerId}
           </button>
         ))}
       </div>
