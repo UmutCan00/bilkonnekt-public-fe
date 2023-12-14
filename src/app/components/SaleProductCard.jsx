@@ -2,7 +2,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 
 const SaleProductCard = ({
@@ -18,6 +18,14 @@ const SaleProductCard = ({
   const router = useRouter();
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
+  const [isHovered, setIsHovered] = useState(false);
+  const handleRemove = () => {
+    if (seller === session?.user?._id) {
+      console.log("Product ID to be removed:", productid);
+      // Handle remove operation
+      console.log("Remove button clicked!");
+    }
+  };
 
   const handleContactSeller = async (sellerDetails) => {
     try {
@@ -38,7 +46,7 @@ const SaleProductCard = ({
 
       if (response.ok) {
         console.log("Created!");
-        router.push("/message"); // Redirect to /message upon successful response
+        router.push("/message");
       } else {
         console.error("Failed to create dialog");
       }
@@ -48,7 +56,21 @@ const SaleProductCard = ({
   };
 
   return (
-    <div className="card mb-3">
+    <div
+      className="card mb-3 position-relative"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {seller === session?.user?._id && (
+        <button
+          className={`btn btn-danger position-absolute top-0 end-0 m-2 ${
+            isHovered ? "visible" : "invisible"
+          }`}
+          onClick={handleRemove}
+        >
+          <i className="bi bi-x"></i>
+        </button>
+      )}
       {/* Display the cropped image */}
       {imageURL && (
         <div
@@ -78,10 +100,7 @@ const SaleProductCard = ({
         <p className="card-text">Type: {type}</p>
         <p className="card-text">Description: {description}</p>
         {/* Assign the function to the onClick event */}
-        <button
-          className="btn btn-primary"
-          onClick={() => handleContactSeller({ productid, seller, token })}
-        >
+        <button className="btn btn-primary" onClick={handleContactSeller}>
           Contact Seller
         </button>
       </div>
