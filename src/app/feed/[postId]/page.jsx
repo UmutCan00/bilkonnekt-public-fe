@@ -91,7 +91,10 @@ const Home = ({ params }) => {
   const router = useRouter();
   //const [post, setPost] = useState(null);
   const [posts, setPosts] = useState([]);
+
   const [newComment, setNewComment] = useState("");
+  const [comments, setComments] = useState([]);
+
   const token = session?.backendTokens?.accessToken;
 
   const [post, setPost] = useState([]);
@@ -105,6 +108,31 @@ const Home = ({ params }) => {
 
     return matchesSearch && matchesType;
   });
+
+  const fetchComments = async () => {
+    try {
+      const incomingComments = await fetch(
+        "http://localhost:3500/api/social/getPostComments",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            postId: params.postId,
+          }),
+        }
+      );
+      const data = await incomingComments.json();
+      console.log("Comment data: ", data)
+      setComments(data);
+      console.log("comments: ", comments)
+    } catch (error) {
+      console.log("fetch comments basarisiz: ", error)
+    }
+  };
+
   useEffect(() => {
     const fetchPost = async () => {
       const postId = params.postId;
@@ -131,6 +159,7 @@ const Home = ({ params }) => {
           console.log("data: ", data);
           setPost(data);
         } else {
+
           console.error("Fetch post info fetch failed, response: ", response);
         }
       } catch (error) {
@@ -148,7 +177,8 @@ const Home = ({ params }) => {
     };
 
     fetchPost();
-  }, [params.postId, token]); // Add params.postId as a dependency
+    fetchComments();
+  }, [params.postId, token, comments]); // Add params.postId as a dependency
 
   const getPostById = async (postId) => {
     // Simulate fetching data from a database or API
@@ -171,13 +201,103 @@ const Home = ({ params }) => {
 
   const handleAddComment = () => {
     // Perform the action of adding a comment here
-    console.log("Adding comment:", newComment);
 
+    console.log('Adding comment:', newComment);
+    console.log("params: ", params);
+    try {
+      fetch("http://localhost:3500/api/social/createComment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            postId: params.postId,
+            description: newComment
+          }),
+        });
+    } catch (error) {
+      console.log("error: ", error)
+    }
     // Close the modal after adding the comment
     handleAddCommentModalClose();
   };
-  console.log("post.url: ", post.imageURL);
-  console.log("post.title: ", post.title);
+  console.log("post.url: ",post.imageURL)
+  console.log("post.title: ",post.title)
+  const SocialPostCard = ({ sharer, title, type, content,  imageURL, comments, }) => (
+    <>
+      <style jsx global>{`
+        /* Global styles to remove underlines from links */
+        a {
+          text-decoration: none;
+        }
+      `}</style>
+
+      <div className="card bg-white" style={{ width: '400px' }}>
+        <div className="card-body">
+          <h5 className="card-title">{title}</h5>
+          <p className="card-text">Sharer: {sharer}</p>
+          <img
+            src={post.imageURL}
+            alt="Product Image"
+            style={{
+              width: "100%", // Ensure the image covers the container width
+              objectFit: "cover", // Crop the image while maintaining aspect ratio
+              maxHeight: "100%", // Ensure the image covers the container height
+            }}
+          />
+          <p className="card-text">Content: {content}</p>
+          <div className="card-body">
+            <Button
+              className="btn btn-primary mr-2"
+              variant="info"
+              onClick={handleAddCommentModalOpen}
+            >
+              <i className="bi bi-chat-dots"></i> Add Comment
+            </Button>
+            <button className="btn btn-primary">
+              <i className="bi bi-heart"></i> Like
+            </button>
+
+            <div className="comments-section" style={{ backgroundColor: 'white' }}>
+              <h6>Comments</h6>
+              {comments.map((comment) => (
+                <div key={comment.id}>
+                  <p>
+                    <strong>{comment.commenterName}:</strong> {comment.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Add Comment Modal */}
+            <Modal show={showAddCommentModal} onHide={handleAddCommentModalClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Add Comment</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group controlId="newComment">
+                    <Form.Control
+                      as="textarea"
+                      placeholder="Type your comment here..."
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Button variant="primary" onClick={handleAddComment}>
+                    Add Comment
+                  </Button>
+                </Form>
+              </Modal.Body>
+            </Modal>
+
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
 
   const numColumns = 1;
   const itemsPerColumn = Math.ceil(filteredPosts.length / numColumns);
@@ -221,21 +341,15 @@ const Home = ({ params }) => {
                         title={post.title}
                         type={null}
                         content={post.content}
-                        comments={[
-                          { id: 1, text: "Great post!", user: "User1" },
-                          {
-                            id: 2,
-                            text: "Interesting thoughts.",
-                            user: "User2",
-                          },
-                          // Add more comments as needed
-                        ]}
+
+                        comments={comments}
                         handleAddCommentModalOpen={handleAddCommentModalOpen}
                         handleAddCommentModalClose={handleAddCommentModalClose}
                         handleAddComment={handleAddComment}
                         newComment={newComment}
                         setNewComment={setNewComment}
                         showAddCommentModal={showAddCommentModal}
+
                       />
                     </div>
                   )}
