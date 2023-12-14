@@ -27,7 +27,7 @@ const SaleProductCard = ({
     }
   };
 
-  const handleContactSeller = async (sellerDetails) => {
+  const handleContactSeller = async () => {
     try {
       const response = await fetch(
         "http://localhost:3500/api/dialog/createDialog",
@@ -35,11 +35,11 @@ const SaleProductCard = ({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${sellerDetails.token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            itemId: sellerDetails.productid,
-            sellerId: sellerDetails.seller,
+            itemId: productid,
+            sellerId: seller,
           }),
         }
       );
