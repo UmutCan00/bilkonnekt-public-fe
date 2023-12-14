@@ -19,10 +19,25 @@ const SaleProductCard = ({
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
   const [isHovered, setIsHovered] = useState(false);
-  const handleRemove = () => {
+  const handleRemove = async () => {
     if (seller === session?.user?._id) {
       console.log("Product ID to be removed:", productid);
       // Handle remove operation
+      try {
+        fetch("http://localhost:3500/api/product/deleteProduct", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              productId: productid,
+            }),
+          });
+      } catch (error) {
+        console.log("error: ", error)
+      }
+      window.location.reload();
       console.log("Remove button clicked!");
     }
   };
