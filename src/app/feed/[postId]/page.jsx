@@ -53,9 +53,9 @@ const SocialPostCard = ({
           >
             <h6>Comments</h6>
             {comments.map((comment) => (
-              <div key={comment.id}>
+              <div key={comment.id}>  
                 <p>
-                  <strong>{comment.user}:</strong> {comment.text}
+                  <strong>{comment.commenterName}:</strong> {comment.description}
                 </p>
               </div>
             ))}
@@ -224,79 +224,7 @@ const Home = ({ params }) => {
   };
   console.log("post.url: ",post.imageURL)
   console.log("post.title: ",post.title)
-  const SocialPostCard = ({ sharer, title, type, content,  imageURL, comments, }) => (
-    <>
-      <style jsx global>{`
-        /* Global styles to remove underlines from links */
-        a {
-          text-decoration: none;
-        }
-      `}</style>
-
-      <div className="card bg-white" style={{ width: '400px' }}>
-        <div className="card-body">
-          <h5 className="card-title">{title}</h5>
-          <p className="card-text">Sharer: {sharer}</p>
-          <img
-            src={post.imageURL}
-            alt="Product Image"
-            style={{
-              width: "100%", // Ensure the image covers the container width
-              objectFit: "cover", // Crop the image while maintaining aspect ratio
-              maxHeight: "100%", // Ensure the image covers the container height
-            }}
-          />
-          <p className="card-text">Content: {content}</p>
-          <div className="card-body">
-            <Button
-              className="btn btn-primary mr-2"
-              variant="info"
-              onClick={handleAddCommentModalOpen}
-            >
-              <i className="bi bi-chat-dots"></i> Add Comment
-            </Button>
-            <button className="btn btn-primary">
-              <i className="bi bi-heart"></i> Like
-            </button>
-
-            <div className="comments-section" style={{ backgroundColor: 'white' }}>
-              <h6>Comments</h6>
-              {comments.map((comment) => (
-                <div key={comment.id}>
-                  <p>
-                    <strong>{comment.commenterName}:</strong> {comment.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* Add Comment Modal */}
-            <Modal show={showAddCommentModal} onHide={handleAddCommentModalClose}>
-              <Modal.Header closeButton>
-                <Modal.Title>Add Comment</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
-                  <Form.Group controlId="newComment">
-                    <Form.Control
-                      as="textarea"
-                      placeholder="Type your comment here..."
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Button variant="primary" onClick={handleAddComment}>
-                    Add Comment
-                  </Button>
-                </Form>
-              </Modal.Body>
-            </Modal>
-
-          </div>
-        </div>
-      </div>
-    </>
-  );
+  
 
 
   const numColumns = 1;
