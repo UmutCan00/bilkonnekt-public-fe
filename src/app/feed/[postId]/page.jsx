@@ -1,6 +1,6 @@
 // pages/index.js
 "use client";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import React, { useState, useEffect } from "react";
@@ -10,18 +10,95 @@ import Navbar from "../../components/Navbar";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+const SocialPostCard = ({
+  sharer,
+  title,
+  type,
+  content,
+  imageURL,
+  comments,
+  handleAddCommentModalOpen,
+  handleAddCommentModalClose,
+  handleAddComment,
+  newComment,
+  setNewComment,
+  showAddCommentModal,
+}) => (
+  <>
+    <div className="card bg-white" style={{ width: "400px" }}>
+      <div className="card-body">
+        <h5 className="card-title">{title}</h5>
+        <p className="card-text">Sharer: {sharer}</p>
+        <img
+          src={imageURL}
+          alt="Product Image"
+          style={{
+            width: "100%",
+            objectFit: "cover",
+            maxHeight: "100%",
+          }}
+        />
+        <p className="card-text">Content: {content}</p>
+        <div className="card-body">
+          <Button
+            className="btn btn-primary mr-2"
+            variant="info"
+            onClick={handleAddCommentModalOpen}
+          >
+            <i className="bi bi-chat-dots"></i> Add Comment
+          </Button>
+          <div
+            className="comments-section"
+            style={{ backgroundColor: "white" }}
+          >
+            <h6>Comments</h6>
+            {comments.map((comment) => (
+              <div key={comment.id}>
+                <p>
+                  <strong>{comment.user}:</strong> {comment.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    <Modal show={showAddCommentModal} onHide={handleAddCommentModalClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Add Comment</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="newComment">
+            <Form.Control
+              as="textarea"
+              placeholder="Type your comment here..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+          </Form.Group>
+          <Button variant="primary" onClick={handleAddComment}>
+            Add Comment
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  </>
+);
 
 const Home = ({ params }) => {
   const { data: session } = useSession();
   const router = useRouter();
   //const [post, setPost] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [newComment, setNewComment] = useState('');
+
+  const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
+
   const token = session?.backendTokens?.accessToken;
 
   const [post, setPost] = useState([]);
- 
+
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -81,9 +158,9 @@ const Home = ({ params }) => {
 
           console.log("data: ", data);
           setPost(data);
-          
         } else {
-          console.error("Fetch post info fetch failed, response: ",response);
+
+          console.error("Fetch post info fetch failed, response: ", response);
         }
       } catch (error) {
         console.log("fetch post info basarisiz, ", error);
@@ -92,8 +169,8 @@ const Home = ({ params }) => {
       try {
         const post = await getPostById(postId);
         //setPost(post);
-        //setComments(post.comments || []); 
-        //setLikes(post.likes || []); 
+        //setComments(post.comments || []);
+        //setLikes(post.likes || []);
       } catch (error) {
         console.error("Error fetching post:", error);
       }
@@ -124,6 +201,7 @@ const Home = ({ params }) => {
 
   const handleAddComment = () => {
     // Perform the action of adding a comment here
+
     console.log('Adding comment:', newComment);
     console.log("params: ", params);
     try {
@@ -220,6 +298,7 @@ const Home = ({ params }) => {
     </>
   );
 
+
   const numColumns = 1;
   const itemsPerColumn = Math.ceil(filteredPosts.length / numColumns);
 
@@ -242,13 +321,18 @@ const Home = ({ params }) => {
               <h1>Welcome to Bilkonnekt Social</h1>
               <p>Don&apos;t Miss Anything on Campus</p>
             </header>
-            <main style={{ marginTop: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <main
+              style={{
+                marginTop: "20px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               {/* Social post container */}
               <div className="social-post-container">
-                { // Conditionally render SocialPostCard if post is not null
-                  
-                
                 <div className="social-post-container">
+                  {post && (
                     <div className="socialpost-card">
                       <SocialPostCard
                         imageURL={post.imageURL}
@@ -257,12 +341,19 @@ const Home = ({ params }) => {
                         title={post.title}
                         type={null}
                         content={post.content}
+
                         comments={comments}
+                        handleAddCommentModalOpen={handleAddCommentModalOpen}
+                        handleAddCommentModalClose={handleAddCommentModalClose}
+                        handleAddComment={handleAddComment}
+                        newComment={newComment}
+                        setNewComment={setNewComment}
+                        showAddCommentModal={showAddCommentModal}
+
                       />
-                      
                     </div>
-              </div>
-                }
+                  )}
+                </div>
               </div>
             </main>
 
@@ -340,7 +431,6 @@ const Home = ({ params }) => {
         .comments-section {
           margin-top: 20px;
         }
-
       `}</style>
     </div>
   );
