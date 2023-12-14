@@ -178,7 +178,7 @@ const Home = ({ params }) => {
 
     fetchPost();
     fetchComments();
-  }, [params.postId, token, comments]); // Add params.postId as a dependency
+  }, [params.postId, token]); // Add params.postId as a dependency
 
   const getPostById = async (postId) => {
     // Simulate fetching data from a database or API
