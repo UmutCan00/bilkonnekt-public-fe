@@ -273,6 +273,7 @@ export default function Home() {
                         type={null}
                         content={post.content}
                         imageURL={post.imageURL}
+                        likeCount={post.likeCount}
                       />
                     </div>
                   </Link>

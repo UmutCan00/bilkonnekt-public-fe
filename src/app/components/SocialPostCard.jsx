@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Button from "react-bootstrap/Button";
 import Modal from 'react-bootstrap/Modal';
 import { useState } from 'react';
+import { useSession } from "next-auth/react";
 
 const SocialPostCard = ({
   id,
@@ -13,12 +14,33 @@ const SocialPostCard = ({
   content,
   type,
   imageURL,
+  likeCount,
 }) => {
   const [showCommentsModal, setShowCommentsModal] = useState(false);
 
   const handleCommentsModalOpen = () => setShowCommentsModal(true);
   const handleCommentsModalClose = () => setShowCommentsModal(false);
 
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
+  const likeFunc = () =>{
+    try {
+      fetch("http://localhost:3500/api/social/likePost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          postId: id,
+        }),
+      });
+    } catch (error) {
+      console.log("like operation error: ", error)
+    }
+    window.location.reload();
+    
+  }
   // Dummy comments data (replace with actual comments data)
   const comments = [
     { id: 1, text: 'Great post!', user: 'User1' },
@@ -67,9 +89,12 @@ const SocialPostCard = ({
             >
               <i className="bi bi-chat"></i> See Comments
             </Button>
-            <button className="btn btn-primary">
+            <Button className="btn btn-primary"
+              onClick={likeFunc}
+            >
               <i className="bi bi-heart"></i> Like
-            </button>
+            </Button>
+            <div style={{ display: "inline-block" }}><h3>{likeCount}</h3></div>
           </div>
         </div>
 
