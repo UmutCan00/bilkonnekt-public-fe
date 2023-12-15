@@ -18,8 +18,11 @@ const MaintenanceRequest = ({ params }) => {
   const currentUser = session?.user?._id;
   const members = useRef([]);
   const tasks = useRef([]);
+  let currentmember = null;
+  const [isLeader, setIsLeader] = useState(false);
+  const currentuserid = session?.user?._id;
 
-  const completeGroupTask = async () => {
+  const completeGroupTask = async (id) => {
     try {
       const response = await fetch(
         "http://localhost:3500/api/group/completeGroupTask",
@@ -30,7 +33,7 @@ const MaintenanceRequest = ({ params }) => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            taskId: "657ab7b165e4762b74b8ddf7",
+            taskId: id,
           }),
         }
       );
@@ -124,6 +127,10 @@ const MaintenanceRequest = ({ params }) => {
         members.current.value = data;
         console.log("data3", members);
         setNewAssignee(members.current.value[0].userId);
+        currentmember = members.current.value.find(
+          (member) => member.userId === currentuserid
+        );
+        if (currentmember.role === "leader") setIsLeader(true);
       } else {
         console.error("Failed to fetch data");
       }
@@ -156,6 +163,7 @@ const MaintenanceRequest = ({ params }) => {
   const handleDeleteRequest = (id) => {};
   const handleMarkDone = (taskId) => {
     completeGroupTask(taskId);
+    window.location.reload();
   };
 
   console.log("gr", members.current.value);
@@ -184,85 +192,88 @@ const MaintenanceRequest = ({ params }) => {
         </button>
       </Link>
       <div className="container mt-4">
-        <h1>Add a New Request</h1>
-
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="description">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter request description"
-              value={newRequest}
-              onChange={(e) => setNewRequest(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="assignee">
-            <Form.Label>Assignee</Form.Label>
-            <Form.Control
-              as="select"
-              value={newAssignee}
-              onChange={(e) => setNewAssignee(e.target.value)}
+        {isLeader && (
+          <Form onSubmit={handleSubmit}>
+            <h1>Add a New Request</h1>
+            <Form.Group controlId="description">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter request description"
+                value={newRequest}
+                onChange={(e) => setNewRequest(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="assignee">
+              <Form.Label>Assignee</Form.Label>
+              <Form.Control
+                as="select"
+                value={newAssignee}
+                onChange={(e) => setNewAssignee(e.target.value)}
+              >
+                {members?.current?.value?.map((member) => (
+                  <option key={member.userId} value={member.userId}>
+                    {member.name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              style={{ marginBottom: "20px", marginTop: "10px" }}
             >
-              {members?.current?.value?.map((member) => (
-                <option key={member.userId} value={member.userId}>
-                  {member.name}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-          <Button
-            variant="primary"
-            type="submit"
-            style={{ marginBottom: "20px", marginTop: "10px" }}
-          >
-            Submit Request (Academic)
-          </Button>
-        </Form>
-
+              Submit Request (Academic)
+            </Button>
+          </Form>
+        )}
         <hr />
+
         <div style={{ marginTop: "10px" }}>
           <h2>Current Requests</h2>
         </div>
 
         <ListGroup>
           {tasks &&
-            tasks?.current?.value?.map((request) =>
-              !false ? (
-                <ListGroup.Item key={request._id}>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <strong>Description:</strong> {request.description}
-                    </div>
-                    <div>
-                      <strong>Assignee:</strong> {request.studentId}
-                    </div>
+            tasks?.current?.value?.map((request) => (
+              <ListGroup.Item key={request._id}>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div style={{ flex: 1 }}>
+                    <strong>Description:</strong>{" "}
+                    <span style={{ wordWrap: "break-word" }}>
+                      {request.description}
+                    </span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <strong>Assignee:</strong>{" "}
+                    <span style={{ wordWrap: "break-word" }}>
+                      {request.studentId}
+                    </span>
+                  </div>
+                  <div>
+                    {isLeader && (
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDeleteRequest(request._id)}
+                        style={{ color: "black", marginRight: "2px" }}
+                      >
+                        Delete
+                      </Button>
+                    )}
                     {currentUser == request.studentId && (
-                      <div>
-                        <Button
-                          variant="danger"
-                          onClick={() => handleDeleteRequest(request._id)}
-                          style={{ color: "black", marginRight: "5px" }}
-                        >
-                          Delete
-                        </Button>
-                        <Button
-                          variant="success"
-                          onClick={() => handleMarkDone(request._id)}
-                          style={{ color: "black", marginRight: "5px" }}
-                        >
-                          Mark Done
-                        </Button>
-                      </div>
+                      <Button
+                        variant="success"
+                        onClick={() => handleMarkDone(request._id)}
+                        style={{ color: "black", marginRight: "0px" }}
+                      >
+                        Mark Done
+                      </Button>
                     )}
                   </div>
-                </ListGroup.Item>
-              ) : null
-            )}
+                </div>
+              </ListGroup.Item>
+            ))}
         </ListGroup>
-
-        <div style={{ marginTop: "10px" }}>
-          <h2>Finished Requests</h2>
-        </div>
       </div>
     </div>
   );

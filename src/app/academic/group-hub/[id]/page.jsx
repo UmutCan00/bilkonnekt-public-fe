@@ -2,14 +2,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../../../components/Navbar";
 import { useSession } from "next-auth/react";
+import { Button, Form, ListGroup } from "react-bootstrap";
 import Link from "next/link";
 
 const GroupPage = ({ params }) => {
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
   const [currentGroup, setCurrentGroup] = useState(null);
+
   let currentGroups = [];
   const members = useRef([]);
+  let currentmember = null;
+  const [isLeader, setIsLeader] = useState(false);
 
   const currentDate = new Date();
   const selectedGroup = {
@@ -98,6 +102,91 @@ const GroupPage = ({ params }) => {
         console.log("data2", data);
         members.current.value = data;
         console.log("data3", members);
+        currentmember = members.current.value.find(
+          (member) => member.userId === currentuserid
+        );
+        if (currentmember.role === "leader") setIsLeader(true);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const kickMember = async (id) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/kickParticipant",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: params.id,
+            futureKickedId: id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("kicked", data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const promoteLeader = async (id) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/promoteToLeader",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: params.id,
+            futureLeaderId: id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("kicked", data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const leaveGroup = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/leaveStudyGroup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: params.id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("kicked", data);
       } else {
         console.error("Failed to fetch data");
       }
@@ -115,7 +204,15 @@ const GroupPage = ({ params }) => {
     setCurrentGroup(null);
     currentGroups = null;
   };
-
+  const handleKickMember = (id) => {
+    kickMember(id);
+  };
+  const handleLeave = (id) => {
+    leaveGroup();
+  };
+  const handlePromoteToLeader = (id) => {
+    promoteLeader(id);
+  };
   if (currentGroup) {
     return (
       <div>
@@ -156,15 +253,55 @@ const GroupPage = ({ params }) => {
             Description: {currentGroup.description}
             <br />
             {"Members: "}
-            {members.current.value?.map((member, index) => (
-              <div key={index}>
-                <div>
-                  <p>
-                    Username: {member.username}, Email: {member.email}
-                  </p>
-                </div>
+            {members.current.value && (
+              <div>
+                <h2>Group Members</h2>
+                <ListGroup>
+                  {members.current.value.map((member, index) => (
+                    <ListGroup.Item key={index}>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                          Username: {member.name}, Email: {member.email}
+                        </div>
+                        <div className="d-flex align-items-center">
+                          {isLeader &&
+                            member.userId !== currentuserid &&
+                            member.role !== "leader" && (
+                              <Button
+                                onClick={() =>
+                                  handlePromoteToLeader(member.userId)
+                                }
+                                variant="danger"
+                                style={{ color: "black", marginLeft: "10px" }}
+                              >
+                                Promote to Leader
+                              </Button>
+                            )}
+                          {isLeader && member.userId !== currentuserid && (
+                            <Button
+                              onClick={() => handleKickMember(member.userId)}
+                              variant="danger"
+                              style={{ color: "black", marginLeft: "10px" }}
+                            >
+                              Kick
+                            </Button>
+                          )}
+                          {member.userId === currentuserid && (
+                            <Button
+                              onClick={() => handleLeave(member.userId)}
+                              variant="danger"
+                              style={{ color: "black", marginLeft: "10px" }}
+                            >
+                              Leave
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
               </div>
-            ))}
+            )}
             <Link href={"/academic/group-hub/" + params.id + "/todo"}>
               <button
                 style={{
