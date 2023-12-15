@@ -14,7 +14,7 @@ import "../globals.css";
 let count=1;
 const ClubsPage = () => {
   const { data: session } = useSession(); 
-  const token = session?.backendTokens?.accessToken; 
+  const token = session?.backendTokens?.accessToken;
   const [showModal, setShowModal] = useState(false);
   const [selectedClub, setSelectedClub] = useState({});
   const [clubData, setClubData] = useState([]);
@@ -77,8 +77,8 @@ const ClubsPage = () => {
           </Modal.Header>
           <Modal.Body>
             <div>
-            <img src={"../"+selectedClub.image} alt={selectedClub.name} />
-            <h1>Club Bio goes here</h1>
+            <img src={selectedClub.imageURL} alt={selectedClub.name} />
+            <h1>Club Bio goes here: {selectedClub.description}</h1>
     </div>
     <div> <button type="button" class="btn btn-success" style={{ color: "black" }} onClick={() => setShowModal(false)}>   Join Club</button> </div>
     <div><button type="button" class="btn btn-danger" style={{ color: "black" }} onClick={() => setShowModal(false)}>Edit Club Page</button></div>
