@@ -25,23 +25,30 @@ const SaleProductCard = ({
       // Handle remove operation
       try {
         fetch("http://localhost:3500/api/product/deleteProduct", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              productId: productid,
-            }),
-          });
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: productid,
+          }),
+        });
       } catch (error) {
-        console.log("error: ", error)
+        console.log("error: ", error);
       }
       window.location.reload();
       console.log("Remove button clicked!");
     }
   };
-
+  const handleClick = () => {
+    // Navigate to the marketplace/id page when the card is clicked
+    router.push(`/marketplace/${productid}`);
+  };
+  const handleSeeSellerProfile = () => {
+    // Navigate to the marketplace/id page when the card is clicked
+    router.push(`/profilePage/${seller}`);
+  };
   const handleContactSeller = async () => {
     try {
       const response = await fetch(
@@ -94,6 +101,7 @@ const SaleProductCard = ({
             height: "200px", // Set a fixed height for uniformity
             overflow: "hidden", // Hide overflowing content
           }}
+          onClick={handleClick}
         >
           <img
             src={imageURL}
@@ -103,20 +111,44 @@ const SaleProductCard = ({
               objectFit: "cover", // Crop the image while maintaining aspect ratio
               maxHeight: "100%", // Ensure the image covers the container height
             }}
+            onClick={handleClick}
           />
         </div>
       )}
 
       <div className="card-body">
-        <h5 className="card-title">{title}</h5>
-        <p className="card-text">Price: ${price}</p>
-        <p className="card-text">Location: {location}</p>
-        <p className="card-text">Seller: {seller}</p>
-        <p className="card-text">Type: {type}</p>
-        <p className="card-text">Description: {description}</p>
+        <h5 className="card-title" onClick={handleClick}>
+          {title}
+        </h5>
+        <p className="card-text" onClick={handleClick}>
+          Price: ${price}
+        </p>
+        <p className="card-text" onClick={handleClick}>
+          Location: {location}
+        </p>
+        <p className="card-text" onClick={handleClick}>
+          Seller: {seller}
+        </p>
+        <p className="card-text" onClick={handleClick}>
+          Type: {type}
+        </p>
+        <p className="card-text" onClick={handleClick}>
+          Description: {description}
+        </p>
         {/* Assign the function to the onClick event */}
-        <button className="btn btn-primary" onClick={handleContactSeller}>
+        <button
+          className="btn btn-primary me-2"
+          style={{ padding: "4px" }}
+          onClick={handleContactSeller}
+        >
           Contact Seller
+        </button>
+        <button
+          className="btn btn-primary"
+          style={{ padding: "4px" }}
+          onClick={handleSeeSellerProfile}
+        >
+          See Seller Profile
         </button>
       </div>
     </div>

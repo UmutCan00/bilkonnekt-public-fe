@@ -1,61 +1,102 @@
 // pages/index.js
 "use client";
-import React from "react";
-import Navbar from "../../components/Navbar";
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar.jsx";
 import { useSession } from "next-auth/react";
-import productdata from "../../mockdata/productdata.js";
 
 function productInfo(products) {
   return (
     <div>
       <div class="productInfo">
         <h2>Price</h2>
-        <p>{products[0].price}</p>
+        <p>{products?.price}</p>
       </div>
       <div class="productInfo">
         <h2>Description</h2>
-        <p>{products[0].description}</p>
+        <p>{products?.description}</p>
       </div>
       <div class="productInfo">
         <h2>Seller ID</h2>
-        <p>{products[0].sellerid}</p>
+        <p>{products?.sellerid}</p>
       </div>
       <div class="productInfo">
         <h2>Address</h2>
-        <p>{products[0].address}</p>
+        <p>{products?.address}</p>
       </div>
       <div class="productInfo">
         <h2>Category</h2>
-        <p>{products[0].category}</p>
+        <p>{products?.type}</p>
       </div>
     </div>
   );
 }
 
-function imageSpace() {
+function imageSpace(product) {
   return (
     <div>
       <div class="imageSpace">
-        <p>Product Image Resides Here</p>
+        {product.imageURL && (
+          <img
+            src={product.imageURL}
+            alt="Product Image"
+            style={{
+              width: "100%",
+              height: "100%", // Ensure the image covers the container width
+            }}
+          />
+        )}
       </div>
     </div>
   );
 }
 
-export default function PostPage() {
+export default function PostPage({ params }) {
   const { data: session } = useSession();
-  let products = productdata;
+  const [product, setProduct] = useState({});
+  const token = session?.backendTokens?.accessToken;
+  useEffect(() => {
+    const fetchSinglePostData = async (id) => {
+      try {
+        const response = await fetch(
+          "http://localhost:3500/api/product/getSingleProductById",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              productId: id,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setProduct(data);
+        } else {
+          console.error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    fetchSinglePostData(params.id);
+  }, [params.id, token]);
+
   return (
     <div>
       <Navbar />
       <div className="container">
         <header>
-          <h1 align="left"> {products[1].title}</h1>
+          <h1 align="left"> {product.title}</h1>
         </header>
 
         <main>
-          <imageSpace>{imageSpace()}</imageSpace>
-          <productInfo>{productInfo(products)}</productInfo>
+          <imageSpace>{imageSpace(product)}</imageSpace>
+          <productInfo>{productInfo(product)}</productInfo>
         </main>
 
         <footer>
