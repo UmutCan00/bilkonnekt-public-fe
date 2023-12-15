@@ -5,7 +5,11 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 const GroupPage = ({ params }) => {
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
   const [currentGroup, setCurrentGroup] = useState(null);
+  let currentGroups = [];
+  const members = useRef([]);
 
   const currentDate = new Date();
   const selectedGroup = {
@@ -37,22 +41,80 @@ const GroupPage = ({ params }) => {
       // ... Add more to-do tasks as needed
     ],
   };
-  const { data: session } = useSession();
-  const token = session?.backendTokens?.accessToken;
+
   const currentuserid = session?.user?._id;
+
+  const fetchUserGroupData = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/seeUserGroups",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        currentGroups = data;
+        if (currentGroups) {
+          console.log("1", params.id);
+          console.log("2", currentGroups);
+          const foundGroup = currentGroups.find(
+            (group) => group._id == params.id
+          );
+          if (foundGroup) {
+            setCurrentGroup(foundGroup);
+          }
+        }
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const fetchGroupMember = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/seeGroupParticipants",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: params.id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data2", data);
+        members.current.value = data;
+        console.log("data3", members);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserGroupData();
+    fetchGroupMember();
+  }, [token]);
 
   const handleBackButtonClick = () => {
     setCurrentGroup(null);
+    currentGroups = null;
   };
-  useEffect(() => {
-    console.log(selectedGroup);
-    console.log(params.id);
-
-    // Update currentGroup only if it's different from selectedGroup
-    if (selectedGroup) {
-      setCurrentGroup(selectedGroup);
-    }
-  }, []);
 
   if (currentGroup) {
     return (
@@ -89,16 +151,21 @@ const GroupPage = ({ params }) => {
               padding: "20px",
             }}
           >
-            {currentGroup.name + "   " + currentGroup.description}
-            {/*currentGroup.members.map((member) => )*/}
-            {currentGroup?.members?.map((member, index) => (
+            Group Name: {currentGroup.groupName}
+            <br />
+            Description: {currentGroup.description}
+            <br />
+            {"Members: "}
+            {members.current.value?.map((member, index) => (
               <div key={index}>
                 <div>
-                  <p>{member}</p>
+                  <p>
+                    Username: {member.username}, Email: {member.email}
+                  </p>
                 </div>
               </div>
             ))}
-            <Link href={"/academic/group-hub/" + selectedGroup._id + "/todo"}>
+            <Link href={"/academic/group-hub/" + params.id + "/todo"}>
               <button
                 style={{
                   cursor: "pointer",
