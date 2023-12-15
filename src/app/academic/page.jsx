@@ -17,22 +17,22 @@ export default function Home() {
             </Link>
             <Link href="academic/find-groups">
               <Card className="mb-3 w-100">
-                <Card.Body>Search For Groups For Your Project</Card.Body>
+                <Card.Body>Search Groups for Your Project</Card.Body>
               </Card>
             </Link>
             <Link href="academic/find-groups">
               <Card className="mb-3 w-100">
-                <Card.Body>Find Group By ID</Card.Body>
+                <Card.Body>Find Group by ID</Card.Body>
               </Card>
             </Link>
             <Link href="academic/create-group">
               <Card className="mb-3 w-100">
-                <Card.Body>Create A Group From Scratch</Card.Body>
+                <Card.Body>Create a Group from Scratch</Card.Body>
               </Card>
             </Link>
             <Link href="/academic/section-swap">
               <Card className="mb-3 w-100">
-                <Card.Body>Swap Sections With Friends</Card.Body>
+                <Card.Body>Swap Sections with Friends</Card.Body>
               </Card>
             </Link>
           </Col>
