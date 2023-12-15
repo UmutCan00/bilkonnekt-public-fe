@@ -23,6 +23,11 @@ const SocialPostCard = ({
 
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
+
+  const currentuserid = session?.user?._id;
+  const isEditButtonVisible = (currentuserid == sharer)
+
+
   const likeFunc = () =>{
     try {
       fetch("http://localhost:3500/api/social/likePost", {
@@ -95,6 +100,11 @@ const SocialPostCard = ({
               <i className="bi bi-heart"></i> Like
             </Button>
             <div style={{ display: "inline-block" }}><h3>{likeCount}</h3></div>
+            <div>
+              {isEditButtonVisible && (
+                <Button className="btn btn-primary" onClick={() => console.log('Button clicked')}>My Button</Button>
+              )}
+            </div>
           </div>
         </div>
 
