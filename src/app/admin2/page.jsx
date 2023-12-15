@@ -32,6 +32,14 @@ const Admin = () => {
       { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', banned: false },
       { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', banned: false },
+      { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', banned: false },
+      { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', banned: false },
+      { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', banned: false },
+      { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', banned: false },
+      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Club Executive', banned: false },
+      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', banned: false },
+      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', banned: false },
+      { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', banned: false },
     ],
     clubs: [
       { id: 1, name: 'Bilkent YES' },
@@ -96,7 +104,7 @@ const Admin = () => {
             onChange={handleSearch}
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
           />
-          <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+          <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
             <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ backgroundColor: 'black', color: 'white' }}>
@@ -118,8 +126,13 @@ const Admin = () => {
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.banned ? 'Yes' : 'No'}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                       {}
-                      <button>Action 1</button>
-                      <button>Action 2</button>
+                      <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
+                      onClick={() => window.location.href = "/profilePage/" + user.id}>See User</button>
+                      <button 
+                      style={{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}>Set Role</button>
+                      <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>Ban Operations</button>
                     </td>
                   </tr>
                 ))}
@@ -154,8 +167,10 @@ const Admin = () => {
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{club.name}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
-                    <button>Action 1</button>
-                    <button>Action 2</button>
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>See Club Page</button>
+                    <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '100px', height: '30px'}}>Delete Club</button>
                   </td>
                 </tr>
               ))}
@@ -180,8 +195,8 @@ const Admin = () => {
               <tr style={{ backgroundColor: 'black', color: 'white' }}>
                 <th style={{ width: '10%', padding: '8px' }}>ID</th>
                 <th style={{ width: '30%', padding: '8px' }}>Name</th>
-                <th style={{ width: '60%', padding: '8px' }}>Description</th>
-                <th style={{ width: '10%', padding: '8px' }}>Actions</th>
+                <th style={{ width: '50%', padding: '8px' }}>Description</th>
+                <th style={{ width: '30%', padding: '8px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -192,8 +207,12 @@ const Admin = () => {
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item.description}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
-                    <button>Action 1</button>
-                    <button>Action 2</button>
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
+                      onClick={() => window.location.href = "/marketplace/" + item.id}>See Marketplace Post
+                      </button>
+                    <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>Delete Post</button>
                   </td>
                 </tr>
               ))}
@@ -219,7 +238,7 @@ const Admin = () => {
                 <th style={{ width: '10%', padding: '8px' }}>ID</th>
                 <th style={{ width: '30%', padding: '8px' }}>Name</th>
                 <th style={{ width: '60%', padding: '8px' }}>Content</th>
-                <th style={{ width: '10%', padding: '8px' }}>Actions</th>
+                <th style={{ width: '30%', padding: '8px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -230,8 +249,11 @@ const Admin = () => {
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.content}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
-                    <button>Action 1</button>
-                    <button>Action 2</button>
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
+                      onClick={() => window.location.href = "/social/" + post.id}>See Social Post</button>
+                    <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>Delete Post</button>
                   </td>
                 </tr>
               ))}
@@ -257,7 +279,7 @@ const Admin = () => {
                 <th style={{ width: '10%', padding: '8px' }}>ID</th>
                 <th style={{ width: '30%', padding: '8px' }}>Owner</th>
                 <th style={{ width: '60%', padding: '8px' }}>Message</th>
-                <th style={{ width: '10%', padding: '8px' }}>Actions</th>
+                <th style={{ width: '40%', padding: '8px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -268,8 +290,10 @@ const Admin = () => {
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.message}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
-                    <button>Action 1</button>
-                    <button>Action 2</button>
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}>Flag as Read</button>
+                    <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}>Flag as Completed</button>
                   </td>
                 </tr>
               ))}
