@@ -10,9 +10,6 @@ import Navbar from "../../components/Navbar";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-
-import Link from "next/link";
-
 const SocialPostCard = ({
   sharer,
   title,
@@ -229,6 +226,8 @@ const Home = ({ params }) => {
   console.log("post.url: ",post.imageURL)
   console.log("post.title: ",post.title)
   
+
+
   const numColumns = 1;
   const itemsPerColumn = Math.ceil(filteredPosts.length / numColumns);
 
@@ -239,8 +238,6 @@ const Home = ({ params }) => {
       filteredPosts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
-
-
   return (
     <div>
       <Navbar />
@@ -261,11 +258,6 @@ const Home = ({ params }) => {
                 alignItems: "center",
               }}
             >
-              <Link href={`/social`} passHref>
-              <Button className="btn btn-primary m-2"> <i className="bi bi-x"></i> </Button>
-                  </Link>
-               
-              
               {/* Social post container */}
               <div className="social-post-container">
                 <div className="social-post-container">
