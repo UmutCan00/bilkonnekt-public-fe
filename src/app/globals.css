@@ -38,5 +38,5 @@ header {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to right, #72C8FF, #72C8FF);
+  background: linear-gradient(to right, #A5A5A5, #A5A5A5);
 }
