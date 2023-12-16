@@ -23,11 +23,16 @@ function ProfilePage({ params }) {
   const [newPassword, setNewPassword] = useState("");
   const [deleteUserEmail, setDeleteUserEmail] = useState("");
   const [showDeleteUser, setShowDeleteUser] = useState(false);
+  const [imageUpload, setImageUpload] = useState(null);
 
-  function ImageSpace() {
+
+  function ImageSpace({ image }) {
     return (
       <div className="imgSpace border rounded text-center">
-        <p className="mt-5">Profile Image Resides Here</p>
+        {image ?
+          <img src={URL.createObjectURL(image)} /> :
+          <p className="mt-5">Profile Image Resides Here</p>
+        }
       </div>
     );
   }
@@ -129,9 +134,25 @@ function ProfilePage({ params }) {
               <div className="ms-5"></div>
               <div className="ms-5"></div>
               <div className="d-flex  mt-5">
-                <ImageSpace />
+                <ImageSpace image={imageUpload} />
               </div>
             </div>
+            {session?.user?._id === params.slug &&
+              <div className="d-flex justify-content-center ">
+                <div className="col-md-6 d-flex flex-column">
+                  <label htmlFor="avatar">Choose a profile picture:</label>
+                  <input
+                    type="file"
+                    id="avatar"
+                    name="avatar"
+                    accept="image/png, image/jpeg"
+                    onChange={(event) => {
+                      setImageUpload(event.target.files[0]);
+                    }}
+                  />
+                </div>
+              </div>
+            }
           </div>
 
           <div className="col-sm bg-secondary">
