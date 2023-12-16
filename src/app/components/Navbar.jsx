@@ -46,6 +46,20 @@ const Navbar = () => {
 
       <Link
         className="transition-colors hover:text-blue-500"
+        href={"/clubpage"}
+      >
+        <span className="text-black">Student Clubs</span>
+      </Link>
+
+      <Link
+        className="transition-colors hover:text-blue-500"
+        href={"/todayinbilkent"}
+      >
+        <span className="text-black">Today in Bilkent</span>
+      </Link>
+
+      <Link
+        className="transition-colors hover:text-blue-500"
         href={"/message/"}
       >
         <span className="text-black">Messages</span>
