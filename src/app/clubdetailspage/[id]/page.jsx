@@ -7,8 +7,12 @@ import { useEffect } from "react";
 import clubsData from '../../mockdata/clubData';
 import eventData from '../../mockdata/eventData';
 import React from 'react';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Modal, FormControl} from 'react-bootstrap';
+import TimePicker from 'react-time-picker';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'react-time-picker/dist/TimePicker.css';
 
 const ClubPostCard = ({
   clubid,
@@ -54,8 +58,8 @@ const ClubDetailPage = ({ params }) => {
   const [newEventTitle,setNewEventTitle]=useState([]);
   const [newEventPicture,setNewEventPicture]=useState([]);
   const [newEventLocation,setNewEventLocation]=useState([]);
-  const [newEventDate,setNewEventDate]=useState([]);
-  const [newEventHour,setNewEventHour]=useState([]);
+  const [newEventDate,setNewEventDate]=useState(new Date());
+  const [newEventHour,setNewEventHour]=useState('12:00');
   const [newEventPoints,setNewEventPoints]=useState([]);
   const [newEventContent,setNewEventContent]=useState([]);
   const id  = params.id;
@@ -76,19 +80,8 @@ const ClubDetailPage = ({ params }) => {
   };
 
   const handlePostClick = (clubid,eventid,title,content,location,date,hour,points,picture) => {
-    // Perform the logic to save the new description
-    const newEvent=[clubid,eventid++,title,content,location,date,hour,points,picture];
-    eventData.push({
-      clubid: clubid,
-      eventid: eventid,
-      title: title,
-      content: content,
-      imageURL: picture,
-      date: date,
-      hour: hour,
-      place: location,      
-      ge25xpoints: points,      
-    });
+    // BURAYA KOY CENKER
+    
     console.log(`Saving new event: ${title}`);
   
     // Close the modal after saving (if that's the desired behavior)
@@ -194,18 +187,35 @@ const ClubDetailPage = ({ params }) => {
                     value={newEventLocation} 
                     onChange={(e) => setNewEventLocation(e.target.value)}  
                     />
-                   <FormControl
+                   {/*<FormControl
                     type="text"
                     placeholder="Enter Post Date"
                     value={newEventDate} 
                     onChange={(e) => setNewEventDate(e.target.value)}  
+              />*/}
+                    {/* Use DatePicker for a date picker */}
+                    <DatePicker
+                    selected={null}
+                    onChange={(newEventDate) => setNewEventDate(newEventDate)}
+                    dateFormat="MM/dd/yyyy"
+                    placeholderText="Choose the Date of the Event."
                     />
+                    {/*
                     <FormControl
                     type="text"
                     placeholder="Enter Post Hour"
                     value={newEventHour} 
                     onChange={(e) => setNewEventHour(e.target.value)}  
-                    />
+                    />*/}
+                    <div  >
+                      {/* Time Picker */}
+                      <TimePicker
+                      value={newEventHour}
+                      onChange={(newEventHour) => setNewEventHour(newEventHour)}
+                      clearIcon={null}  
+                      clockIcon={null}
+                      />
+                    </div>
                     <FormControl
                     type="text"
                     placeholder="Enter Post Points"
@@ -250,10 +260,7 @@ const ClubDetailPage = ({ params }) => {
         </div>
       </div>
       <style jsx>{`
-        /* Add any additional styles you may need */
-        .clubpost-card {
-          /* Add styles for the clubpost-card class if necessary */
-        }
+      
       `}</style>
     </div>
   );
