@@ -290,8 +290,8 @@ export default function Home() {
           <div className="col-md-9" style={{ marginLeft: "-160px" }}>
             {/* Center-align the content */}
             <header  className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px" }}>
-          <h1>Welcome to Bilkonnekt </h1>
-          <p>Your access to all things Bilkent.</p>
+          <h1>Welcome to Bilkonnekt Marketplace </h1>
+          <p>Find great deals on items near you</p>
         </header>
 
             <div className="search-bar">
