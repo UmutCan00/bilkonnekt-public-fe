@@ -29,6 +29,7 @@ const SocialPostCard = ({
   showAddCommentModal,
   isAnonymous,
   setIsAnonymous,
+  userLikedPosts,
 }) => {
 
   const router = useRouter();
@@ -101,6 +102,16 @@ const SocialPostCard = ({
 
   const [isEditHovered, setIsEditHovered] = useState(false);
   const [isDeleteHovered, setIsDeleteHovered] = useState(false);
+
+  const [isLiked, setIsLiked] = useState(
+    userLikedPosts ? userLikedPosts?.includes(id) : false
+  );
+  const initiallyliked = userLikedPosts ? userLikedPosts.includes(id) : false;
+  useEffect(() => {
+    if (userLikedPosts?.includes(id)) {
+      setIsLiked(true);
+    }
+  }, [userLikedPosts, id]);
 
   return (
   <>
@@ -209,7 +220,13 @@ const SocialPostCard = ({
         <div className="card-body">
           <p>
             <i className="bi bi-heart-fill text-danger"></i> {" "}
-            {likeCount} Likes
+            {initiallyliked
+                ? isLiked
+                  ? likeCount
+                  : likeCount - 1
+                : isLiked
+                ? likeCount + 1
+                : likeCount}{" "} Likes
           </p>
           <div style={{ display: 'flex', flexDirection: 'row' }}>  
             <Button
@@ -222,7 +239,11 @@ const SocialPostCard = ({
             <Button className="btn btn-danger"
               onClick={likeFunc}
             >
-              <i className="bi bi-heart"></i> Like
+              {isLiked ? (
+                <i className="bi bi-heart-fill"></i>
+              ) : (
+                <i className="bi bi-heart"></i>
+              )} Like
             </Button>
           </div>
           <div
@@ -513,7 +534,36 @@ const Home = ({ params }) => {
     router.push("/social"); 
   };
 
+  const [userLikedIdsArray, setUserLikedIdsArray] = useState([]);
+  const fetchLikedPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getLikedPostsOfUser",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data22", data);
+        setUserLikedIdsArray(data.map((item) => item.postId));
+        console.log("userLikedIdsArray", userLikedIdsArray);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLikedPosts();
+  }, [token]);
 
   return (
     <div>
@@ -560,6 +610,7 @@ const Home = ({ params }) => {
                         type={null}
                         content={post.content}
                         likeCount={post.likeCount}
+                        userLikedPosts={userLikedIdsArray}
 
                         comments={comments}
                         handleAddCommentModalOpen={handleAddCommentModalOpen}
