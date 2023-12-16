@@ -12,7 +12,9 @@ const SignInButton = () => {
     <div className="d-flex align-items-center">
       {username ? (
         <>
-          <p className="text-primary mr-3 mb-0">{username}</p>
+
+          <div className="text-primary mr-3">{username}</div>
+
           <Link href="/api/auth/signout" className="text-danger">
             Sign Out
           </Link>

@@ -35,7 +35,7 @@ export default function Home() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setPosts([data[0], data[1], data[2]]);
+        setPosts([data[0], data[1], data[2],data[3]]);
       } else {
         console.error("Failed to fetch data");
       }
@@ -79,84 +79,103 @@ export default function Home() {
     <div>
       <Navbar />
       <div className="container-fluid home">
+
+        
         <header className="text-center">
           <h1>Welcome to Bilkonnekt Marketplace</h1>
           <p>Find great deals on items near you</p>
         </header>
 
         <main>
-          <div className="container-fluid card bg-custom1 m-2">
+
+        <div class="row">
+            <div class="col">
+            <div className="container-fluid card bg-custom1 m-2">
             <div className="intro-card d-flex flex-column justify-content-center align-items-center">
-              <h1>Go to Marketplace</h1>
+              
               <Link href="/marketplace">
-                <button className="btn btn-primary"> Go</button>
+                <button className="btn btn-primary"> Go to Marketplace </button>
               </Link>
             </div>
 
-            <div className="list">
-              {products.map((product, index) => (
-                <div key={index} className="product-card">
-                  <SaleProductCard
-                    seller={product.sellerid}
-                    sellerName={product.sellerName}
-                    productid={product._id}
-                    title={product.title}
-                    price={product.price}
-                    location={product.address}
-                    type={product.type}
-                    description={product.description}
-                    imageURL={product.imageURL}
-                  />
-                </div>
-              ))}
-            </div>
+            <div className="list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }} >
+  {products.map((product, index) => (
+    <div key={index} className="product-card">
+      <SaleProductCard
+        seller={product.sellerid}
+        sellerName={product.sellerName}
+        productid={product._id}
+        title={product.title}
+        price={product.price}
+        location={product.address}
+        type={product.type}
+        description={product.description}
+        imageURL={product.imageURL}
+      />
+    </div>
+  ))}
+</div>
           </div>
-
-          <div className="container-fluid card bg-custom1 m-2">
+            </div>
+            <div class="col">
+            <div className="container-fluid card bg-custom1 m-2">
             <div className="intro-card d-flex flex-column justify-content-center align-items-center">
-              <h1>Go to Bilkent Social</h1>
+              
               <Link href="/social">
-                <button className="btn btn-primary"> Go</button>
+                <button className="btn btn-primary"> Go to Bilkent Social</button>
               </Link>
             </div>
 
             {/* Social post container */}
-            <div className="list">
-              {posts.map((post, index) => (
-                <Link key={index} href={`/feed/${post._id}`} passHref>
-                  <div className="socialpost-card">
-                    <SocialPostCard
-                      id={post._id}
-                      sharer={post.publisherId}
-                      title={post.title}
-                      type={null}
-                      content={post.content}
-                      imageURL={post.imageURL}
-                    />
-                  </div>
-                </Link>
-              ))}
+            <div className="list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }} >
+            {posts.map((post, index) => (
+            <Link key={index} href={`/feed/${post._id}`} passHref>
+            <div className="socialpost-card" >
+            <SocialPostCard
+            id={post._id}
+            sharer={post.publisherId}
+            title={post.title}
+            type={null}
+            content={post.content}
+            imageURL={post.imageURL}
+            />
             </div>
-          </div>
+            </Link>
+            ))}
+            </div>
 
-          <div className="container-fluid card bg-custom1 m-2">
-            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
-              <h1 className="text-center">Go to Bilkent Academic</h1>
+          </div>
+            </div>
+            <div class="col">
+            <div className="container-fluid card bg-custom1 m-2">
+          <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              
               <Link href="/academic">
-                <button className="btn btn-primary">Go</button>
+                <button className="btn btn-primary">Go to Bilkent Academic</button>
               </Link>
             </div>
-          </div>
-
-          <div className="container-fluid card bg-custom1 m-2">
             <div className="intro-card d-flex flex-column justify-content-center align-items-center">
-              <h1 className="text-center">Go to Lost & Found</h1>
-
+              
               <Link href="/lostfound">
-                <button className="btn btn-primary">Go</button>
+                <button className="btn btn-primary">Go to Lost & Found</button>
               </Link>
             </div>
+            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              
+              <Link href="/todayinbilkent">
+                <button className="btn btn-primary">Go to Today in Bilkent</button>
+              </Link>
+            </div>
+            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              
+             
+            </div>
+
           </div>
+            </div>
+            
+            </div>
+          
         </main>
 
         <footer>
@@ -180,9 +199,8 @@ export default function Home() {
             flex-wrap: wrap;
             justify-content: space-around;
             margin-top: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: white;
+            
+            
           }
 
           .search-bar {
