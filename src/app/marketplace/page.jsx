@@ -313,6 +313,7 @@ export default function Home() {
                       <div key={index} className="product-card">
                         <SaleProductCard
                           seller={product.sellerid}
+                          sellerName={product.sellerName}
                           productid={product._id}
                           title={product.title}
                           price={product.price}
