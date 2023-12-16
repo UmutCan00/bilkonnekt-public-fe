@@ -14,9 +14,9 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 import { v4 } from "uuid";
+
 import { storage } from "../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
-
 export default function Home() {
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
@@ -165,6 +165,7 @@ export default function Home() {
       filteredPosts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
+
 
   return (
     <div>

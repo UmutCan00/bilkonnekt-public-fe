@@ -4,8 +4,15 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
 import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../globals.css";
 import { useRouter } from "next/navigation";
+
+
+import { v4 } from "uuid";
+import { storage } from "../../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+
 
 function ProfilePage({ params }) {
   const router = useRouter();
@@ -17,6 +24,7 @@ function ProfilePage({ params }) {
     email: "",
     bio: "3. Sinif CS öğrencisi",
     rating: "Güvenilir",
+    imageURL: "none"
   });
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -24,16 +32,14 @@ function ProfilePage({ params }) {
   const [deleteUserEmail, setDeleteUserEmail] = useState("");
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [imageUpload, setImageUpload] = useState(null);
+  let uploadedImageURL = "false";
 
-
-  function ImageSpace({ image }) {
+  function ImageSpace() {
     return (
       <div className="imgSpace border rounded text-center">
-        {image ?
-          <img src={URL.createObjectURL(image)} /> :
-          <p className="mt-5">Profile Image Resides Here</p>
-        }
+        <img src={userData.imageURL} />
       </div>
+      
     );
   }
 
@@ -113,7 +119,9 @@ function ProfilePage({ params }) {
           email: userDataResponse.email,
           bio: "3. Sinif CS öğrencisi",
           rating: "Güvenilir",
+          imageURL: userDataResponse.imageURL,
         });
+        ImageSpace()
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -121,6 +129,44 @@ function ProfilePage({ params }) {
     handleFetch();
   }, [token]);
 
+  const handleSubmit = async () => {
+    try {
+      uploadedImageURL = await uploadImage();
+    } catch (error) {
+      console.log("firebase error: ", error);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload)
+      .then(() => {
+        return getDownloadURL(imageRef);
+      })
+      .then((downloadURL) => {
+        uploadedImageURL = downloadURL;
+        console.log("Image URL:", uploadedImageURL);
+        alert("Image uploaded");
+        return downloadURL;
+      })
+      .then(() => {
+        fetch("http://localhost:3500/api/auth/updateImage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            imageURL: uploadedImageURL
+          }),
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
+      console.log("uploadedImageURL: ", uploadedImageURL)
+  };
   return (
     <div>
       <Navbar />
@@ -148,8 +194,12 @@ function ProfilePage({ params }) {
                     accept="image/png, image/jpeg"
                     onChange={(event) => {
                       setImageUpload(event.target.files[0]);
+                      handleSubmit();
                     }}
                   />
+                  <button variant="primary" class="btn btn-dark" onClick={handleSubmit}>
+                  Update
+                  </button>
                 </div>
               </div>
             }
@@ -163,26 +213,30 @@ function ProfilePage({ params }) {
                 <UserInfo userData={userData} />
               </div>
               <div className="mt-5">
-                <button type="button" className="btn bg-success btn-lg">
-                  Send a Message!
+                <button className="btn btn-primary m-2">
+                  <i class="bi bi-envelope-fill"></i> Send Message
                 </button>
                 <button
-                  type="button"
-                  className="btn bg-warning btn-lg ms-5"
-                  onClick={() =>
-                    router.push("/marketplace/seller/" + params.slug)
-                  }
+                  className="btn btn-info m-2"
+                  onClick={() => { router.push("/marketplace/seller/" + params.slug) }}
                 >
-                  Go to Their Shop!
+                  <i class="bi bi-shop-window"></i> Go to Shop
                 </button>
                 {session?.user?._id === params.slug && (
-                  <button
-                    type="button"
-                    className="btn bg-warning btn-lg ms-5"
-                    onClick={() => setShowDeleteUser(true)}
-                  >
-                    Delete User
-                  </button>
+                  <>
+                    <button
+                      className="btn btn-danger m-2"
+                      onClick={() => setShowDeleteUser(true)}
+                    >
+                      <i class="bi bi-person-x-fill"></i> Delete User
+                    </button>
+                    <button
+                      className="btn btn-warning m-2"
+                      onClick={() => setShowChangePassword(true)}
+                    >
+                      <i class="bi bi-key-fill"></i> Change Password
+                    </button>
+                  </>
                 )}
                 {showDeleteUser && (
                   <div className="modal">
@@ -220,15 +274,6 @@ function ProfilePage({ params }) {
                       </button>
                     </div>
                   </div>
-                )}
-                {session?.user?._id === params.slug && (
-                  <button
-                    type="button"
-                    className="btn bg-warning btn-lg ms-5"
-                    onClick={() => setShowChangePassword(true)}
-                  >
-                    Change Password
-                  </button>
                 )}
                 {showChangePassword && (
                   <div className="modal">

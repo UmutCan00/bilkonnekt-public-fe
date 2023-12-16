@@ -1,13 +1,12 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import LostAndFoundList from "../components/LostAndFoundList";
 import Navbar from "../components/Navbar";
-import { useEffect } from "react";
+import { Container, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function Login() {
+export default function LostAndFound() {
   const [showForm, setShowForm] = useState(false);
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
@@ -16,34 +15,15 @@ export default function Login() {
   const [text3, setText3] = useState("");
   const [btnText, setButtonText] = useState("Add an Item");
   const [items, setItems] = useState([]);
+
   useEffect(() => {
     getLostAds();
   }, []);
 
   const toggleForm = () => {
-    if (btnText == "Add an Item") {
-      setButtonText("Close");
-    } else {
-      setButtonText("Add an Item");
-    }
+    setButtonText(btnText === "Add an Item" ? "Close" : "Add an Item");
     setShowForm(!showForm);
   };
-  /*const items = [
-    { text1: 'String 1-1', text2: 'String 1-2', text3: 'String 1-3' },
-    { text1: 'String 2-1', text2: 'String 2-2', text3: 'String 2-3' },
-    { text1: 'String 3-1', text2: 'String 3-2', text3: 'String 3-3' },
-    { text1: 'String 1-1', text2: 'String 1-2', text3: 'String 1-3' },
-    { text1: 'String 2-1', text2: 'String 2-2', text3: 'String 2-3' },
-    { text1: 'String 3-1', text2: 'String 3-2', text3: 'String 3-3' },
-    { text1: 'String 1-1', text2: 'String 1-2', text3: 'String 1-3' },
-    { text1: 'String 2-1', text2: 'String 2-2', text3: 'String 2-3' },
-    { text1: 'String 3-1', text2: 'String 3-2', text3: 'String 3-3' },
-    { text1: 'String 1-1', text2: 'String 1-2', text3: 'String 1-3' },
-    { text1: 'String 2-1', text2: 'String 2-2', text3: 'String 2-3' },
-    { text1: 'String 3-1', text2: 'String 3-2', text3: 'String 3-3' },
-    { text1: 'String 1-1', text2: 'String 1-2', text3: 'String 1-3' },
-    
-  ];*/
 
   const handleAddButtonClick = async () => {
     await createLostAd(text1, text2, text3);
@@ -54,7 +34,6 @@ export default function Login() {
     lostObjDescription,
     deliveredPlace
   ) => {
-    console.log("token: ", token);
     try {
       const response = await fetch(
         "http://localhost:3500/api/lostandfound/createItem",
@@ -87,7 +66,6 @@ export default function Login() {
   };
 
   const getLostAds = async () => {
-    console.log("token: ", token);
     try {
       const response = await fetch(
         "http://localhost:3500/api/lostandfound/getItems",
@@ -111,6 +89,7 @@ export default function Login() {
       console.error("Error:", error);
     }
   };
+
   const transformData = (serverData) => {
     return serverData.map((item) => {
       return {
@@ -120,104 +99,58 @@ export default function Login() {
       };
     });
   };
-  const card = {
-    border: "1px solid #ccc",
-    padding: "10px",
-    borderColor: "black",
-    display: "block",
-    textAlign: "center",
-    background: "beige",
-  };
-  const cardForm = {
-    border: "1px solid #ccc",
-    padding: "10px",
-    borderColor: "black",
-    display: "grid",
-    textAlign: "left",
-    background: "white",
-    color: "black",
-  };
-  const cardFormInput = {
-    border: "1px solid #ccc",
-    padding: "10px",
-    borderColor: "black",
-    display: "grid",
 
-    background: "white",
-    color: "black",
-    marginBottom: "10px"
-  };
   return (
-    <div
-      style={{
-        textAlign: "center",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-        // background: "linear-gradient(to bottom, #3498db, #C5F7F3)",
-      }}
-    >
+    <div>
       <Navbar />
-      <header className="text-center">
-        <h1>Welcome to Bilkonnekt Lost & Found</h1>
-        <p>Search for your lost items</p>
-      </header>
-      <div className="card" style={card}>
-        {/* "Create List Item" düğmesi */}
-        <button
-          onClick={toggleForm}
-          style={{
-            border: "1px solid #ccc",
-            borderColor: "black",
-            color: "black",
-          }}
-        >
-          {btnText}
-        </button>
-        {/* Formun görüntülendiği alan */}
-        {showForm && (
-          <div className="form" style={cardForm}>
-            <span>Enter the location that the object is found</span>
-            <input
-              type="text"
-              placeholder="Founded Place"
-              style={cardFormInput}
-              value={text1}
-              onChange={(e) => setText1(e.target.value)}
-            />
-            <span>Enter the description of the object</span>
-            <input
-              type="text"
-              placeholder="Object Description"
-              style={cardFormInput}
-              value={text2}
-              onChange={(e) => setText2(e.target.value)}
-            />
-            <span>Enter the location where you handed over the object</span>
-            <input
-              type="text"
-              placeholder="Delivered Place"
-              style={cardFormInput}
-              value={text3}
-              onChange={(e) => setText3(e.target.value)}
-            />
-            <button
-              onClick={handleAddButtonClick}
-              style={{
-                border: "1px solid #ccc",
-                borderColor: "black",
-                color: "black",
-                background: "green",
-                margin: "5px",
-                display: "block",
-              }}
-            >
-              Add
-            </button>
-          </div>
-        )}
-      </div>
-      <LostAndFoundList items={items} /> {}
+      <Container>
+        <header className="text-center">
+          <h1>Welcome to Bilkonnekt Lost & Found</h1>
+          <p>Search for your lost items</p>
+        </header>
+        <div className="card mt-3 p-4 rounded-3 shadow">
+          <Button onClick={toggleForm} className="btn btn-outline-dark mt-3">
+            {btnText}
+          </Button>
+          {showForm && (
+            <Form className="card mt-3 p-4 rounded-3 shadow">
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Founded Place"
+                  value={text1}
+                  onChange={(e) => setText1(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Object Description"
+                  value={text2}
+                  onChange={(e) => setText2(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="text"
+                  placeholder="Delivered Place"
+                  value={text3}
+                  onChange={(e) => setText3(e.target.value)}
+                />
+              </Form.Group>
+              <Button
+                onClick={handleAddButtonClick}
+                className="btn btn-success"
+              >
+                Add
+              </Button>
+            </Form>
+          )}
+        </div>
+        <div className="my-4">
+          <LostAndFoundList items={items} />
+        </div>
+      </Container>
     </div>
   );
 }
