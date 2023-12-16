@@ -109,7 +109,6 @@ const Home = ({ params }) => {
 
   const [post, setPost] = useState([]);
 
-
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -250,6 +249,10 @@ const Home = ({ params }) => {
       filteredPosts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
+  const goBack = () => {
+    router.push("/social"); 
+  };
+
   return (
     <div>
       <Navbar />
@@ -262,6 +265,17 @@ const Home = ({ params }) => {
               <h1>Welcome to Bilkonnekt Social</h1>
               <p>Don&apos;t Miss Anything on Campus</p>
             </header>
+            <button
+              className="btn btn-dark"
+              onClick={goBack}
+              style={{
+                maxWidth: "100px",
+                maxHeight: "70px",
+                marginTop: "20px",
+              }}
+            >
+              Back
+            </button>
             <main
               style={{
                 marginTop: "20px",
