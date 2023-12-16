@@ -128,7 +128,7 @@ const ClubDetailPage = ({ params }) => {
 
   return (
     <div>
-      
+      <Navbar />
       <div className="container-fluid">
         <div className="row justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
           <div className="col-md-9">
