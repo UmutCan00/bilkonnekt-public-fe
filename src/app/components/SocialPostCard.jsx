@@ -60,20 +60,22 @@ const SocialPostCard = ({
         }
       `}</style>
 
-      <div className="card bg-white" style={{ width: '400px' }}>
+      <div className="card bg-white" style={{ width: '300px',height:'500px' }}>
         <div className="card-body">
           
-          <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'row' }}>
+          <div style={{ marginLeft: '10px', display: 'flex',justifyContent: 'space-between', flexDirection: 'row' }}>
             <h5 className="card-title">{title}</h5>
+            
             {isEditButtonVisible && (
               <>
                 <Link href={`/feed/${id}`} passHref>
-                  <Button className="btn btn-primary" style={{ marginLeft: '200px'}}  > Edit My Post</Button>
+                  <Button className="btn btn-primary "    > Edit My Post</Button>
                 </Link>
               </>
             )}
+            
           </div>
-          <p className="card-text">Sharer: {sharerName}</p>
+          <p className="card-text text-left">Sharer: {sharerName}</p>
           {imageURL && (
         <div
           className="card-img-top"
@@ -103,6 +105,7 @@ const SocialPostCard = ({
                 <Button
                   className="btn btn-primary mr-2"
                   variant="info"
+                  
                 >
                   <i className="bi bi-chat"></i> See Comments
                 </Button>
