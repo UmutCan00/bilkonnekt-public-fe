@@ -12,10 +12,19 @@ const Admin = () => {
   console.log(searchUser)
   //Panels
   const [showRolePanel, setShowRolePanel] = useState(false);
-  const [isConfirmationOpen, setConfirmationOpen] = useState(false);
+  const [showBanPanel, setShowBanPanel] = useState(false);
+  const [showDeleteClubPanel, setShowDeleteClubPanel] = useState(false);
+  const [showAddClubPanel, setShowAddClubPanel] = useState(false);
+  const [showDeleteMarketplacePostPanel, setShowDeleteMarketplacePostPanel] = useState(false);
+  const [showDeleteSocialPostPanel, setShowDeleteSocialPostPanel] = useState(false);
   //Selected x
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedRole, setSelectedRole] = useState('');
+  const [selectedClubId, setSelectedClubId] = useState(null);
+  const [selectedMarketplacePostId, setSelectedMarketplacePostId] = useState(null);
+  const [selectedSocialPostId, setSelectedSocialPostId] = useState(null);
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
+
   const handleButtonClick = (tableName) => {
     setSelectedTable(tableName);
   };
@@ -41,36 +50,106 @@ const Admin = () => {
     closeRolePanel();
   };
 
-  const openConfirmationPanel = () => {
-      setConfirmationOpen(true);
-    };
+  const openBanPanel = (userID) => {
+    setSelectedUserId(userID);
+    setShowBanPanel(true);
+  };
+
+  const closeBanPanel = () => {
+    setSelectedUserId(null);
+    setShowBanPanel(false);
+  };
+
+  const handleBan = (isBanned) => {
+    if (selectedUserId && selectedRole) {
+      setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+          user.id === selectedUserId ? { ...user, isBanned: !isBanned } : user
+          )
+      );
+      }
+    closeBanPanel();
+  };
+
+  const openDeleteClubPanel = (clubID) => {
+    setSelectedClubId(clubID);
+    setShowDeleteClubPanel(true);
+  };
   
-    const closeConfirmationPanel = () => {
-      setConfirmationOpen(false);
-    };
+  const closeDeleteClubPanel = () => {
+    setSelectedClubId(null);
+    setShowDeleteClubPanel(false);
+  };
   
-    const handleConfirmation = () => {
-      closeConfirmationPanel();
-    };
+  const handleDeleteClub = () => {
+    console.log(selectedClubId);
+    closeDeleteClubPanel();
+  };
+
+  const openAddClubPanel = () => {
+    setShowAddClubPanel(true);
+  };
+  
+  const closeAddClubPanel = () => {
+    setShowAddClubPanel(false);
+  };
+  
+  const handleAddClub = () => {
+    closeAddClubPanel();
+  };
+
+  const openDeleteMarketplacePostPanel = (marketplacePostID) => {
+    setSelectedMarketplacePostId(marketplacePostID);
+    setShowDeleteMarketplacePostPanel(true);
+  };
+  
+  const closeDeleteMarketplacePostPanel = () => {
+    setSelectedMarketplacePostId(null);
+    setShowDeleteMarketplacePostPanel(false);
+  };
+  
+  const handleDeleteMarketplacePost = () => {
+    console.log(selectedMarketplacePostId);
+    closeDeleteMarketplacePostPanel();
+  };
+
+  const openDeleteSocialPostPanel = (socialPostID) => {
+    setSelectedSocialPostId(socialPostID);
+    setShowDeleteSocialPostPanel(true);
+  };
+  
+  const closeDeleteSocialPostPanel = () => {
+    setSelectedSocialPostId(null);
+    setShowDeleteSocialPostPanel(false);
+  };
+  
+  const handleDeleteSocialPost = () => {
+    console.log(selectedSocialPostId);
+    closeDeleteSocialPostPanel();
+  };
+
+  const handleTicket = (ticketID) => {
+    
+  };
 
   const mockData = {
     users: [
-      { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', banned: false },
-      { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', banned: false },
-      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', banned: false },
-      { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', banned: false },
-      { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', banned: false },
-      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Instructor', banned: false },
-      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', banned: false },
-      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', banned: false },
-      { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', banned: false },
+      { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: true },
+      { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', isBanned: false },
+      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', isBanned: false },
+      { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 9, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: false },
+      { id: 10, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 11, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 12, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', isBanned: false },
+      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Instructor', isBanned: false },
+      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', isBanned: true },
+      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', isBanned: false },
+      { id: 19, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', isBanned: true },
     ],
     clubs: [
       { id: 1, name: 'Bilkent YES' },
@@ -85,8 +164,8 @@ const Admin = () => {
       { id: 2, name: 'Yemekhanedeki çocuk', content: 'Tanişmak isterim saat 10da gördüm.' },
     ],
     tickets: [
-      { id: 1, owner: 'Serhan Turan', message: 'İletişim butonu çalişmiyor' },
-      { id: 2, owner: 'Kachow', message: 'Şifremi unuttum' },
+      { id: 1, owner: 'Serhan Turan', message: 'İletişim butonu çalişmiyor' , status: false},
+      { id: 2, owner: 'Kachow', message: 'Şifremi unuttum' , status: true},
     ],
   };
 
@@ -158,47 +237,76 @@ const Admin = () => {
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.name}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.email}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.role}</td>
-                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.banned ? 'Yes' : 'No'}</td>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.isBanned ? 'Yes' : 'No'}</td> 
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
+                      {}
                       <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
-                      onClick={() => window.location.href = "/profilePage/" + user.id}>See User</button>
+                      onClick={() => window.location.href = "/profilePage/" + user.id}>See User
+                      </button>
                       <button 
                       style={{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
                       onClick={() => openRolePanel(user.id)}
-                      >Set Role</button>
-                      <div style={{position: 'fixed',
-                                  top: '50%',
-                                  left: '50%',
-                                  transform: 'translate(-50%, -50%)',
-                                  backgroundColor: '#fff',
-                                  padding: '20px',
-                                  border: '1px solid #ccc',
-                                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                                  zIndex: 1000,
-                                  display: showRolePanel ? 'block' : 'none',}}>
-                        
-                        <label>Select Role:</label>
-          <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
-            <option value="Admin">Admin</option>
-            <option value="Student">Student</option>
-            <option value="Instructor">Instructor</option>
-            <option value="Staff">Staff</option>
-          </select>
-                        <button onClick={handleRoleChange}>Yes</button>
-                        <button onClick={closeRolePanel}>No</button>
-                      </div>
+                      >Set Role
+                      </button>
                       <button 
-                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>Ban Operations</button>
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '100px', height: '30px'}}
+                      onClick={()=> openBanPanel(user.id)}>{user.isBanned ? 'Unban' : 'Ban'}
+                      </button>
+                        
                       </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-          
+          </div>  
         </div>
       )}
+{showRolePanel && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' ,backgroundColor: '#fff',
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+          <label style={{color: 'black'}}>Select Role:</label>
+          <select style={{color: 'black'}} value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+            <option value="Admin">Admin</option>
+            <option value="Student">Student</option>
+            <option value="Instructor">Instructor</option>
+            <option value="Staff">Staff</option>
+          </select>
+          <button
+                            style = {{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+                            onClick={handleRoleChange}>Save
+                            </button>
+                            <button 
+                            style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                            onClick={closeRolePanel}>Cancel
+                            </button>
+        </div>
+)}
+
+{showBanPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleBan()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeBanPanel}>Cancel
+  </button>
+  </div>
+)}
 
 {selectedTable === 'clubs' && (
       <div>
@@ -231,32 +339,61 @@ const Admin = () => {
                       onClick={() => window.location.href = "/clubpage/" + club.id}>See Club Page</button>
                     <button
                       style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
-                      onClick={openConfirmationPanel}>Delete Club</button>
-                      <div style={{position: 'fixed',
-                                  top: '50%',
-                                  left: '50%',
-                                  transform: 'translate(-50%, -50%)',
-                                  backgroundColor: '#fff',
-                                  padding: '20px',
-                                  border: '1px solid #ccc',
-                                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                                  zIndex: 1000,
-                                  display: isConfirmationOpen ? 'block' : 'none',}}>
-                        <p>Select Role</p>
-                        <button onClick={handleConfirmation}>Save</button>
-                        <button onClick={closeConfirmationPanel}>Cancel</button>
-                        </div>
+                      onClick={() => openDeleteClubPanel(club.id)}>Delete Club</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
           <button 
-            style={{backgroundColor: 'green', color: 'white', marginTop: '20px', marginRight: '10px' , width: '130px', height: '30px', margin: '0 auto', display: 'block'}}>Add Club</button>
+            style={{backgroundColor: 'green', color: 'white', marginTop: '20px', marginRight: '10px' , width: '130px', height: '30px', margin: '0 auto', display: 'block'}}
+            onClick={openAddClubPanel}>Add Club</button>
         </div>
         </div>
       )}
+{showDeleteClubPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure to delete club?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleDeleteClub()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeDeleteClubPanel}>Cancel
+  </button>
+  </div>
+)}
 
+{showAddClubPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Enter club informations</label>
+  <button
+  style = {{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleAddClub()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeAddClubPanel}>Cancel
+  </button>
+  </div>
+)}
       {selectedTable === 'marketplace' && (
         <div>
         <input
@@ -290,7 +427,9 @@ const Admin = () => {
                       onClick={() => window.location.href = "/marketplace/" + item.id}>See Marketplace Post
                       </button>
                     <button 
-                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>Delete Post</button>
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={() => openDeleteMarketplacePostPanel(item.id)}
+                      >Delete Post</button>
                   </td>
                 </tr>
               ))}
@@ -299,7 +438,27 @@ const Admin = () => {
         </div>
         </div>
       )}
-
+{showDeleteMarketplacePostPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure to delete marketplace post?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleDeleteMarketplacePost()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeDeleteMarketplacePostPanel}>Cancel
+  </button>
+  </div>
+)}
       {selectedTable === 'social' && (
         <div>
         <input
@@ -332,7 +491,9 @@ const Admin = () => {
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
                       onClick={() => window.location.href = "/social/" + post.id}>See Social Post</button>
                     <button 
-                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>Delete Post</button>
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={() => openDeleteSocialPostPanel(post.id)}
+                      >Delete Post</button>
                   </td>
                 </tr>
               ))}
@@ -341,6 +502,27 @@ const Admin = () => {
         </div>
         </div>
       )}
+{showDeleteSocialPostPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure to delete social post?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleDeleteSocialPost()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeDeleteSocialPostPanel}>Cancel
+  </button>
+  </div>
+)}
 
       {selectedTable === 'tickets' && (
         <div>
@@ -359,7 +541,8 @@ const Admin = () => {
                 <th style={{ width: '10%', padding: '8px' }}>ID</th>
                 <th style={{ width: '30%', padding: '8px' }}>Owner</th>
                 <th style={{ width: '60%', padding: '8px' }}>Message</th>
-                <th style={{ width: '40%', padding: '8px' }}>Actions</th>
+                <th style={{ width: '10%', padding: '8px' }}>Handled</th>
+                <th style={{ width: '20%', padding: '8px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -368,12 +551,13 @@ const Admin = () => {
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.id}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.owner}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.message}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.status ? 'Yes': 'No'}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
                     <button 
-                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}>Flag as Read</button>
-                    <button 
-                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}>Flag as Completed</button>
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '200px', height: '30px'}}
+                      onClick={() => handleTicket(ticket.id)}>{ticket.status ? 'Flag as Unhandled': 'Flag as Handled'}
+                      </button>
                   </td>
                 </tr>
               ))}
