@@ -269,6 +269,7 @@ export default function Home() {
                       <SocialPostCard
                         id={post._id}
                         sharer={post.publisherId}
+                        sharerName={post.publisherName}
                         title={post.title}
                         type={null}
                         content={post.content}

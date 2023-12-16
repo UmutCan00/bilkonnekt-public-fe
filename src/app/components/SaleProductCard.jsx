@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 
 const SaleProductCard = ({
   seller,
+  sellerName,
   title,
   price,
   location,
@@ -127,7 +128,7 @@ const SaleProductCard = ({
           Location: {location}
         </p>
         <p className="card-text" onClick={handleClick}>
-          Seller: {seller}
+          Seller: {sellerName}
         </p>
         <p className="card-text" onClick={handleClick}>
           Type: {type}

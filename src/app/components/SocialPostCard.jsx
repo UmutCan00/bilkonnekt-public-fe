@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 const SocialPostCard = ({
   id,
   sharer,
+  sharerName,
   title,
   content,
   type,
@@ -65,7 +66,7 @@ const SocialPostCard = ({
       <div className="card bg-white" style={{ width: '400px' }}>
         <div className="card-body">
           <h5 className="card-title">{title}</h5>
-          <p className="card-text">Sharer: {sharer}</p>
+          <p className="card-text">Sharer: {sharerName}</p>
           {imageURL && (
         <div
           className="card-img-top"
