@@ -147,7 +147,7 @@ const SocialPostCard = ({
         </div>
         </div>
         
-        <p className="card-text">Sharer: {sharer}</p>
+        <p className="card-text">Sharer: {nameOfSharer}</p>
         <img
           src={imageURL}
           alt="Product Image"
