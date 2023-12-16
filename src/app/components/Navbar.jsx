@@ -56,6 +56,12 @@ const Navbar = () => {
         >
           <span className="text-black">Messages</span>
         </Link>
+        <Link
+          className="transition-colors hover:text-blue-500"
+          href={"/reporttoadmin/"}
+        >
+          <span className="text-black">Report to admin</span>
+        </Link>
       </div>
       <SignInButton />
     </header>
