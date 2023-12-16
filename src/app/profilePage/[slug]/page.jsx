@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
 import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../globals.css";
 import { useRouter } from "next/navigation";
 
@@ -163,26 +164,30 @@ function ProfilePage({ params }) {
                 <UserInfo userData={userData} />
               </div>
               <div className="mt-5">
-                <button type="button" className="btn bg-success btn-lg">
-                  Send a Message!
+                <button className="btn btn-primary m-2">
+                  <i class="bi bi-envelope-fill"></i> Send Message
                 </button>
                 <button
-                  type="button"
-                  className="btn bg-warning btn-lg ms-5"
-                  onClick={() =>
-                    router.push("/marketplace/seller/" + params.slug)
-                  }
+                  className="btn btn-info m-2"
+                  onClick={() => { router.push("/marketplace/seller/" + params.slug) }}
                 >
-                  Go to Their Shop!
+                  <i class="bi bi-shop-window"></i> Go to Shop
                 </button>
                 {session?.user?._id === params.slug && (
-                  <button
-                    type="button"
-                    className="btn bg-warning btn-lg ms-5"
-                    onClick={() => setShowDeleteUser(true)}
-                  >
-                    Delete User
-                  </button>
+                  <>
+                    <button
+                      className="btn btn-danger m-2"
+                      onClick={() => setShowDeleteUser(true)}
+                    >
+                      <i class="bi bi-person-x-fill"></i> Delete User
+                    </button>
+                    <button
+                      className="btn btn-warning m-2"
+                      onClick={() => setShowChangePassword(true)}
+                    >
+                      <i class="bi bi-key-fill"></i> Change Password
+                    </button>
+                  </>
                 )}
                 {showDeleteUser && (
                   <div className="modal">
@@ -220,15 +225,6 @@ function ProfilePage({ params }) {
                       </button>
                     </div>
                   </div>
-                )}
-                {session?.user?._id === params.slug && (
-                  <button
-                    type="button"
-                    className="btn bg-warning btn-lg ms-5"
-                    onClick={() => setShowChangePassword(true)}
-                  >
-                    Change Password
-                  </button>
                 )}
                 {showChangePassword && (
                   <div className="modal">
