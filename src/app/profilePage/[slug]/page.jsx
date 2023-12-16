@@ -8,6 +8,12 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../globals.css";
 import { useRouter } from "next/navigation";
 
+
+import { v4 } from "uuid";
+import { storage } from "../../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
+
+
 function ProfilePage({ params }) {
   const router = useRouter();
   const { data: session } = useSession();
@@ -18,6 +24,7 @@ function ProfilePage({ params }) {
     email: "",
     bio: "3. Sinif CS öğrencisi",
     rating: "Güvenilir",
+    imageURL: "none"
   });
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -25,16 +32,14 @@ function ProfilePage({ params }) {
   const [deleteUserEmail, setDeleteUserEmail] = useState("");
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [imageUpload, setImageUpload] = useState(null);
+  let uploadedImageURL = "false";
 
-
-  function ImageSpace({ image }) {
+  function ImageSpace() {
     return (
       <div className="imgSpace border rounded text-center">
-        {image ?
-          <img src={URL.createObjectURL(image)} /> :
-          <p className="mt-5">Profile Image Resides Here</p>
-        }
+        <img src={userData.imageURL} />
       </div>
+      
     );
   }
 
@@ -114,7 +119,9 @@ function ProfilePage({ params }) {
           email: userDataResponse.email,
           bio: "3. Sinif CS öğrencisi",
           rating: "Güvenilir",
+          imageURL: userDataResponse.imageURL,
         });
+        ImageSpace()
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -122,6 +129,44 @@ function ProfilePage({ params }) {
     handleFetch();
   }, [token]);
 
+  const handleSubmit = async () => {
+    try {
+      uploadedImageURL = await uploadImage();
+    } catch (error) {
+      console.log("firebase error: ", error);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload)
+      .then(() => {
+        return getDownloadURL(imageRef);
+      })
+      .then((downloadURL) => {
+        uploadedImageURL = downloadURL;
+        console.log("Image URL:", uploadedImageURL);
+        alert("Image uploaded");
+        return downloadURL;
+      })
+      .then(() => {
+        fetch("http://localhost:3500/api/auth/updateImage", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            imageURL: uploadedImageURL
+          }),
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
+      console.log("uploadedImageURL: ", uploadedImageURL)
+  };
   return (
     <div>
       <Navbar />
@@ -149,8 +194,12 @@ function ProfilePage({ params }) {
                     accept="image/png, image/jpeg"
                     onChange={(event) => {
                       setImageUpload(event.target.files[0]);
+                      handleSubmit();
                     }}
                   />
+                  <button variant="primary" class="btn btn-dark" onClick={handleSubmit}>
+                  Update
+                  </button>
                 </div>
               </div>
             }
