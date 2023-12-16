@@ -59,15 +59,23 @@ const SocialPostCard = ({
   // Define a state variable to control the modal visibility
   const [showEditCommentModal, setShowEditCommentModal] = useState(false);
 
+  const [currentCommentId, setCurrentCommentId] = useState(null);
+  
   // Function to handle the modal open
-  const openEditCommentModal = () => {
+  const openEditCommentModal = (paramId) => {
+    setCurrentCommentId(paramId);
     setShowEditCommentModal(true);
   };
 
   // Function to handle the modal close
   const closeEditCommentModal = () => {
+    setCurrentCommentId(null);
     setShowEditCommentModal(false);
   };
+
+  const handleEditCommentButton = (paramId) =>{
+    openEditCommentModal(paramId);
+  }
 
   const [newEditedComment, changeComment] = useState("");
 
@@ -234,7 +242,7 @@ const SocialPostCard = ({
                         style={{ cursor: 'pointer', transition: 'color 0.3s', color: isEditHovered ? 'black' : 'gray', marginRight: '10px'}}
                         onMouseEnter={() => setIsEditHovered(true)}
                         onMouseLeave={() => setIsEditHovered(false)}
-                        onClick={openEditCommentModal}
+                        onClick={handleEditCommentButton(comment.id)}
                       >
                         Edit Comment
                       </span>
@@ -243,7 +251,24 @@ const SocialPostCard = ({
                         style={{ cursor: 'pointer', transition: 'color 0.3s', color: isDeleteHovered ? 'black' : 'gray',  }}
                         onMouseEnter={() => setIsDeleteHovered(true)}
                         onMouseLeave={() => setIsDeleteHovered(false)}
-                        // onClick={handleDeleteComment}
+                        onClick={ () => {
+                          try {
+                            fetch("http://localhost:3500/api/social/deleteComment", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`,
+                              },
+                              body: JSON.stringify({
+                                commentId: comment.id,
+                              }),
+                            });
+                          } catch (error) {
+                            console.log("like operation error: ", error)
+                          }
+                          router.push("/social"); 
+                          
+                        }}
                       >
                         Delete Comment
                       </span>
@@ -269,7 +294,24 @@ const SocialPostCard = ({
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
-                    <Button variant="primary" >
+                    <Button variant="primary" onClick={() => {
+                      try {
+                        fetch("http://localhost:3500/api/social/updateComment", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({
+                          commentId: currentCommentId,
+                          description:newPostContent
+                        }),
+                      });
+                      } catch (error) {
+                        console.log("like operation error: ", error)
+                      }
+                      window.location.reload();
+                    }}>
                       Save
                     </Button>
                   </Modal.Footer>
