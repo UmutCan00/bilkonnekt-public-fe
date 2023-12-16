@@ -476,23 +476,13 @@ const Home = ({ params }) => {
       <div className="container-fluid">
         <div className="row">
           {/* Sidebar for type filtering */}
-          <div className="col-md-9" style={{ marginLeft: "160px" }}>
+          <div className="col-md-9" style={{ marginLeft: "220px" }}>
             {/* Center-align the content */}
-            <header className="text-center">
-              <h1>Welcome to Bilkonnekt Social</h1>
-              <p>Don&apos;t Miss Anything on Campus</p>
-            </header>
-            <button
-              className="btn btn-dark"
-              onClick={goBack}
-              style={{
-                maxWidth: "100px",
-                maxHeight: "70px",
-                marginTop: "20px",
-              }}
-            >
-              Back
-            </button>
+            <header className=" card text-center mx-auto bg-custom1 m-2 text-white " style={{ maxWidth:"500px" }}>
+          <h1>Welcome to Bilkonnekt Social </h1>
+          <p>Don&apos;t Miss Anything on Campus</p>
+        </header>
+            
             <main
               style={{
                 marginTop: "20px",
@@ -502,7 +492,7 @@ const Home = ({ params }) => {
               }}
             >
               {/* Social post container */}
-              <div className="social-post-container">
+              <div className="social-post-container card bg-custom1 p-3" style={{width:"100%",marginLeft:"0%"}}>
                 <div className="social-post-container">
                   {post && (
                     <div className="socialpost-card">
@@ -544,7 +534,10 @@ const Home = ({ params }) => {
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 20px;
         }
-
+        .bg-custom1 {
+          background-color: #0B1356;
+          
+        }
         .social-post-container {
           display: flex;
           flex-direction: column;
