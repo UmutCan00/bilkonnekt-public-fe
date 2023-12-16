@@ -172,8 +172,9 @@ export default function Home() {
       <div className="container-fluid">
         <div className="row">
           {/* Sidebar for type filtering */}
-          <div className="col-md-3">
-            <div className="sidebar titleColor  text-white">
+          <div className="col-md-3 ">
+            <div className="fixed-element">
+            <div className="sidebar titleColor text-white">
               <div>
                 <h3 style={{ marginBottom: '30px' }}>Filter by Type</h3>
                 <ul>
@@ -209,6 +210,7 @@ export default function Home() {
             >
               Add Product
             </button>
+            </div>
             <Modal show={showModal} onHide={closeModal}>
               <Modal.Header closeButton>
                 <Modal.Title>Add New Product</Modal.Title>
@@ -306,7 +308,7 @@ export default function Home() {
             </div>
 
             <main style={{ marginTop: "20px" }}>
-              <div className="container-fluid card bg-custom1">
+              <div className="container-fluid card bg-custom1 ">
               {/* Product grid */}
               <div className="list " style={{ marginTop:"10px",display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}
               >
@@ -361,9 +363,9 @@ export default function Home() {
           background: #f8f9fa;
           padding: 20px;
           border-radius: 5px;
-          width: 200px;
+          width: 225px;
           height: 300px;
-          margin-top: 160px;
+          margin-top: 210px;
         }
 
         .sidebar h3 {
@@ -399,6 +401,14 @@ export default function Home() {
         }
         .titleColor{
           background-color: #0B1356;
+        }
+        .fixed-element {
+          position: fixed;
+          margin-top: 600; /* Stick to the top of the viewport */
+          left: 10; /* Stick to the left of the viewport */
+          width: 15%; /* Take up the full width of the viewport */
+          
+          z-index: 1000; /* Set a high z-index to ensure it's on top of other elements */
         }
       `}</style>
     </div>
