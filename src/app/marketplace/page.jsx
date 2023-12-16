@@ -51,6 +51,7 @@ export default function Home() {
   const [newProductAddress, setNewProductAddress] = useState("");
   const [newProductType, setNewProductType] = useState("selling");
   const [newProductDescription, setNewProductDescription] = useState("");
+  const [newProductDuration, setNewProductDuration] = useState("");
 
   const [imageUpload, setImageUpload] = useState(null);
   const [imageList, setImageList] = useState([]);
@@ -215,39 +216,6 @@ export default function Home() {
               </Modal.Header>
               <Modal.Body>
                 <Form>
-                  <Form.Group controlId="title">
-                    <Form.Label>Title</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter title"
-                      value={newProductTitle}
-                      onChange={(e) => setNewProductTitle(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="price">
-                    <Form.Label>Price</Form.Label>
-                    <Form.Control
-                      type="number"
-                      min={0}
-                      onKeyPress={(event) => {
-                        if (!/[0-9.]/.test(event.key)) {
-                          event.preventDefault();
-                        }
-                      }}
-                      placeholder="Enter price"
-                      value={newProductPrice}
-                      onChange={(e) => setNewProductPrice(e.target.value)}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="address">
-                    <Form.Label>Address</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter address"
-                      value={newProductAddress}
-                      onChange={(e) => setNewProductAddress(e.target.value)}
-                    />
-                  </Form.Group>
                   <Form.Group controlId="type">
                     <Form.Label>Type</Form.Label>
                     <Form.Control
@@ -259,6 +227,58 @@ export default function Home() {
                       <option value="donating">Donating</option>
                       <option value="borrowing">Borrowing</option>
                     </Form.Control>
+                  </Form.Group>
+                  <Form.Group controlId="title">
+                    <Form.Label>Title</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter title"
+                      value={newProductTitle}
+                      onChange={(e) => setNewProductTitle(e.target.value)}
+                    />
+                  </Form.Group>
+                  {(newProductType == "borrowing") && (
+                    <Form.Group controlId="title">
+                      <Form.Label>Days to Borrow</Form.Label>
+                      <Form.Control
+                        type="number"
+                        min={0}
+                        onKeyPress={(event) => {
+                          if (!/[0-9.]/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
+                        placeholder="Enter days to borrow"
+                        value={setNewProductDuration}
+                        onChange={(e) => setNewProductDuration(e.target.value)}
+                      />
+                    </Form.Group>
+                  )}
+                  {(newProductType == "selling") && (
+                    <Form.Group controlId="price">
+                      <Form.Label>Price</Form.Label>
+                      <Form.Control
+                        type="number"
+                        min={0}
+                        onKeyPress={(event) => {
+                          if (!/[0-9.]/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
+                        placeholder="Enter price"
+                        value={newProductPrice}
+                        onChange={(e) => setNewProductPrice(e.target.value)}
+                      />
+                    </Form.Group>
+                  )}
+                  <Form.Group controlId="address">
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter address"
+                      value={newProductAddress}
+                      onChange={(e) => setNewProductAddress(e.target.value)}
+                    />
                   </Form.Group>
                   <Form.Group controlId="description">
                     <Form.Label>Description</Form.Label>
