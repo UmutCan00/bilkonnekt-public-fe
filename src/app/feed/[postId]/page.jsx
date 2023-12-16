@@ -10,8 +10,10 @@ import Navbar from "../../components/Navbar";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+
 const SocialPostCard = ({
   sharer,
+  sharerName,
   title,
   type,
   content,
@@ -25,12 +27,120 @@ const SocialPostCard = ({
   showAddCommentModal,
   isAnonymous,
   setIsAnonymous,
-}) => (
+}) => {
+
   
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
+
+  const currentuserid = session?.user?._id;
+  const isEditButtonVisible = (currentuserid == sharer);
+
+  // Add a new product card to the page
+  // Define a state variable to control the modal visibility
+  const [showModal, setShowModal] = useState(false);
+
+  // Function to handle the modal open
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // Function to handle the modal close
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const [newPostTitle, setNewPostTitle] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
+
+    // Add a new product card to the page
+  // Define a state variable to control the modal visibility
+  const [showEditCommentModal, setShowEditCommentModal] = useState(false);
+
+  // Function to handle the modal open
+  const openEditCommentModal = () => {
+    setShowEditCommentModal(true);
+  };
+
+  // Function to handle the modal close
+  const closeEditCommentModal = () => {
+    setShowEditCommentModal(false);
+  };
+
+  const [newEditedComment, changeComment] = useState("");
+
+  const likeFunc = () =>{
+    try {
+      fetch("http://localhost:3500/api/social/likePost", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          postId: id,
+        }),
+      });
+    } catch (error) {
+      console.log("like operation error: ", error)
+    }
+    window.location.reload();
+    
+  }
+
+
+  return (
   <>
     <div className="card bg-white" style={{ width: "400px" }}>
       <div className="card-body">
+      <div style={{ display: 'flex' }}>
         <h5 className="card-title">{title}</h5>
+        <div style={{ marginLeft: '230px', display: 'flex', flexDirection: 'row' }}>
+          
+          {isEditButtonVisible && (
+            <>
+              <Button className="btn btn-primary" onClick={ openModal}>Edit</Button>
+              <Button className="btn btn-danger m-2"
+                      onClick={() => console.log('Delete button clicked')}> <i className="bi bi-x"></i> </Button>
+            </>
+          )}
+          <Modal show={showModal} onHide={closeModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Edit Post</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group controlId="title">
+                  <Form.Label>Header</Form.Label>
+                  <Form.Control
+                    type="text"
+                    defaultValue={title}
+                    value={newPostTitle}
+                    onChange={(e) => setNewPostTitle(e.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group controlId="description">
+                  <Form.Label>Content</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    defaultValue={content}
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                  />
+                </Form.Group>
+
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" >
+                Save
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+        </div>
+        
         <p className="card-text">Sharer: {sharer}</p>
         <img
           src={imageURL}
@@ -43,23 +153,73 @@ const SocialPostCard = ({
         />
         <p className="card-text">Content: {content}</p>
         <div className="card-body">
-          <Button
-            className="btn btn-primary mr-2"
-            variant="info"
-            onClick={handleAddCommentModalOpen}
-          >
-            <i className="bi bi-chat-dots"></i> Add Comment
-          </Button>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>  
+            <Button
+              className="btn btn-primary mr-2"
+              variant="info"
+              onClick={handleAddCommentModalOpen}
+            >
+              <i className="bi bi-chat-dots"></i> Add Comment
+            </Button>
+            <Button className="btn btn-primary"
+              onClick={likeFunc}
+            >
+              <i className="bi bi-heart"></i> Like
+            </Button>
+          </div>
           <div
             className="comments-section"
             style={{ backgroundColor: "white" }}
           >
             <h6>Comments</h6>
             {comments.map((comment) => (
-              <div key={comment.id}>  
+              <div key={comment.id} 
+                  style={{ display: 'flex', flexDirection: 'row' }}>  
                 <p>
-                  <strong>{comment.commenterName}:</strong> {comment.description}
+                  <strong>{comment.commenterName}:</strong> {comment.description} 
+                  {' '}
+                  {currentuserid ==comment.commenterId && (
+                    <>
+                      <span
+                        style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+                        onClick={openEditCommentModal}
+                      >
+                        Edit Comment
+                      </span>
+                      {' '}
+                      <span
+                        style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+                        // onClick={handleDeleteComment}
+                      >
+                        Delete Comment
+                      </span>
+                    </>
+                  )}
+                  
                 </p>
+                <Modal show={showEditCommentModal} onHide={closeEditCommentModal}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>Edit Comment</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form>
+                      <Form.Group controlId="title">
+                        <Form.Label>Comment</Form.Label>
+                        <Form.Control
+                          type="text"
+                          defaultValue={comment.description}
+                          value={newEditedComment}
+                          onChange={(e) => changeComment(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Form>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="primary" >
+                      Save
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
               </div>
             ))}
           </div>
@@ -95,7 +255,8 @@ const SocialPostCard = ({
       </Modal.Body>
     </Modal>
   </>
-);
+  );
+};
 
 const Home = ({ params }) => {
   const { data: session } = useSession();
@@ -253,6 +414,8 @@ const Home = ({ params }) => {
     router.push("/social"); 
   };
 
+
+
   return (
     <div>
       <Navbar />
@@ -292,7 +455,8 @@ const Home = ({ params }) => {
                       <SocialPostCard
                         imageURL={post.imageURL}
                         id={post._id}
-                        sharer={post.publisherName}
+                        sharer={post.publisherId}
+                        sharerName={post.publisherName}
                         title={post.title}
                         type={null}
                         content={post.content}
