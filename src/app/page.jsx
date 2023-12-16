@@ -148,26 +148,26 @@ export default function Home() {
 
           </div>
             </div>
-            <div class="card bg-info d-flex flex-row justify-content-center align-items-center m-2" style={{ marginLeft:"10px" }}>
+            <div class="card bg-custom2 d-flex flex-row justify-content-center align-items-center m-2" style={{ marginLeft:"10px" }}>
             <div class="col">
             
               
               <Link href="/academic">
-                <button className="btn btn-primary">Go to Bilkent Academic</button>
+                <button className="btn btn-light">Go to Bilkent Academic</button>
               </Link>
             
             </div>
             <div class="col">
             
               <Link href="/lostfound">
-                <button className="btn btn-primary">Go to Lost & Found</button>
+                <button className="btn btn-light">Go to Lost & Found</button>
               </Link>
             
             </div>
             <div class="col">
             
               <Link href="/todayinbilkent">
-                <button className="btn btn-primary">Go to Today in Bilkent</button>
+                <button className="btn btn-light">Go to Today in Bilkent</button>
               </Link>
             
             </div>
@@ -189,7 +189,11 @@ export default function Home() {
           }
           
           .bg-custom1 {
-            background-color: #89cff0; 
+            background-color: #e472fb;
+            ; 
+          }
+          .bg-custom2 {
+            background-color: #e472fb; 
           }
 
           .intro-card {
@@ -227,7 +231,7 @@ export default function Home() {
             margin-top: 20px;
           }
           .titleColor{
-            background-color: #add8e6;
+            background-color: #928DFF;
           }
         `}</style>
       </div>
