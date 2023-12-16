@@ -81,7 +81,7 @@ export default function Home() {
       <div className="container-fluid home">
 
         
-        <header  className=" card text-center mx-auto titleColor" style={{ maxWidth:"500px" }}>
+        <header  className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px" }}>
           <h1>Welcome to Bilkonnekt </h1>
           <p>Your access to all things Bilkent.</p>
         </header>
@@ -189,11 +189,11 @@ export default function Home() {
           }
           
           .bg-custom1 {
-            background-color: #FFA972;
+            background-color: #8F3DE4;
             ; 
           }
           .bg-custom2 {
-            background-color: #FFA972; 
+            background-color: #8F3DE4; 
           }
 
           .intro-card {
@@ -231,7 +231,7 @@ export default function Home() {
             margin-top: 20px;
           }
           .titleColor{
-            background-color: #FFA972;
+            background-color: #3E007F;
           }
         `}</style>
       </div>
