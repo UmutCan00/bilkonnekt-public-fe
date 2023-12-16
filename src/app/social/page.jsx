@@ -32,6 +32,7 @@ export default function Home() {
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [products, setProducts] = useState(initialProducts);
+  const [userLikedIdsArray, setUserLikedIdsArray] = useState([]);
   console.log("products: ", products);
   const [posts, setPosts] = useState([]);
 
@@ -97,9 +98,35 @@ export default function Home() {
       console.error("Error fetching data:", error);
     }
   };
+  const fetchLikedPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getLikedPostsOfUser",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data22", data);
+        setUserLikedIdsArray(data.map((item) => item.postId));
+        console.log("userLikedIdsArray", userLikedIdsArray);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     fetchPosts();
+    fetchLikedPosts();
   }, [token]);
 
   // Function to handle the form submission
@@ -165,7 +192,6 @@ export default function Home() {
       filteredPosts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
-
 
   return (
     <div>
@@ -236,7 +262,10 @@ export default function Home() {
                       type="checkbox"
                       label="Make my post Anonymous"
                       checked={isAnonymous}
-                      onChange={(e) => {setIsAnonymous(e.target.checked); console.log("isAnon: ", isAnonymous)}}
+                      onChange={(e) => {
+                        setIsAnonymous(e.target.checked);
+                        console.log("isAnon: ", isAnonymous);
+                      }}
                     />
                   </Form.Group>
                 </Form>
@@ -287,6 +316,7 @@ export default function Home() {
                         content={post.content}
                         imageURL={post.imageURL}
                         likeCount={post.likeCount}
+                        userLikedPosts={userLikedIdsArray}
                       />
                     </div>
                   </Link>
