@@ -3,9 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Link from 'next/link';
 import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal';
-import { useState } from 'react';
+import Modal from "react-bootstrap/Modal";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
+import Form from "react-bootstrap/Form";
 
 const SocialPostCard = ({
   id,
@@ -17,10 +18,7 @@ const SocialPostCard = ({
   imageURL,
   likeCount,
 }) => {
-  const [showCommentsModal, setShowCommentsModal] = useState(false);
-
-  const handleCommentsModalOpen = () => setShowCommentsModal(true);
-  const handleCommentsModalClose = () => setShowCommentsModal(false);
+  
 
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
@@ -54,6 +52,28 @@ const SocialPostCard = ({
     // Add more comments as needed
   ];
 
+  // Add a new product card to the page
+  // Define a state variable to control the modal visibility
+  const [showModal, setShowModal] = useState(false);
+
+  // Function to handle the modal open
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // Function to handle the modal close
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const [newPostTitle, setNewPostTitle] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
+
+  const handleButtonClick = (e) => {
+    e.stopPropagation();
+    openModal(); // Open the modal
+  };
+
   return (
     <>
       <style jsx global>{`
@@ -65,7 +85,52 @@ const SocialPostCard = ({
 
       <div className="card bg-white" style={{ width: '400px' }}>
         <div className="card-body">
+          <div style={{ display: 'flex' }}>
           <h5 className="card-title">{title}</h5>
+            <div style={{ marginLeft: '230px', display: 'flex', flexDirection: 'row' }}>
+              {isEditButtonVisible && (
+                <>
+                  <Button className="btn btn-primary" onClick={ handleButtonClick}>Edit</Button>
+                  <Button className="btn btn-danger m-2"
+                          onClick={() => console.log('Delete button clicked')}> <i className="bi bi-x"></i> </Button>
+                </>
+              )}
+              <Modal show={showModal} onHide={closeModal}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Edit Post</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form>
+                    <Form.Group controlId="title">
+                      <Form.Label>Header</Form.Label>
+                      <Form.Control
+                        type="text"
+                        defaultValue={title}
+                        value={newPostTitle}
+                        onChange={(e) => setNewPostTitle(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <Form.Group controlId="description">
+                      <Form.Label>Content</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        defaultValue={content}
+                        value={newPostContent}
+                        onChange={(e) => setNewPostContent(e.target.value)}
+                      />
+                    </Form.Group>
+
+                  </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="primary" >
+                    Save
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </div>
+          </div>
           <p className="card-text">Sharer: {sharerName}</p>
           {imageURL && (
         <div
@@ -88,43 +153,26 @@ const SocialPostCard = ({
       )}
           <p className= "card-text">Content: {content}</p>
           <div className= "card-body">
-            <Button
-              className="btn btn-primary mr-2"
-              variant="info"
-              onClick={handleCommentsModalOpen}
-            >
-              <i className="bi bi-chat"></i> See Comments
-            </Button>
+          <Link href={`/feed/${id}`} passHref>
+              <Button
+                className="btn btn-primary mr-2"
+                variant="info"
+              >
+                <i className="bi bi-chat"></i> See Comments
+              </Button>
+          </Link>
             <Button className="btn btn-primary"
               onClick={likeFunc}
             >
               <i className="bi bi-heart"></i> Like
             </Button>
             <div style={{ display: "inline-block" }}><h3>{likeCount}</h3></div>
-            <div>
-              {isEditButtonVisible && (
-                <Button className="btn btn-primary" onClick={() => console.log('Button clicked')}>My Button</Button>
-              )}
-            </div>
           </div>
         </div>
 
-        {/* Comments Modal */}
-        <Modal show={showCommentsModal} onHide={handleCommentsModalClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Comments</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {comments.map((comment) => (
-              <div key={comment.id}>
-                <p>
-                  <strong>{comment.user}:</strong> {comment.text}
-                </p>
-              </div>
-            ))}
-          </Modal.Body>
-        </Modal>
+        
       </div>
+      
     </>
   );
 };
