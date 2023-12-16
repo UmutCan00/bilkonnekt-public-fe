@@ -3,29 +3,29 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar.jsx";
 import { useSession } from "next-auth/react";
-
+import "bootstrap/dist/css/bootstrap.min.css";
 function productInfo(products) {
   return (
-    <div>
+    <div className="text-black text-left" >
       <div class="productInfo">
-        <h2>Price</h2>
-        <p>{products?.price}</p>
+        <h2>Price: {products?.price}$</h2>
+        
       </div>
       <div class="productInfo">
-        <h2>Description</h2>
-        <p>{products?.description}</p>
+        <h2>Description: {products?.description}</h2>
+        
       </div>
       <div class="productInfo">
-        <h2>Seller ID</h2>
-        <p>{products?.sellerid}</p>
+        <h2>Seller: {products?.sellerName} </h2>
+        
       </div>
       <div class="productInfo">
-        <h2>Address</h2>
-        <p>{products?.address}</p>
+        <h2>Address: {products?.address}</h2>
+        
       </div>
       <div class="productInfo">
-        <h2>Category</h2>
-        <p>{products?.type}</p>
+        <h2>Category: {products?.type}</h2>
+        
       </div>
     </div>
   );
@@ -34,14 +34,20 @@ function productInfo(products) {
 function imageSpace(product) {
   return (
     <div>
-      <div class="imageSpace">
+      <div class="imageSpace m-1"style={{
+            height: "500px", // Set a fixed height for uniformity
+            overflow: "hidden", // Hide overflowing content
+          }}>
+
         {product.imageURL && (
           <img
             src={product.imageURL}
             alt="Product Image"
             style={{
-              width: "100%",
-              height: "100%", // Ensure the image covers the container width
+              width: "100%", // Ensure the image covers the container width
+              objectFit: "cover", // Crop the image while maintaining aspect ratio
+              height: "100%",
+              maxHeight: "100%", // Ensure the image covers the container height
             }}
           />
         )}
@@ -67,6 +73,7 @@ export default function PostPage({ params }) {
             },
             body: JSON.stringify({
               productId: id,
+              
             }),
           }
         );
@@ -95,8 +102,20 @@ export default function PostPage({ params }) {
         </header>
 
         <main>
-          <imageSpace>{imageSpace(product)}</imageSpace>
-          <productInfo>{productInfo(product)}</productInfo>
+          <div className="card bg-custom1" >
+            <div className="row">
+              <div className="col">
+              <imageSpace class="card m-2" style={{marginLeft:"20px",width:"750px"}}>{imageSpace(product)}</imageSpace>
+              </div>
+              <div className="col" style={{marginTop:"100px",marginLeft:"-30px"}}>
+                <div className="text-white text-left" style={{fontSize: '20px',marginLeft:"10px"}}>Item Information</div>
+              <productInfo class="card m-2 "  >{productInfo(product)}</productInfo>
+              </div>
+            </div>
+            
+          
+          </div>
+          
         </main>
 
         <footer>
@@ -104,11 +123,11 @@ export default function PostPage({ params }) {
         </footer>
 
         <style>{`
-        .container {
-          display:block;
-          margin: 0 auto;
-          background: #aaa;
-          height: 800px
+        .bg-custom1 {
+          
+          
+          background: #0B1356;
+          
         }
 
         header {
@@ -134,31 +153,7 @@ export default function PostPage({ params }) {
 
         main {
           text-align: center;
-        }
-
-        .imageSpace{
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 1000px;
-          height: 500px;
-          float:left;
-          color: black;          
-          border-radius: 2px;          
-          background: white;
-        }
-
-        .productInfo {
-          
-          width: 300px;
-          margin: 0px;
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 2px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-          text-align: left;
-          margin-left: auto;
-        }        
+        } 
 
         footer {
           text-align: center;
