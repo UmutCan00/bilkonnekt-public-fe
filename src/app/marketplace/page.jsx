@@ -173,25 +173,25 @@ export default function Home() {
         <div className="row">
           {/* Sidebar for type filtering */}
           <div className="col-md-3">
-            <div className="sidebar">
+            <div className="sidebar titleColor  text-white">
               <div>
-                <h3>Filter by Type</h3>
+                <h3 style={{ marginBottom: '30px' }}>Filter by Type</h3>
                 <ul>
                   <li>
-                    <button onClick={() => setSelectedType("")}>All</button>
+                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("")}>All</button>
                   </li>
                   <li>
-                    <button onClick={() => setSelectedType("selling")}>
+                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("selling")}>
                       Selling
                     </button>
                   </li>
                   <li>
-                    <button onClick={() => setSelectedType("donating")}>
+                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("donating")}>
                       Donating
                     </button>
                   </li>
                   <li>
-                    <button onClick={() => setSelectedType("borrowing")}>
+                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("borrowing")}>
                       Borrowing
                     </button>
                   </li>
@@ -199,10 +199,10 @@ export default function Home() {
               </div>
             </div>
             <button
-              className="btn btn-success"
+              className="btn btn-success text-nowrap"
               onClick={openModal}
-              style={{
-                maxWidth: "100px",
+              style={{ fontSize: '20px',
+                maxWidth: "200px",
                 maxHeight: "70px",
                 marginTop: "20px",
               }}
@@ -289,10 +289,10 @@ export default function Home() {
           </div>
           <div className="col-md-9" style={{ marginLeft: "-160px" }}>
             {/* Center-align the content */}
-            <header className="text-center">
-              <h1>Welcome to Bilkonnekt Marketplace</h1>
-              <p>Find great deals on items near you</p>
-            </header>
+            <header  className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px" }}>
+          <h1>Welcome to Bilkonnekt </h1>
+          <p>Your access to all things Bilkent.</p>
+        </header>
 
             <div className="search-bar">
               <input
@@ -306,10 +306,9 @@ export default function Home() {
             </div>
 
             <main style={{ marginTop: "20px" }}>
+              <div className="container-fluid card bg-custom1">
               {/* Product grid */}
-              <div
-                className="product-grid"
-                style={{ gridTemplateColumns: dynamicGridTemplateColumns }}
+              <div className="list " style={{ marginTop:"10px",display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}
               >
                 {columns.map((column, columnIndex) => (
                   <div key={columnIndex} className="column">
@@ -330,6 +329,7 @@ export default function Home() {
                     ))}
                   </div>
                 ))}
+              </div>
               </div>
             </main>
 
@@ -353,7 +353,10 @@ export default function Home() {
         .product-card:hover {
           cursor: pointer;
         }
-
+        .bg-custom1 {
+          background-color: #0B1356;
+          ; 
+        }
         .sidebar {
           background: #f8f9fa;
           padding: 20px;
@@ -393,6 +396,9 @@ export default function Home() {
         .search-bar {
           text-align: center;
           margin-top: 20px;
+        }
+        .titleColor{
+          background-color: #0B1356;
         }
       `}</style>
     </div>
