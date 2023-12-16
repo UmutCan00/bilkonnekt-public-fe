@@ -158,6 +158,7 @@ export default function Home() {
             type: newProductType,
             description: newProductDescription,
             imageURL: uploadedImageURL,
+            duration: parseFloat(newProductDuration),
           }),
         });
       })
@@ -221,7 +222,20 @@ export default function Home() {
                     <Form.Control
                       as="select"
                       value={newProductType}
-                      onChange={(e) => setNewProductType(e.target.value)}
+                      onChange={(e) => {
+                        setNewProductType(e.target.value);
+                        if(e.target.value == "borrowing"){
+                          setNewProductPrice(null);
+                        }
+                        if(e.target.value == "selling"){
+                          setNewProductDuration(null);
+                        }
+                        if(e.target.value == "donating"){
+                          setNewProductPrice(null);
+                          setNewProductDuration(null);
+                        }
+
+                      }}
                     >
                       <option value="selling">Selling</option>
                       <option value="donating">Donating</option>
@@ -249,7 +263,7 @@ export default function Home() {
                           }
                         }}
                         placeholder="Enter days to borrow"
-                        value={setNewProductDuration}
+                        value={newProductDuration}
                         onChange={(e) => setNewProductDuration(e.target.value)}
                       />
                     </Form.Group>
