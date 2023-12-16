@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 //import postdata from "../mockdata/postdata"; TODO delete
 
+
 import Navbar from "../components/Navbar";
 import SocialPostCard from "../components/SocialPostCard";
 import Modal from "react-bootstrap/Modal";
@@ -164,6 +165,8 @@ export default function Home() {
     );
   }
 
+
+
   return (
     <div>
       <Navbar />
@@ -264,7 +267,7 @@ export default function Home() {
               {/* Social post container */}
               <div className="social-post-container">
                 {filteredPosts.map((post, index) => (
-                  <Link key={index} href={`/feed/${post._id}`} passHref>
+                  <Link key={index} href={`/feed/${post._id}`} passHref >
                     <div className="socialpost-card">
                       <SocialPostCard
                         id={post._id}
@@ -287,6 +290,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
       <style jsx>{`
         a {
           text-decoration: none;

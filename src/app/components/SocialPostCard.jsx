@@ -27,6 +27,11 @@ const SocialPostCard = ({
   const currentuserid = session?.user?._id;
   const isEditButtonVisible = (currentuserid == sharer)
 
+  const editPost = () =>{
+    
+    window.location.reload();
+    
+  }
 
   const likeFunc = () =>{
     try {
@@ -64,7 +69,18 @@ const SocialPostCard = ({
 
       <div className="card bg-white" style={{ width: '400px' }}>
         <div className="card-body">
-          <h5 className="card-title">{title}</h5>
+          <div style={{ display: 'flex' }}>
+            <h5 className="card-title">{title}</h5>
+            <div style={{ marginLeft: '230px', display: 'flex', flexDirection: 'row' }}>
+              {isEditButtonVisible && (
+                <>
+                  <Button className="btn btn-primary" onClick={editPost}>Edit</Button>
+                  <Button className="btn btn-danger m-2"
+                          onClick={() => console.log('Delete button clicked')}> <i className="bi bi-x"></i> </Button>
+                </>
+              )}
+            </div>
+          </div>
           <p className="card-text">Sharer: {sharer}</p>
           {imageURL && (
         <div
@@ -100,11 +116,7 @@ const SocialPostCard = ({
               <i className="bi bi-heart"></i> Like
             </Button>
             <div style={{ display: "inline-block" }}><h3>{likeCount}</h3></div>
-            <div>
-              {isEditButtonVisible && (
-                <Button className="btn btn-primary" onClick={() => console.log('Button clicked')}>My Button</Button>
-              )}
-            </div>
+            
           </div>
         </div>
 
