@@ -110,6 +110,7 @@ const SaleProductCard = ({
             style={{
               width: "100%", // Ensure the image covers the container width
               objectFit: "cover", // Crop the image while maintaining aspect ratio
+              height: "100%",
               maxHeight: "100%", // Ensure the image covers the container height
             }}
             onClick={handleClick}
@@ -121,22 +122,25 @@ const SaleProductCard = ({
         <h5 className="card-title" onClick={handleClick}>
           {title}
         </h5>
-        <p className="card-text" onClick={handleClick}>
+        <div className="vertical-details text-left">
+        <div className="detail" onClick={handleClick}>
           Price: ${price}
-        </p>
-        <p className="card-text" onClick={handleClick}>
+        </div>
+        <div className="detail" onClick={handleClick}>
           Location: {location}
-        </p>
-        <p className="card-text" onClick={handleClick}>
+        </div>
+        <div className="detail" onClick={handleClick}>
           Seller: {sellerName}
-        </p>
-        <p className="card-text" onClick={handleClick}>
+        </div>
+        <div className="detail" onClick={handleClick}>
           Type: {type}
-        </p>
-        <p className="card-text" onClick={handleClick}>
+        </div>
+        <div className="detail" onClick={handleClick}>
           Description: {description}
-        </p>
+        </div>
+      </div>
         {/* Assign the function to the onClick event */}
+        <div align="left">
         <button
           className="btn btn-primary me-2"
           style={{ padding: "4px" }}
@@ -151,7 +155,22 @@ const SaleProductCard = ({
         >
           See Seller Profile
         </button>
+        </div>
       </div>
+      <style jsx>{`
+      .vertical-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px; /* Adjust the gap as needed */
+      }
+
+      .detail {
+        cursor: pointer;
+        color: black;
+      }
+
+      
+    `}</style>
     </div>
   );
 };

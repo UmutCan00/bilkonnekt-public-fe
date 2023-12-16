@@ -74,8 +74,10 @@ const EventsPage = () => {
   };
 
   return (
-    <Container>
-        <Navbar />
+    <div>
+      <Navbar />
+    <Container> 
+            
       <h1>Events</h1>
       <Row>
         {eventsData.map((event) => (
@@ -104,6 +106,7 @@ const EventsPage = () => {
         </Modal.Footer>
       </Modal>
     </Container>
+    </div>
   );
 };
 
