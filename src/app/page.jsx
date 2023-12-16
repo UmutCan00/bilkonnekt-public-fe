@@ -168,9 +168,7 @@ export default function Home() {
             </div>
             <div className="intro-card d-flex flex-column justify-content-center align-items-center">
               
-              <Link href="/lostfound">
-                <button className="btn btn-primary">Go to Lost & Found</button>
-              </Link>
+              
             </div>
 
           </div>
