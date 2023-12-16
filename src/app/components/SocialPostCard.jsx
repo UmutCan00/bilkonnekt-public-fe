@@ -3,9 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Link from 'next/link';
 import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal';
-import { useState } from 'react';
+import Modal from "react-bootstrap/Modal";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
+import Form from "react-bootstrap/Form";
 
 const SocialPostCard = ({
   id,
@@ -17,10 +18,7 @@ const SocialPostCard = ({
   imageURL,
   likeCount,
 }) => {
-  const [showCommentsModal, setShowCommentsModal] = useState(false);
-
-  const handleCommentsModalOpen = () => setShowCommentsModal(true);
-  const handleCommentsModalClose = () => setShowCommentsModal(false);
+  
 
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
@@ -47,12 +45,11 @@ const SocialPostCard = ({
     window.location.reload();
     
   }
-  // Dummy comments data (replace with actual comments data)
-  const comments = [
-    { id: 1, text: 'Great post!', user: 'User1' },
-    { id: 2, text: 'Interesting thoughts.', user: 'User2' },
-    // Add more comments as needed
-  ];
+
+
+  
+
+
 
   return (
     <>
@@ -65,7 +62,17 @@ const SocialPostCard = ({
 
       <div className="card bg-white" style={{ width: '400px' }}>
         <div className="card-body">
-          <h5 className="card-title">{title}</h5>
+          
+          <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'row' }}>
+            <h5 className="card-title">{title}</h5>
+            {isEditButtonVisible && (
+              <>
+                <Link href={`/feed/${id}`} passHref>
+                  <Button className="btn btn-primary" style={{ marginLeft: '200px'}}  > Edit My Post</Button>
+                </Link>
+              </>
+            )}
+          </div>
           <p className="card-text">Sharer: {sharerName}</p>
           {imageURL && (
         <div
@@ -88,43 +95,30 @@ const SocialPostCard = ({
       )}
           <p className= "card-text">Content: {content}</p>
           <div className= "card-body">
-            <Button
-              className="btn btn-primary mr-2"
-              variant="info"
-              onClick={handleCommentsModalOpen}
-            >
-              <i className="bi bi-chat"></i> See Comments
-            </Button>
-            <Button className="btn btn-primary"
-              onClick={likeFunc}
-            >
-              <i className="bi bi-heart"></i> Like
-            </Button>
-            <div style={{ display: "inline-block" }}><h3>{likeCount}</h3></div>
-            <div>
-              {isEditButtonVisible && (
-                <Button className="btn btn-primary" onClick={() => console.log('Button clicked')}>My Button</Button>
-              )}
-            </div>
+            <p>
+              <i className="bi bi-heart-fill text-danger"></i> {" "}
+              {likeCount} Likes
+            </p>
+            <Link href={`/feed/${id}`} passHref>
+                <Button
+                  className="btn btn-primary mr-2"
+                  variant="info"
+                >
+                  <i className="bi bi-chat"></i> See Comments
+                </Button>
+            </Link>
+              <Button className="btn btn-danger"
+                onClick={likeFunc}
+              >
+                <i className="bi bi-heart"></i> Like
+              </Button>
+              
           </div>
         </div>
 
-        {/* Comments Modal */}
-        <Modal show={showCommentsModal} onHide={handleCommentsModalClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Comments</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {comments.map((comment) => (
-              <div key={comment.id}>
-                <p>
-                  <strong>{comment.user}:</strong> {comment.text}
-                </p>
-              </div>
-            ))}
-          </Modal.Body>
-        </Modal>
+        
       </div>
+      
     </>
   );
 };
