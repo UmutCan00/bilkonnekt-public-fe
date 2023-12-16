@@ -80,7 +80,10 @@ const Navbar = () => {
         >
           <span className="text-black">Report to admin</span>
         </Link>
-      <SignInButton />
+        <div className="ml-auto">
+        <SignInButton  />
+        </div>
+      
     </header>
   );
 };
