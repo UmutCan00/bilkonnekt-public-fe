@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 
 const GroupPage = () => {
   const [currentGroup, setCurrentGroup] = useState(null);
+  const [currentGroups, setCurrentGroups] = useState([]);
+  const [applicationDescription, setApplicationDescription] = useState("");
 
   const currentDate = new Date();
   const groups = [
@@ -82,13 +84,74 @@ const GroupPage = () => {
   const currentuserid = session?.user?._id;
 
   const handleGroupClick = (groupId) => {
-    const selectedGroup = groups.find((group) => group._id === groupId);
+    const selectedGroup = currentGroups.find((group) => group._id === groupId);
     setCurrentGroup(selectedGroup);
+    console.log("click", groupId);
   };
   const handleBackButtonClick = () => {
     setCurrentGroup(null);
   };
-  const handleJoinButtonClick = () => {};
+  const joinGroup = async (groupId) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/applyToStudyGroup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: groupId,
+            description: applicationDescription,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data", data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const handleJoinButtonClick = (id) => {
+    console.log("join", id);
+    joinGroup(id);
+    window.location.reload();
+  };
+
+  const fetchUserGroupData = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/getAllGroups",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setCurrentGroups(data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserGroupData();
+  }, [token]);
 
   if (currentGroup) {
     return (
@@ -123,7 +186,7 @@ const GroupPage = () => {
               padding: "20px",
             }}
           >
-            {currentGroup.name}
+            {currentGroup.groupName}
             <br />
             {currentGroup.description}
             <br />
@@ -136,8 +199,23 @@ const GroupPage = () => {
                 </div>
               </div>
             ))}
+            <textarea
+              placeholder="Enter application description"
+              value={applicationDescription}
+              onChange={(e) => setApplicationDescription(e.target.value)}
+              style={{
+                display: "block",
+                marginBottom: "10px",
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                width: "100%",
+                fontSize: "16px",
+                minHeight: "100px",
+              }}
+            />
             <button
-              onClick={handleJoinButtonClick}
+              onClick={() => handleJoinButtonClick(currentGroup._id)}
               style={{
                 cursor: "pointer",
                 display: "block",
@@ -176,7 +254,7 @@ const GroupPage = () => {
           {"Groups with Missing Members"}
         </div>
 
-        {groups.map((group) => (
+        {currentGroups.map((group) => (
           <div key={group._id}>
             {" "}
             {/* Add the key prop here */}
@@ -194,7 +272,10 @@ const GroupPage = () => {
                 color: "black",
               }}
             >
-              {group.name}
+              Group Name:
+              {" " + group.groupName + ", "}
+              Course:
+              {" " + group.courseCode}
             </div>
             <button
               onClick={() => handleGroupClick(group._id)}
@@ -206,7 +287,7 @@ const GroupPage = () => {
                 color: "black",
               }}
             >
-              Join
+              Join Request
             </button>
           </div>
         ))}

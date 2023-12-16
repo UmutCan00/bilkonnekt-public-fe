@@ -20,7 +20,7 @@ export default function Home() {
                 <Card.Body>Search Groups for Your Project</Card.Body>
               </Card>
             </Link>
-            <Link href="academic/find-groups">
+            <Link href="academic/find-groups/by-id">
               <Card className="mb-3 w-100">
                 <Card.Body>Find Group by ID</Card.Body>
               </Card>

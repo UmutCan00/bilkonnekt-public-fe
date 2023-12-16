@@ -30,7 +30,7 @@ export default function Home() {
   const [products, setProducts] = useState(initialProducts);
   console.log("products: ", products);
   // Function to filter products based on search and type
-  
+
   const filteredProducts = products?.filter((product) => {
     const matchesSearch =
       product.title.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -128,6 +128,7 @@ export default function Home() {
       filteredProducts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
+  const dynamicGridTemplateColumns = `repeat(auto-fill, minmax(calc(100% / ${numColumns}), 1fr))`;
 
   const uploadImage = async () => {
     if (imageUpload == null) return;
@@ -306,7 +307,10 @@ export default function Home() {
 
             <main style={{ marginTop: "20px" }}>
               {/* Product grid */}
-              <div className="product-grid">
+              <div
+                className="product-grid"
+                style={{ gridTemplateColumns: dynamicGridTemplateColumns }}
+              >
                 {columns.map((column, columnIndex) => (
                   <div key={columnIndex} className="column">
                     {column.map((product, index) => (
