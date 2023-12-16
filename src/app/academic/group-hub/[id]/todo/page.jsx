@@ -1,78 +1,172 @@
 // Create a new component, e.g., MaintenanceRequest.js
 "use client";
 //TODO Connect backend and delete mockdata
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button, Form, ListGroup } from "react-bootstrap";
-import { v4 as uuidv4 } from "uuid";
+import { useSession } from "next-auth/react";
 import academicForumData from "../../../../mockdata/academicForumData";
 import Navbar from "../../../../components/Navbar";
 import Link from "next/link";
 
 const MaintenanceRequest = ({ params }) => {
-  const [requests, setRequests] = useState(academicForumData);
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
   const [newRequest, setNewRequest] = useState("");
-  const [newLocation, setNewLocation] = useState("");
+  const [newAssignee, setNewAssignee] = useState("");
   const [newDate, setNewDate] = useState(new Date());
   const [filterStatus, setFilterStatus] = useState("Pending");
-  const [currentUser, setCurrentUser] = useState("owner-id-1"); // TODO Replace with actual user ID from seesion
+  const currentUser = session?.user?._id;
+  const members = useRef([]);
+  const tasks = useRef([]);
+  let currentmember = null;
+  const [isLeader, setIsLeader] = useState(false);
+  const currentuserid = session?.user?._id;
+
+  const completeGroupTask = async (id) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/completeGroupTask",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            taskId: id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        console.log("completed task", data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const assignGroupTask = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/assignGroupTask",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: params.id,
+            description: newRequest,
+            assignedId: newAssignee,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        tasks.current.value = data;
+        console.log("data3", members);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const fetchGroupTask = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/seeGroupTasks",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: params.id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        tasks.current.value = data;
+        console.log("data3", members);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const fetchGroupMember = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/seeGroupParticipants",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupId: params.id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data2", data);
+        members.current.value = data;
+        console.log("data3", members);
+        setNewAssignee(members.current.value[0].userId);
+        currentmember = members.current.value.find(
+          (member) => member.userId === currentuserid
+        );
+        if (currentmember.role === "leader") setIsLeader(true);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGroupMember();
+    fetchGroupTask();
+  }, [token]);
+
   console.log("id= ", params);
   const handleSubmit = (e) => {
     e.preventDefault();
     const newRequestItem = {
-      id: uuidv4(),
+      id: 3,
       description: newRequest,
-      location: newLocation,
-      date: new Date(newDate),
-      status: "Pending",
-      ownerId: currentUser, // Assign the owner ID
+      assignee: newAssignee,
     };
-    setRequests([...requests, newRequestItem]);
+    console.log("newRequest", newRequest);
+    console.log("newAssignee", newAssignee);
+    assignGroupTask();
     setNewRequest("");
-    setNewLocation("");
-    setNewDate(Date.now());
+    setNewAssignee(members.current.value[0].userId);
+    window.location.reload();
   };
 
-  const handleStatusChange = (id, newStatus) => {
-    const updatedRequests = requests.map((request) => {
-      if (request.uuid === id) {
-        return { ...request, status: newStatus };
-      }
-      return request;
-    });
-
-    setRequests(updatedRequests);
+  const handleDeleteRequest = (id) => {};
+  const handleMarkDone = (taskId) => {
+    completeGroupTask(taskId);
+    window.location.reload();
   };
 
-  const handleDeleteRequest = (id) => {
-    const updatedRequests = requests.filter((request) => request.uuid !== id);
-    setRequests(updatedRequests);
-  };
-
-  const sortedRequests = [...requests].sort((a, b) => {
-    const dateComparison = a.date;
-
-    if (dateComparison !== 0) {
-      return -dateComparison;
-    }
-
-    if (a.status === "Pending" && b.status !== "Pending") {
-      return -1;
-    }
-
-    if (a.status !== "Pending" && b.status === "Pending") {
-      return 1;
-    }
-
-    return 0;
-  });
-
-  // Filter requests based on selected status
-  const filteredRequests = sortedRequests.filter((request) => {
-    if (filterStatus === "All") {
-      return true;
-    }
-    return request.status === filterStatus;
-  });
+  console.log("gr", members.current.value);
 
   return (
     <div>
@@ -98,129 +192,87 @@ const MaintenanceRequest = ({ params }) => {
         </button>
       </Link>
       <div className="container mt-4">
-        <h1>Maintenance Requests</h1>
-
-        <div className="mb-3">
-          <Button
-            variant="outline-primary"
-            className="mr-2"
-            onClick={() => setFilterStatus("All")}
-          >
-            All
-          </Button>
-          <Button
-            variant="outline-primary"
-            className="mr-2"
-            onClick={() => setFilterStatus("Pending")}
-          >
-            Pending
-          </Button>
-          <Button
-            variant="outline-primary"
-            className="mr-2"
-            onClick={() => setFilterStatus("In Progress")}
-          >
-            In Progress
-          </Button>
-          <Button
-            variant="outline-primary"
-            onClick={() => setFilterStatus("Done")}
-          >
-            Done
-          </Button>
-        </div>
-
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="description">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter request description"
-              value={newRequest}
-              onChange={(e) => setNewRequest(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="location">
-            <Form.Label>Location</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter location"
-              value={newLocation}
-              onChange={(e) => setNewLocation(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="date">
-            <Form.Label>Date (Leave Blank for Today)</Form.Label>
-            <Form.Control
-              type="date"
-              value={newDate}
-              onChange={(e) => setNewDate(e.target.value)}
-            />
-          </Form.Group>
-          <Button
-            variant="primary"
-            type="submit"
-            style={{ marginBottom: "20px", marginTop: "10px" }}
-          >
-            Submit Request (Academic)
-          </Button>
-        </Form>
-
+        {isLeader && (
+          <Form onSubmit={handleSubmit}>
+            <h1>Add a New Request</h1>
+            <Form.Group controlId="description">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter request description"
+                value={newRequest}
+                onChange={(e) => setNewRequest(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="assignee">
+              <Form.Label>Assignee</Form.Label>
+              <Form.Control
+                as="select"
+                value={newAssignee}
+                onChange={(e) => setNewAssignee(e.target.value)}
+              >
+                {members?.current?.value?.map((member) => (
+                  <option key={member.userId} value={member.userId}>
+                    {member.name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            <Button
+              variant="primary"
+              type="submit"
+              style={{ marginBottom: "20px", marginTop: "10px" }}
+            >
+              Submit Request (Academic)
+            </Button>
+          </Form>
+        )}
         <hr />
+
         <div style={{ marginTop: "10px" }}>
           <h2>Current Requests</h2>
         </div>
 
         <ListGroup>
-          {filteredRequests.map((request) => (
-            <ListGroup.Item key={request.uuid}>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <strong>Status:</strong> {request.status}
+          {tasks &&
+            tasks?.current?.value?.map((request) => (
+              <ListGroup.Item key={request._id}>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div style={{ flex: 1 }}>
+                    <strong>Description:</strong>{" "}
+                    <span style={{ wordWrap: "break-word" }}>
+                      {request.description}
+                    </span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <strong>Assignee:</strong>{" "}
+                    <span style={{ wordWrap: "break-word" }}>
+                      {request.studentId}
+                    </span>
+                  </div>
+                  <div>
+                    {isLeader && (
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDeleteRequest(request._id)}
+                        style={{ color: "black", marginRight: "2px" }}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                    {currentUser == request.studentId && (
+                      <Button
+                        variant="success"
+                        onClick={() => handleMarkDone(request._id)}
+                        style={{ color: "black", marginRight: "0px" }}
+                      >
+                        Mark Done
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  {request.status === "Pending" && (
-                    <Button
-                      variant="success"
-                      onClick={() =>
-                        handleStatusChange(request.uuid, "In Progress")
-                      }
-                      style={{ color: "black" }}
-                    >
-                      Mark In Progress (Staff)
-                    </Button>
-                  )}
-                  {request.status === "In Progress" && (
-                    <Button
-                      variant="success"
-                      onClick={() =>
-                        handleStatusChange(request.uuid, "Completed")
-                      }
-                      style={{ color: "black" }}
-                    >
-                      Mark Completed (Staff)
-                    </Button>
-                  )}
-                  {request.ownerId === currentUser && (
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDeleteRequest(request.uuid)}
-                      style={{ color: "black", marginLeft: "15px" }}
-                    >
-                      Delete Request
-                    </Button>
-                  )}
-                </div>
-              </div>
-              <div>
-                <strong>Date:</strong> {request.date}
-              </div>
-              <div>
-                <strong>Location:</strong> {request.location}
-              </div>
-              {request.description}
-            </ListGroup.Item>
-          ))}
+              </ListGroup.Item>
+            ))}
         </ListGroup>
       </div>
     </div>

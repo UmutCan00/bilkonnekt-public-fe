@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import LostAndFoundList from "../components/LostAndFoundList";
 import Navbar from "../components/Navbar";
 import { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Login() {
   const [showForm, setShowForm] = useState(false);
@@ -13,17 +14,17 @@ export default function Login() {
   const [text1, setText1] = useState("");
   const [text2, setText2] = useState("");
   const [text3, setText3] = useState("");
-  const [btnText, setButtonText] = useState("Create List Item");
+  const [btnText, setButtonText] = useState("Add an Item");
   const [items, setItems] = useState([]);
   useEffect(() => {
     getLostAds();
   }, []);
 
   const toggleForm = () => {
-    if (btnText == "Create List Item") {
+    if (btnText == "Add an Item") {
       setButtonText("Close");
     } else {
-      setButtonText("Create List Item");
+      setButtonText("Add an Item");
     }
     setShowForm(!showForm);
   };
@@ -132,7 +133,7 @@ export default function Login() {
     padding: "10px",
     borderColor: "black",
     display: "grid",
-    textAlign: "center",
+    textAlign: "left",
     background: "white",
     color: "black",
   };
@@ -144,6 +145,7 @@ export default function Login() {
 
     background: "white",
     color: "black",
+    marginBottom: "10px"
   };
   return (
     <div
@@ -152,11 +154,14 @@ export default function Login() {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        background: "linear-gradient(to bottom, #3498db, #C5F7F3)",
+        // background: "linear-gradient(to bottom, #3498db, #C5F7F3)",
       }}
     >
       <Navbar />
-      <h1>List</h1>
+      <header className="text-center">
+        <h1>Welcome to Bilkonnekt Lost & Found</h1>
+        <p>Search for your lost items</p>
+      </header>
       <div className="card" style={card}>
         {/* "Create List Item" düğmesi */}
         <button
@@ -172,7 +177,7 @@ export default function Login() {
         {/* Formun görüntülendiği alan */}
         {showForm && (
           <div className="form" style={cardForm}>
-            <h1>Enter the location that the object is found</h1>
+            <span>Enter the location that the object is found</span>
             <input
               type="text"
               placeholder="Founded Place"
@@ -180,7 +185,7 @@ export default function Login() {
               value={text1}
               onChange={(e) => setText1(e.target.value)}
             />
-            <h1>Enter the location what is the object</h1>
+            <span>Enter the description of the object</span>
             <input
               type="text"
               placeholder="Object Description"
@@ -188,7 +193,7 @@ export default function Login() {
               value={text2}
               onChange={(e) => setText2(e.target.value)}
             />
-            <h1>Enter the location where you handed over the object</h1>
+            <span>Enter the location where you handed over the object</span>
             <input
               type="text"
               placeholder="Delivered Place"

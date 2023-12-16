@@ -23,7 +23,10 @@ const SocialPostCard = ({
   newComment,
   setNewComment,
   showAddCommentModal,
+  isAnonymous,
+  setIsAnonymous,
 }) => (
+  
   <>
     <div className="card bg-white" style={{ width: "400px" }}>
       <div className="card-body">
@@ -77,6 +80,14 @@ const SocialPostCard = ({
               onChange={(e) => setNewComment(e.target.value)}
             />
           </Form.Group>
+          <Form.Group controlId="Anonymous">
+            <Form.Check
+              type="checkbox"
+              label="Make my post Anonymous"
+              checked={isAnonymous}
+              onChange={(e) => {setIsAnonymous(e.target.checked); console.log("isAnon: ", isAnonymous)}}
+            />
+          </Form.Group>
           <Button variant="primary" onClick={handleAddComment}>
             Add Comment
           </Button>
@@ -91,13 +102,13 @@ const Home = ({ params }) => {
   const router = useRouter();
   //const [post, setPost] = useState(null);
   const [posts, setPosts] = useState([]);
-
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
-
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const token = session?.backendTokens?.accessToken;
 
   const [post, setPost] = useState([]);
+
 
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
@@ -213,7 +224,8 @@ const Home = ({ params }) => {
           },
           body: JSON.stringify({
             postId: params.postId,
-            description: newComment
+            description: newComment,
+            isAnonymous: isAnonymous
           }),
         });
     } catch (error) {
@@ -266,7 +278,7 @@ const Home = ({ params }) => {
                       <SocialPostCard
                         imageURL={post.imageURL}
                         id={post._id}
-                        sharer={post.publisherId}
+                        sharer={post.publisherName}
                         title={post.title}
                         type={null}
                         content={post.content}
@@ -278,7 +290,8 @@ const Home = ({ params }) => {
                         newComment={newComment}
                         setNewComment={setNewComment}
                         showAddCommentModal={showAddCommentModal}
-
+                        setIsAnonymous={setIsAnonymous}
+                        isAnonymous={isAnonymous}
                       />
                     </div>
                   )}

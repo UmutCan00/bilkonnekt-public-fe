@@ -22,6 +22,7 @@ export default function Home() {
   const token = session?.backendTokens?.accessToken;
   const [productdata, setproductdata] = useState([]);
   const [initialProducts, setinitialProducts] = useState([]);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   const [imageUpload, setImageUpload] = useState(null);
   const [imageList, setImageList] = useState([]);
@@ -144,6 +145,7 @@ export default function Home() {
             title: newProductTitle,
             content: newProductDescription,
             imageURL: uploadedImageURL,
+            isAnonymous: isAnonymous,
           }),
         });
       })
@@ -227,6 +229,15 @@ export default function Home() {
                       onChange={(e) => setNewProductDescription(e.target.value)}
                     />
                   </Form.Group>
+
+                  <Form.Group controlId="Anonymous">
+                    <Form.Check
+                      type="checkbox"
+                      label="Make my post Anonymous"
+                      checked={isAnonymous}
+                      onChange={(e) => {setIsAnonymous(e.target.checked); console.log("isAnon: ", isAnonymous)}}
+                    />
+                  </Form.Group>
                 </Form>
                 <input
                   type="file"
@@ -269,6 +280,7 @@ export default function Home() {
                       <SocialPostCard
                         id={post._id}
                         sharer={post.publisherId}
+                        sharerName={post.publisherName}
                         title={post.title}
                         type={null}
                         content={post.content}

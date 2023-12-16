@@ -11,16 +11,46 @@ const CreateGroupPage = () => {
   const [groupDescription, setGroupDescription] = useState("");
   const [selectedLesson, setSelectedLesson] = useState("");
   const router = useRouter();
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
+
+  const postGroup = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/group/createStudyGroup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            groupName: groupName,
+            description: groupDescription,
+            courseCode: selectedLesson,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleCreateGroup = (e) => {
-    //TODO
     e.preventDefault();
     console.log(groupName);
     console.log(groupDescription);
     console.log(selectedLesson);
+    postGroup();
     router.push("/academic/group-hub");
   };
-
   return (
     <div>
       <Navbar />
