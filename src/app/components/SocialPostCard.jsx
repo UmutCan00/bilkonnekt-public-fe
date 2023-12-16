@@ -45,12 +45,6 @@ const SocialPostCard = ({
     window.location.reload();
     
   }
-
-
-  
-
-
-
   return (
     <>
       <style jsx global>{`
@@ -60,7 +54,7 @@ const SocialPostCard = ({
         }
       `}</style>
 
-      <div className="card bg-white" style={{ width: '300px',height:'500px' }}>
+      <div className="card bg-white" style={{ width: '400px',height:'450px' }}>
         <div className="card-body">
           
           <div style={{ marginLeft: '10px', display: 'flex',justifyContent: 'space-between', flexDirection: 'row' }}>

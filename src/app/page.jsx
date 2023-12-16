@@ -82,8 +82,8 @@ export default function Home() {
 
         
         <header className="text-center">
-          <h1>Welcome to Bilkonnekt Marketplace</h1>
-          <p>Find great deals on items near you</p>
+          <h1>Welcome to Bilkonnekt </h1>
+          <p>Your access to all things Bilkent.</p>
         </header>
 
         <main>
@@ -91,12 +91,14 @@ export default function Home() {
         <div class="row">
             <div class="col">
             <div className="container-fluid card bg-custom1 m-2">
-            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+              <div>
+                
+              </div>
               
               <Link href="/marketplace">
                 <button className="btn btn-primary"> Go to Marketplace </button>
               </Link>
-            </div>
+              
 
             <div className="list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }} >
   {products.map((product, index) => (
@@ -146,34 +148,30 @@ export default function Home() {
 
           </div>
             </div>
+            <div class="card bg-info d-flex flex-row justify-content-center align-items-center" style={{ marginLeft:"10px" }}>
             <div class="col">
-            <div className="container-fluid card bg-custom1 m-2">
-          <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+            
               
               <Link href="/academic">
                 <button className="btn btn-primary">Go to Bilkent Academic</button>
               </Link>
+            
             </div>
-            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
-              
+            <div class="col">
+            
               <Link href="/lostfound">
                 <button className="btn btn-primary">Go to Lost & Found</button>
               </Link>
+            
             </div>
-            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
-              
+            <div class="col">
+            
               <Link href="/todayinbilkent">
                 <button className="btn btn-primary">Go to Today in Bilkent</button>
               </Link>
-            </div>
-            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
-              
-              
-            </div>
-
-          </div>
-            </div>
             
+            </div>
+            </div>
             </div>
           
         </main>
@@ -216,14 +214,14 @@ export default function Home() {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
-            margin-top: 20px;
+            
           }
 
           img {
             max-width: 100%;
             height: auto;
           }
-
+          
           footer {
             text-align: center;
             margin-top: 20px;
