@@ -1,26 +1,57 @@
 "use client";
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-
+import { Form, FormControl, InputGroup } from 'react-bootstrap';
+//change
 const Admin = () => {
-  const [selectedTable, setSelectedTable] = useState(null);
+  //Table Selection
+  const [selectedTable, setSelectedTable] = useState("users");
+  //Search Items
+  const [searchUser, setSearchUser] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-
+  console.log(searchUser)
+  //Panels
+  const [showRolePanel, setShowRolePanel] = useState(false);
+  const [isConfirmationOpen, setConfirmationOpen] = useState(false);
+  //Selected x
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedRole, setSelectedRole] = useState('');
   const handleButtonClick = (tableName) => {
     setSelectedTable(tableName);
   };
-
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+  
+  const openRolePanel = (userID) => {
+    setSelectedUserId(userID);
+    setShowRolePanel(true);
   };
 
-  const filterUserData = () => {
-    return mockData.users.filter(
-      (user) =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const closeRolePanel = () => {
+    setSelectedUserId(null);
+    setShowRolePanel(false);
   };
+
+  const handleRoleChange = () => {
+    if (selectedUserId && selectedRole) {
+      setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+          user.id === selectedUserId ? { ...user, role: selectedRole } : user
+          )
+      );
+      }
+    closeRolePanel();
+  };
+
+  const openConfirmationPanel = () => {
+      setConfirmationOpen(true);
+    };
+  
+    const closeConfirmationPanel = () => {
+      setConfirmationOpen(false);
+    };
+  
+    const handleConfirmation = () => {
+      closeConfirmationPanel();
+    };
 
   const mockData = {
     users: [
@@ -28,7 +59,7 @@ const Admin = () => {
       { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', banned: false },
-      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Club Executive', banned: false },
+      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', banned: false },
       { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', banned: false },
@@ -36,7 +67,7 @@ const Admin = () => {
       { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', banned: false },
-      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Club Executive', banned: false },
+      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Instructor', banned: false },
       { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', banned: false },
       { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', banned: false },
       { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', banned: false },
@@ -65,45 +96,47 @@ const Admin = () => {
 
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
   <button
-    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '50px'}}
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
     onClick={() => handleButtonClick('users')}
   >
-    See User List
+    Manage Users
   </button>
   <button
-    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '50px'}}
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
     onClick={() => handleButtonClick('clubs')}
   >
-    See Club Page List
+    Manage Clubs
   </button>
   <button
-    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '50px'}}
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
     onClick={() => handleButtonClick('marketplace')}
   >
-    See Marketplace Posts
+    Manage Marketplace Posts
   </button>
   <button
-    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '50px'}}
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
     onClick={() => handleButtonClick('social')}
   >
-    See Social Posts
+    Manage Social Posts
   </button>
   <button
-    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '50px'}}
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
     onClick={() => handleButtonClick('tickets')}
   >
-    See Tickets
+    Manage Tickets
   </button>
 </div>
       {selectedTable === 'users' && (
         <div>
-          <input
-            type="text"
-            placeholder="Search by name or email"
-            value={searchTerm}
-            onChange={handleSearch}
-            style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
-          />
+          <Form>
+            <InputGroup>
+              <FormControl
+                onChange={(e) => setSearchUser(e.target.value)}
+                placeholder = 'Search User by name or email'
+              />
+            </InputGroup>
+          </Form>
+          <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Users</h1>
           <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
             <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
               <thead>
@@ -111,13 +144,15 @@ const Admin = () => {
                   <th style={{ width: '10%', padding: '8px' }}>ID</th>
                   <th style={{ width: '20%', padding: '8px' }}>Name</th>
                   <th style={{ width: '30%', padding: '8px' }}>Email</th>
-                  <th style={{ width: '20%', padding: '8px' }}>Role</th>
+                  <th style={{ width: '20%', padding: '8px' }}>Role</th>  
                   <th style={{ width: '10%', padding: '8px' }}>Banned</th>
                   <th style={{ width: '30%', padding: '8px' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filterUserData().map((user) => (
+                {mockData.users.filter((user) => {
+                    return searchUser.toLowerCase() == '' ? user : user.name.toLowerCase().includes(searchUser);
+                }).map((user) => (
                   <tr key={user.id}>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.id}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.name}</td>
@@ -125,20 +160,43 @@ const Admin = () => {
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.role}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.banned ? 'Yes' : 'No'}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
-                      {}
                       <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
                       onClick={() => window.location.href = "/profilePage/" + user.id}>See User</button>
                       <button 
-                      style={{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}>Set Role</button>
+                      style={{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
+                      onClick={() => openRolePanel(user.id)}
+                      >Set Role</button>
+                      <div style={{position: 'fixed',
+                                  top: '50%',
+                                  left: '50%',
+                                  transform: 'translate(-50%, -50%)',
+                                  backgroundColor: '#fff',
+                                  padding: '20px',
+                                  border: '1px solid #ccc',
+                                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                                  zIndex: 1000,
+                                  display: showRolePanel ? 'block' : 'none',}}>
+                        
+                        <label>Select Role:</label>
+          <select value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+            <option value="Admin">Admin</option>
+            <option value="Student">Student</option>
+            <option value="Instructor">Instructor</option>
+            <option value="Staff">Staff</option>
+          </select>
+                        <button onClick={handleRoleChange}>Yes</button>
+                        <button onClick={closeRolePanel}>No</button>
+                      </div>
                       <button 
                       style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>Ban Operations</button>
-                    </td>
+                      </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          
         </div>
       )}
 
@@ -148,10 +206,11 @@ const Admin = () => {
             type="text"
             placeholder="Search by name"
             value={searchTerm}
-            onChange={handleSearch}
+            //onChange={handleSearch}
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
-          />
-        <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+          />          
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Clubs</h1>
+        <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
           <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: 'black', color: 'white' }}>
@@ -168,14 +227,32 @@ const Admin = () => {
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
                     <button 
-                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}>See Club Page</button>
-                    <button 
-                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '100px', height: '30px'}}>Delete Club</button>
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={() => window.location.href = "/clubpage/" + club.id}>See Club Page</button>
+                    <button
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={openConfirmationPanel}>Delete Club</button>
+                      <div style={{position: 'fixed',
+                                  top: '50%',
+                                  left: '50%',
+                                  transform: 'translate(-50%, -50%)',
+                                  backgroundColor: '#fff',
+                                  padding: '20px',
+                                  border: '1px solid #ccc',
+                                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+                                  zIndex: 1000,
+                                  display: isConfirmationOpen ? 'block' : 'none',}}>
+                        <p>Select Role</p>
+                        <button onClick={handleConfirmation}>Save</button>
+                        <button onClick={closeConfirmationPanel}>Cancel</button>
+                        </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <button 
+            style={{backgroundColor: 'green', color: 'white', marginTop: '20px', marginRight: '10px' , width: '130px', height: '30px', margin: '0 auto', display: 'block'}}>Add Club</button>
         </div>
         </div>
       )}
@@ -186,9 +263,10 @@ const Admin = () => {
             type="text"
             placeholder="Search by name or description"
             value={searchTerm}
-            onChange={handleSearch}
+            //onChange={handleSearch}
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
           />
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Marketplace Posts</h1>
         <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
           <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
             <thead>
@@ -228,9 +306,10 @@ const Admin = () => {
             type="text"
             placeholder="Search by name or content"
             value={searchTerm}
-            onChange={handleSearch}
+            //onChange={handleSearch}
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
           />
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Social Posts</h1>
         <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
           <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
             <thead>
@@ -248,7 +327,7 @@ const Admin = () => {
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.name}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.content}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
-                    {}
+                    {}          
                     <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
                       onClick={() => window.location.href = "/social/" + post.id}>See Social Post</button>
@@ -269,9 +348,10 @@ const Admin = () => {
             type="text"
             placeholder="Search by owner or message"
             value={searchTerm}
-            onChange={handleSearch}
+            //onChange={handleSearch}
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
           />
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Tickets</h1>
         <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
           <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
             <thead>
