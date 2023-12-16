@@ -54,16 +54,16 @@ const SocialPostCard = ({
         }
       `}</style>
 
-      <div className="card bg-white" style={{ width: '400px',height:'450px' }}>
+      <div className="card mb-3 position-relative" >
         <div className="card-body">
           
           <div style={{ marginLeft: '10px', display: 'flex',justifyContent: 'space-between', flexDirection: 'row' }}>
-            <h5 className="card-title">{title}</h5>
+            <h5 className="card-title" style={{ marginTop: '8px',marginLeft:"-10px" }}>{title}</h5>
             
             {isEditButtonVisible && (
               <>
                 <Link href={`/feed/${id}`} passHref>
-                  <Button className="btn btn-primary "    > Edit My Post</Button>
+                  <Button className="btn btn-primary " style={{ marginTop: '0px' }}> Edit My Post</Button>
                 </Link>
               </>
             )}
@@ -84,32 +84,41 @@ const SocialPostCard = ({
             style={{
               width: "100%", // Ensure the image covers the container width
               objectFit: "cover", // Crop the image while maintaining aspect ratio
+              height: "100%",
               maxHeight: "100%", // Ensure the image covers the container height
             }}
           />
         </div>
       )}
+          
+          <div className= "card-body" style={{ paddingBottom: '0px' }} >
           <p className= "card-text">Content: {content}</p>
-          <div className= "card-body">
-            <p>
-              <i className="bi bi-heart-fill text-danger"></i> {" "}
+            <p style={{ marginTop: '-8px'}}>
+              <i className="bi bi-heart-fill text-danger" ></i> {" "}
               {likeCount} Likes
             </p>
-            <Link href={`/feed/${id}`} passHref>
+            <div className="row" style={{ marginTop: '-5px'}}>
+              <div className="col">
+              <Link href={`/feed/${id}`} passHref>
                 <Button
-                  className="btn btn-primary mr-2"
+                  className="btn btn-primary  "
                   variant="info"
-                  
+                  style={{ whiteSpace: 'nowrap' }}
                 >
                   <i className="bi bi-chat"></i> See Comments
                 </Button>
             </Link>
+              </div>
+              <div className="col">
               <Button className="btn btn-danger"
                 onClick={likeFunc}
+                
               >
                 <i className="bi bi-heart"></i> Like
               </Button>
-              
+              </div>
+            </div>
+            
           </div>
         </div>
 

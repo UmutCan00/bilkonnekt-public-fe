@@ -81,7 +81,7 @@ export default function Home() {
       <div className="container-fluid home">
 
         
-        <header className="text-center">
+        <header  className=" card text-center mx-auto titleColor" style={{ maxWidth:"500px" }}>
           <h1>Welcome to Bilkonnekt </h1>
           <p>Your access to all things Bilkent.</p>
         </header>
@@ -90,13 +90,13 @@ export default function Home() {
 
         <div class="row">
             <div class="col">
-            <div className="container-fluid card bg-custom1 m-2">
+            <div className="container-fluid card bg-custom1 ">
               <div>
-                
+
               </div>
               
               <Link href="/marketplace">
-                <button className="btn btn-primary"> Go to Marketplace </button>
+                <button className="btn btn-primary m-2"> Go to Marketplace </button>
               </Link>
               
 
@@ -120,13 +120,13 @@ export default function Home() {
           </div>
             </div>
             <div class="col">
-            <div className="container-fluid card bg-custom1 m-2">
-            <div className="intro-card d-flex flex-column justify-content-center align-items-center">
+            <div className="container-fluid card bg-custom1 ">
+           
               
               <Link href="/social">
-                <button className="btn btn-primary"> Go to Bilkent Social</button>
+                <button className="btn btn-primary m-2"> Go to Bilkent Social</button>
               </Link>
-            </div>
+            
 
             {/* Social post container */}
             <div className="list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }} >
@@ -148,7 +148,7 @@ export default function Home() {
 
           </div>
             </div>
-            <div class="card bg-info d-flex flex-row justify-content-center align-items-center" style={{ marginLeft:"10px" }}>
+            <div class="card bg-info d-flex flex-row justify-content-center align-items-center m-2" style={{ marginLeft:"10px" }}>
             <div class="col">
             
               
@@ -225,6 +225,9 @@ export default function Home() {
           footer {
             text-align: center;
             margin-top: 20px;
+          }
+          .titleColor{
+            background-color: #add8e6;
           }
         `}</style>
       </div>
