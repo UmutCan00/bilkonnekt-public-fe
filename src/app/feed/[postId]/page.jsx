@@ -12,6 +12,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 const SocialPostCard = ({
+  id,
   sharer,
   nameOfSharer,
   title,
@@ -30,7 +31,7 @@ const SocialPostCard = ({
   setIsAnonymous,
 }) => {
 
-  
+  const router = useRouter();
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
 
@@ -106,7 +107,26 @@ const SocialPostCard = ({
               <div >
               <Button className="btn btn-primary" onClick={ openModal}>Edit</Button>
               <Button className="btn btn-danger m-2"
-                      onClick={() => console.log('Delete button clicked')}> <i className="bi bi-x"></i> </Button>
+                      onClick={() => {
+                        console.log('postId: ', id)
+                        try {
+                          fetch("http://localhost:3500/api/social/deletePost", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({
+                              postId: id,
+                            }),
+                          });
+                        } catch (error) {
+                          console.log("like operation error: ", error)
+                        }
+                        router.push("/social"); 
+                        
+                      }  
+                    }> <i className="bi bi-x"></i> </Button>
               </div>
             </>
           )}
@@ -125,6 +145,7 @@ const SocialPostCard = ({
                     onChange={(e) => setNewPostTitle(e.target.value)}
                   />
                 </Form.Group>
+                
 
                 <Form.Group controlId="description">
                   <Form.Label>Content</Form.Label>
@@ -139,8 +160,27 @@ const SocialPostCard = ({
               </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" >
-                Save
+              <Button variant="primary" onClick={() => {
+                  try {
+                    fetch("http://localhost:3500/api/social/updatePost", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({
+                      postId: id,
+                      header:newPostTitle,
+                      description:newPostContent
+                    }),
+                  });
+                  } catch (error) {
+                    console.log("like operation error: ", error)
+                  }
+                  console.log(`newPostTitle: ${newPostTitle}, newPostContent: ${newPostContent}, id: ${id}`)
+                  window.location.reload();
+                }}>
+                Save 
               </Button>
             </Modal.Footer>
           </Modal>

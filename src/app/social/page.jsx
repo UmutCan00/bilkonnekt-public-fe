@@ -200,33 +200,15 @@ export default function Home() {
         <div className="row">
           {/* Sidebar for type filtering */}
           <div className="col-md-3">
-            <div className="sidebar">
-              <div>
-                <h3>Filter by Type</h3>
-                <ul>
-                  <li>
-                    <button onClick={() => setSelectedType("")}>All</button>
-                  </li>
-                  <li>
-                    <button onClick={() => setSelectedType("feed")}>
-                      Feed
-                    </button>
-                  </li>
-                  <li>
-                    <button onClick={() => setSelectedType("clubPage")}>
-                      Club Page
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            
             <button
               className="btn btn-success"
               onClick={openModal}
               style={{
                 maxWidth: "100px",
                 maxHeight: "70px",
-                marginTop: "20px",
+                marginTop: "220px",
+                marginLeft: "20px",
               }}
             >
               Share
