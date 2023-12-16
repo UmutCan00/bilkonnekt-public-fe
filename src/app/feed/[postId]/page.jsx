@@ -12,6 +12,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 const SocialPostCard = ({
+  id,
   sharer,
   nameOfSharer,
   title,
@@ -106,7 +107,7 @@ const SocialPostCard = ({
               <div >
               <Button className="btn btn-primary" onClick={ openModal}>Edit</Button>
               <Button className="btn btn-danger m-2"
-                      onClick={() => console.log('Delete button clicked')}> <i className="bi bi-x"></i> </Button>
+                      onClick={() => console.log('postId: ', id)}> <i className="bi bi-x"></i> </Button>
               </div>
             </>
           )}
@@ -125,6 +126,7 @@ const SocialPostCard = ({
                     onChange={(e) => setNewPostTitle(e.target.value)}
                   />
                 </Form.Group>
+                
 
                 <Form.Group controlId="description">
                   <Form.Label>Content</Form.Label>
@@ -139,8 +141,8 @@ const SocialPostCard = ({
               </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" >
-                Save
+              <Button variant="primary" onClick={() => console.log(`newPostTitle: ${newPostTitle}, newPostContent: ${newPostContent}, id: ${id}`)}>
+                Save 
               </Button>
             </Modal.Footer>
           </Modal>
