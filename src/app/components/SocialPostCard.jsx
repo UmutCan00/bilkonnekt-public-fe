@@ -25,7 +25,7 @@ const SocialPostCard = ({
   const currentuserid = session?.user?._id;
   const isEditButtonVisible = currentuserid == sharer;
   const [isLiked, setIsLiked] = useState(
-    userLikedPosts ? userLikedPosts.includes(id) : false
+    userLikedPosts ? userLikedPosts?.includes(id) : false
   );
   const initiallyliked = userLikedPosts ? userLikedPosts.includes(id) : false;
 
@@ -60,7 +60,7 @@ const SocialPostCard = ({
     }
   };
   useEffect(() => {
-    if (userLikedPosts.includes(id)) {
+    if (userLikedPosts?.includes(id)) {
       setIsLiked(true);
     }
   }, [userLikedPosts, id]);
