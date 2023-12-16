@@ -189,11 +189,11 @@ export default function Home() {
           }
           
           .bg-custom1 {
-            background-color: #8F3DE4;
+            background-color: #0B1356;
             ; 
           }
           .bg-custom2 {
-            background-color: #8F3DE4; 
+            background-color: #0B1356; 
           }
 
           .intro-card {
@@ -231,7 +231,7 @@ export default function Home() {
             margin-top: 20px;
           }
           .titleColor{
-            background-color: #3E007F;
+            background-color: #0B1356;
           }
         `}</style>
       </div>
