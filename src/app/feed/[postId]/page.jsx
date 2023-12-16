@@ -29,6 +29,7 @@ const SocialPostCard = ({
   showAddCommentModal,
   isAnonymous,
   setIsAnonymous,
+  userLikedPosts,
 }) => {
 
   const router = useRouter();
@@ -59,15 +60,23 @@ const SocialPostCard = ({
   // Define a state variable to control the modal visibility
   const [showEditCommentModal, setShowEditCommentModal] = useState(false);
 
-  // Function to handle the modal open
-  const openEditCommentModal = () => {
-    setShowEditCommentModal(true);
-  };
+  // const [_currentCommentId, setCurrentCommentId] = useState(null);
+  
+  // // Function to handle the modal open
+  // const openEditCommentModal = (_paramId) => {
+  //   setCurrentCommentId(_paramId);
+  //   setShowEditCommentModal(true);
+  // };
 
-  // Function to handle the modal close
-  const closeEditCommentModal = () => {
-    setShowEditCommentModal(false);
-  };
+  // // Function to handle the modal close
+  // const closeEditCommentModal = () => {
+  //   setCurrentCommentId(null);
+  //   setShowEditCommentModal(false);
+  // };
+
+  // const handleEditCommentButton = (_paramId) =>{
+  //   openEditCommentModal(_paramId);
+  // }
 
   const [newEditedComment, changeComment] = useState("");
 
@@ -93,6 +102,16 @@ const SocialPostCard = ({
 
   const [isEditHovered, setIsEditHovered] = useState(false);
   const [isDeleteHovered, setIsDeleteHovered] = useState(false);
+
+  const [isLiked, setIsLiked] = useState(
+    userLikedPosts ? userLikedPosts?.includes(id) : false
+  );
+  const initiallyliked = userLikedPosts ? userLikedPosts.includes(id) : false;
+  useEffect(() => {
+    if (userLikedPosts?.includes(id)) {
+      setIsLiked(true);
+    }
+  }, [userLikedPosts, id]);
 
   return (
   <>
@@ -201,7 +220,13 @@ const SocialPostCard = ({
         <div className="card-body">
           <p>
             <i className="bi bi-heart-fill text-danger"></i> {" "}
-            {likeCount} Likes
+            {initiallyliked
+                ? isLiked
+                  ? likeCount
+                  : likeCount - 1
+                : isLiked
+                ? likeCount + 1
+                : likeCount}{" "} Likes
           </p>
           <div style={{ display: 'flex', flexDirection: 'row' }}>  
             <Button
@@ -214,7 +239,11 @@ const SocialPostCard = ({
             <Button className="btn btn-danger"
               onClick={likeFunc}
             >
-              <i className="bi bi-heart"></i> Like
+              {isLiked ? (
+                <i className="bi bi-heart-fill"></i>
+              ) : (
+                <i className="bi bi-heart"></i>
+              )} Like
             </Button>
           </div>
           <div
@@ -223,7 +252,7 @@ const SocialPostCard = ({
           >
             <h6 style={{marginTop: '10px', }}>Comments</h6>
             {comments.map((comment) => (
-              <div key={comment.id} 
+              <div key={comment._id} 
                   style={{ display: 'flex', flexDirection: 'column' }}>  
                 <p>
                   <strong>{comment.commenterName}:</strong> {comment.description} 
@@ -233,17 +262,76 @@ const SocialPostCard = ({
                       <span
                         style={{ cursor: 'pointer', transition: 'color 0.3s', color: isEditHovered ? 'black' : 'gray', marginRight: '10px'}}
                         onMouseEnter={() => setIsEditHovered(true)}
-                        onMouseLeave={() => setIsEditHovered(false)}
-                        onClick={openEditCommentModal}
+                        onMouseLeave={() => setIsEditHovered(false)} 
+                        onClick={() =>{ 
+                          setShowEditCommentModal(true);
+                        }}
                       >
                         Edit Comment
                       </span>
+                      <Modal show={showEditCommentModal} onHide={() => setShowEditCommentModal(false)}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Edit Comment</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <Form>
+                            <Form.Group controlId="title">
+                              <Form.Label>Comment</Form.Label>
+                              <Form.Control
+                                type="text"
+                                placeholder="Enter new comment"
+                                value={newEditedComment}
+                                onChange={(e) => changeComment(e.target.value)}
+                              />
+                            </Form.Group>
+                          </Form>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="primary" onClick={() => {
+                            try {
+                              fetch("http://localhost:3500/api/social/updateComment", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`,
+                              },
+                              body: JSON.stringify({
+                                commentId: comment._id,
+                                description:newEditedComment,
+                              }),
+                            });
+                            } catch (error) {
+                              console.log("like operation error: ", error)
+                            }
+                            window.location.reload();
+                          }}>
+                            Save
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
                       {' '}
                       <span
                         style={{ cursor: 'pointer', transition: 'color 0.3s', color: isDeleteHovered ? 'black' : 'gray',  }}
                         onMouseEnter={() => setIsDeleteHovered(true)}
                         onMouseLeave={() => setIsDeleteHovered(false)}
-                        // onClick={handleDeleteComment}
+                        onClick={ () => {
+                          try {
+                            fetch("http://localhost:3500/api/social/deleteComment", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`,
+                              },
+                              body: JSON.stringify({
+                                commentId: comment._id,
+                              }),
+                            });
+                          } catch (error) {
+                            console.log("like operation error: ", error)
+                          }
+                          router.push("/social"); 
+                          window.location.reload();
+                        }}
                       >
                         Delete Comment
                       </span>
@@ -251,29 +339,7 @@ const SocialPostCard = ({
                   )}
                   
                 </p>
-                <Modal show={showEditCommentModal} onHide={closeEditCommentModal}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>Edit Comment</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form>
-                      <Form.Group controlId="title">
-                        <Form.Label>Comment</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter new comment"
-                          value={newEditedComment}
-                          onChange={(e) => changeComment(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Form>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="primary" >
-                      Save
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
+                
               </div>
             ))}
           </div>
@@ -468,7 +534,36 @@ const Home = ({ params }) => {
     router.push("/social"); 
   };
 
+  const [userLikedIdsArray, setUserLikedIdsArray] = useState([]);
+  const fetchLikedPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getLikedPostsOfUser",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data22", data);
+        setUserLikedIdsArray(data.map((item) => item.postId));
+        console.log("userLikedIdsArray", userLikedIdsArray);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLikedPosts();
+  }, [token]);
 
   return (
     <div>
@@ -505,6 +600,7 @@ const Home = ({ params }) => {
                         type={null}
                         content={post.content}
                         likeCount={post.likeCount}
+                        userLikedPosts={userLikedIdsArray}
 
                         comments={comments}
                         handleAddCommentModalOpen={handleAddCommentModalOpen}
