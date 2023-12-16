@@ -45,12 +45,7 @@ const SocialPostCard = ({
     window.location.reload();
     
   }
-  // Dummy comments data (replace with actual comments data)
-  const comments = [
-    { id: 1, text: 'Great post!', user: 'User1' },
-    { id: 2, text: 'Interesting thoughts.', user: 'User2' },
-    // Add more comments as needed
-  ];
+
 
   
 
@@ -100,20 +95,24 @@ const SocialPostCard = ({
       )}
           <p className= "card-text">Content: {content}</p>
           <div className= "card-body">
-          <Link href={`/feed/${id}`} passHref>
-              <Button
-                className="btn btn-primary mr-2"
-                variant="info"
+            <p>
+              <i className="bi bi-heart-fill text-danger"></i> {" "}
+              {likeCount} Likes
+            </p>
+            <Link href={`/feed/${id}`} passHref>
+                <Button
+                  className="btn btn-primary mr-2"
+                  variant="info"
+                >
+                  <i className="bi bi-chat"></i> See Comments
+                </Button>
+            </Link>
+              <Button className="btn btn-danger"
+                onClick={likeFunc}
               >
-                <i className="bi bi-chat"></i> See Comments
+                <i className="bi bi-heart"></i> Like
               </Button>
-          </Link>
-            <Button className="btn btn-primary"
-              onClick={likeFunc}
-            >
-              <i className="bi bi-heart"></i> Like
-            </Button>
-            <div style={{ display: "inline-block" }}><h3>{likeCount}</h3></div>
+              
           </div>
         </div>
 

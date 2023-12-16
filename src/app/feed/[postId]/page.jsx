@@ -13,12 +13,13 @@ import Form from "react-bootstrap/Form";
 
 const SocialPostCard = ({
   sharer,
-  sharerName,
+  nameOfSharer,
   title,
   type,
   content,
   imageURL,
   comments,
+  likeCount,
   handleAddCommentModalOpen,
   handleAddCommentModalClose,
   handleAddComment,
@@ -89,19 +90,24 @@ const SocialPostCard = ({
   }
 
 
+  const [isEditHovered, setIsEditHovered] = useState(false);
+  const [isDeleteHovered, setIsDeleteHovered] = useState(false);
+
   return (
   <>
-    <div className="card bg-white" style={{ width: "400px" }}>
+    <div className="card bg-white" style={{ width: "500px" }}>
       <div className="card-body">
       <div style={{ display: 'flex' }}>
-        <h5 className="card-title">{title}</h5>
-        <div style={{ marginLeft: '230px', display: 'flex', flexDirection: 'row' }}>
+        <h5 className="card-title" style={{ marginTop: '10px' }}>{title}</h5>
+        <div style={{ display: 'flex', flexDirection: 'row',justifyContent: 'space-between', marginLeft: '270px' }}>
           
           {isEditButtonVisible && (
             <>
+              <div >
               <Button className="btn btn-primary" onClick={ openModal}>Edit</Button>
               <Button className="btn btn-danger m-2"
                       onClick={() => console.log('Delete button clicked')}> <i className="bi bi-x"></i> </Button>
+              </div>
             </>
           )}
           <Modal show={showModal} onHide={closeModal}>
@@ -114,7 +120,7 @@ const SocialPostCard = ({
                   <Form.Label>Header</Form.Label>
                   <Form.Control
                     type="text"
-                    defaultValue={title}
+                    placeholder="Enter new title"
                     value={newPostTitle}
                     onChange={(e) => setNewPostTitle(e.target.value)}
                   />
@@ -124,7 +130,7 @@ const SocialPostCard = ({
                   <Form.Label>Content</Form.Label>
                   <Form.Control
                     as="textarea"
-                    defaultValue={content}
+                    placeholder="Enter new content"
                     value={newPostContent}
                     onChange={(e) => setNewPostContent(e.target.value)}
                   />
@@ -151,8 +157,12 @@ const SocialPostCard = ({
             maxHeight: "100%",
           }}
         />
-        <p className="card-text">Content: {content}</p>
+        <p className="card-text" style={{marginTop: '10px'}}>Content: {content}</p>
         <div className="card-body">
+          <p>
+            <i className="bi bi-heart-fill text-danger"></i> {" "}
+            {likeCount} Likes
+          </p>
           <div style={{ display: 'flex', flexDirection: 'row' }}>  
             <Button
               className="btn btn-primary mr-2"
@@ -161,7 +171,7 @@ const SocialPostCard = ({
             >
               <i className="bi bi-chat-dots"></i> Add Comment
             </Button>
-            <Button className="btn btn-primary"
+            <Button className="btn btn-danger"
               onClick={likeFunc}
             >
               <i className="bi bi-heart"></i> Like
@@ -171,29 +181,33 @@ const SocialPostCard = ({
             className="comments-section"
             style={{ backgroundColor: "white" }}
           >
-            <h6>Comments</h6>
+            <h6 style={{marginTop: '10px', }}>Comments</h6>
             {comments.map((comment) => (
               <div key={comment.id} 
-                  style={{ display: 'flex', flexDirection: 'row' }}>  
+                  style={{ display: 'flex', flexDirection: 'column' }}>  
                 <p>
                   <strong>{comment.commenterName}:</strong> {comment.description} 
                   {' '}
                   {currentuserid ==comment.commenterId && (
-                    <>
+                    <div>
                       <span
-                        style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+                        style={{ cursor: 'pointer', transition: 'color 0.3s', color: isEditHovered ? 'black' : 'gray', marginRight: '10px'}}
+                        onMouseEnter={() => setIsEditHovered(true)}
+                        onMouseLeave={() => setIsEditHovered(false)}
                         onClick={openEditCommentModal}
                       >
                         Edit Comment
                       </span>
                       {' '}
                       <span
-                        style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+                        style={{ cursor: 'pointer', transition: 'color 0.3s', color: isDeleteHovered ? 'black' : 'gray',  }}
+                        onMouseEnter={() => setIsDeleteHovered(true)}
+                        onMouseLeave={() => setIsDeleteHovered(false)}
                         // onClick={handleDeleteComment}
                       >
                         Delete Comment
                       </span>
-                    </>
+                    </div>
                   )}
                   
                 </p>
@@ -207,7 +221,7 @@ const SocialPostCard = ({
                         <Form.Label>Comment</Form.Label>
                         <Form.Control
                           type="text"
-                          defaultValue={comment.description}
+                          placeholder="Enter new comment"
                           value={newEditedComment}
                           onChange={(e) => changeComment(e.target.value)}
                         />
@@ -456,10 +470,11 @@ const Home = ({ params }) => {
                         imageURL={post.imageURL}
                         id={post._id}
                         sharer={post.publisherId}
-                        sharerName={post.publisherName}
+                        nameOfSharer={post.publisherName}
                         title={post.title}
                         type={null}
                         content={post.content}
+                        likeCount={post.likeCount}
 
                         comments={comments}
                         handleAddCommentModalOpen={handleAddCommentModalOpen}
