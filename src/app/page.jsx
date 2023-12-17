@@ -19,6 +19,7 @@ export default function Home() {
   const [searchInput, setSearchInput] = useState("");
   const [posts, setPosts] = useState([]);
   const [products, setProducts] = useState([]);
+  const [userLikedIdsArray, setUserLikedIdsArray] = useState([]);
   const fetchPosts = async () => {
     try {
       const response = await fetch(
@@ -35,7 +36,7 @@ export default function Home() {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
-        setPosts([data[0], data[1], data[2],data[3]]);
+        setPosts([data[0], data[1], data[2], data[3]]);
       } else {
         console.error("Failed to fetch data");
       }
@@ -46,6 +47,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchPosts();
+    fetchLikedPosts();
   }, [token]);
   console.log("pro", products);
   useEffect(() => {
@@ -75,105 +77,146 @@ export default function Home() {
     getProducts();
   }, [token]); // Fetch data only when token changes
 
+  const fetchLikedPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getLikedPostsOfUser",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data22", data);
+        setUserLikedIdsArray(data.map((item) => item.postId));
+        console.log("userLikedIdsArray", userLikedIdsArray);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   return (
     <div>
       <Navbar />
       <div className="container-fluid home">
-
-        
-        <header  className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px" }}>
+        <header
+          className=" card text-center mx-auto titleColor m-2 text-white"
+          style={{ maxWidth: "500px" }}
+        >
           <h1>Welcome to Bilkonnekt </h1>
           <p>Your access to all things Bilkent.</p>
         </header>
 
         <main>
-
-        <div class="row">
+          <div class="row">
             <div class="col">
-            <div className="container-fluid card bg-custom1 ">
-              <div>
+              <div className="container-fluid card bg-custom1 ">
+                <div></div>
 
+                <Link href="/marketplace">
+                  <button className="btn btn-primary m-2">
+                    {" "}
+                    Go to Marketplace{" "}
+                  </button>
+                </Link>
+
+                <div
+                  className="list"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                    gap: "20px",
+                  }}
+                >
+                  {products.map((product, index) => (
+                    <div key={index} className="product-card">
+                      <SaleProductCard
+                        seller={product.sellerid}
+                        sellerName={product.sellerName}
+                        productid={product._id}
+                        title={product.title}
+                        price={product.price}
+                        location={product.address}
+                        type={product.type}
+                        description={product.description}
+                        imageURL={product.imageURL}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-              
-              <Link href="/marketplace">
-                <button className="btn btn-primary m-2"> Go to Marketplace </button>
-              </Link>
-              
+            </div>
+            <div class="col">
+              <div className="container-fluid card bg-custom1 ">
+                <Link href="/social">
+                  <button className="btn btn-primary m-2">
+                    {" "}
+                    Go to Bilkent Social
+                  </button>
+                </Link>
 
-            <div className="list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }} >
-  {products.map((product, index) => (
-    <div key={index} className="product-card">
-      <SaleProductCard
-        seller={product.sellerid}
-        sellerName={product.sellerName}
-        productid={product._id}
-        title={product.title}
-        price={product.price}
-        location={product.address}
-        type={product.type}
-        description={product.description}
-        imageURL={product.imageURL}
-      />
-    </div>
-  ))}
-</div>
+                {/* Social post container */}
+                <div
+                  className="list"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                    gap: "20px",
+                  }}
+                >
+                  {posts.map((post, index) => (
+                    <Link key={index} href={`/feed/${post._id}`} passHref>
+                      <div className="socialpost-card">
+                        <SocialPostCard
+                          id={post._id}
+                          sharer={post.publisherId}
+                          sharerName={post.publisherName}
+                          title={post.title}
+                          type={null}
+                          content={post.content}
+                          imageURL={post.imageURL}
+                          likeCount={post.likeCount}
+                          userLikedPosts={userLikedIdsArray}
+                        />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div
+              class="card bg-custom2 d-flex flex-row justify-content-center align-items-center m-2"
+              style={{ marginLeft: "10px" }}
+            >
+              <div class="col">
+                <Link href="/academic">
+                  <button className="btn btn-light">
+                    Go to Bilkent Academic
+                  </button>
+                </Link>
+              </div>
+              <div class="col">
+                <Link href="/lostfound">
+                  <button className="btn btn-light">Go to Lost & Found</button>
+                </Link>
+              </div>
+              <div class="col">
+                <Link href="/todayinbilkent">
+                  <button className="btn btn-light">
+                    Go to Today in Bilkent
+                  </button>
+                </Link>
+              </div>
+            </div>
           </div>
-            </div>
-            <div class="col">
-            <div className="container-fluid card bg-custom1 ">
-           
-              
-              <Link href="/social">
-                <button className="btn btn-primary m-2"> Go to Bilkent Social</button>
-              </Link>
-            
-
-            {/* Social post container */}
-            <div className="list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }} >
-            {posts.map((post, index) => (
-            <Link key={index} href={`/feed/${post._id}`} passHref>
-            <div className="socialpost-card" >
-            <SocialPostCard
-            id={post._id}
-            sharer={post.publisherId}
-            title={post.title}
-            type={null}
-            content={post.content}
-            imageURL={post.imageURL}
-            />
-            </div>
-            </Link>
-            ))}
-            </div>
-
-          </div>
-            </div>
-            <div class="card bg-custom2 d-flex flex-row justify-content-center align-items-center m-2" style={{ marginLeft:"10px" }}>
-            <div class="col">
-            
-              
-              <Link href="/academic">
-                <button className="btn btn-light">Go to Bilkent Academic</button>
-              </Link>
-            
-            </div>
-            <div class="col">
-            
-              <Link href="/lostfound">
-                <button className="btn btn-light">Go to Lost & Found</button>
-              </Link>
-            
-            </div>
-            <div class="col">
-            
-              <Link href="/todayinbilkent">
-                <button className="btn btn-light">Go to Today in Bilkent</button>
-              </Link>
-            
-            </div>
-            </div>
-            </div>
-          
         </main>
 
         <footer>
