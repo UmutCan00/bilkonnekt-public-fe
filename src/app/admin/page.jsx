@@ -1,368 +1,773 @@
 "use client";
-import { useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from '../components/Navbar';
+import { Form, FormControl, InputGroup } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
-// Mock user data
-const mockUsers = [
-{ id: 1, username: 'john_doe', email: 'john.doe@example.com', role: 'Student', isBanned: false },
-{ id: 2, username: 'jane_smith', email: 'jane.smith@example.com', role: 'Instructor', isBanned: true },
-{ id: 3, username: 'alex_jackson', email: 'alex.jackson@example.com', role: 'Staff', isBanned: false },
-{ id: 4, username: 'emily_williams', email: 'emily.williams@example.com', role: 'Club Executive', isBanned: true },
-{ id: 5, username: 'david_miller', email: 'david.miller@example.com', role: 'Admin', isBanned: false },
-{ id: 6, username: 'serhan_turan', email: 'serhan.turan@example.com', role: 'Student', isBanned: false },
-{ id: 7, username: 'umut_can_bolat', email: 'jane.smith@example.com', role: 'Instructor', isBanned: true },
-{ id: 8, username: 'alex_jackson', email: 'alex.jackson@example.com', role: 'Staff', isBanned: false },
-{ id: 9, username: 'emily_williams', email: 'emily.williams@example.com', role: 'Club Executive', isBanned: true },
-{ id: 10, username: 'david_miller', email: 'david.miller@example.com', role: 'Admin', isBanned: false },
-{ id: 11, username: 'lightning_mcqueen', email: 'lightning.mcqueen@example.com', role: 'Admin', isBanned: false },
-];
-
-// Mock marketplace posts
-const mockMarketplacePosts = [
-{ id: 1, name: 'Basys 3', description: '200 TL' },
-{ id: 2, name: 'CS 223 book', description: 'n11den aldim' },
-{ id: 3, name: 'Macbook air', description: 'Orijinal apple' },
-{ id: 10, name: 'Post 1', description: 'Description for Post 1' },
-{ id: 2, name: 'Post 2', description: 'Description for Post 2' },
-{ id: 3, name: 'Post 3', description: 'Description for Post 3' },
-{ id: 1, name: 'Post 1', description: 'Description for Post 1' },
-{ id: 2, name: 'Post 2', description: 'Description for Post 2' },
-{ id: 3, name: 'Post 3', description: 'Description for Post 3' },
-{ id: 1, name: 'Post 1', description: 'Description for Post 1' },
-{ id: 2, name: 'Post 2', description: 'Description for Post 2' },
-{ id: 3, name: 'Post 3', description: 'Description for Post 3' },
-{ id: 1, name: 'Post 1', description: 'Description for Post 1' },
-{ id: 2, name: 'Post 2', description: 'Description for Post 2' },
-{ id: 3, name: 'Post 3', description: 'Description for Post 3' },
-];
-
-const RoleDropdown = ({ onSelect, initialValue }) => {
-const roles = ['Student', 'Instructor', 'Staff', 'Club Executive', 'Admin'];
-
-return (
-    <select value={initialValue} onChange={(e) => onSelect(e.target.value)}>
-    {roles.map((role) => (
-        <option key={role} value={role}>
-        {role}
-        </option>
-    ))}
-    </select>
-);
-};
-
+//change
 const Admin = () => {
-const [users, setUsers] = useState(mockUsers);
-const [selectedUserId, setSelectedUserId] = useState(null);
-const [showBanConfirmation, setShowBanConfirmation] = useState(false);
-const [selectedRole, setSelectedRole] = useState('Student');
-const [searchTerm, setSearchTerm] = useState('');
-const [marketplaceSearchTerm, setMarketplaceSearchTerm] = useState('');
+  //Table Selection
+  const [selectedTable, setSelectedTable] = useState("users");
+  //Search Items
+  const [searchUser, setSearchUser] = useState('');
+  const [searchClub, setSearchClub] = useState('');
+  const [searchMarketplacePost, setSearchMarketplacePost] = useState('');
+  const [searchSocialPost, setSearchSocialPost] = useState('');
+  const [searchTicket, setSearchTicket] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  //Panels
+  const [showRolePanel, setShowRolePanel] = useState(false);
+  const [showBanPanel, setShowBanPanel] = useState(false);
+  const [showDeleteClubPanel, setShowDeleteClubPanel] = useState(false);
+  const [showAddClubPanel, setShowAddClubPanel] = useState(false);
+  const [showDeleteMarketplacePostPanel, setShowDeleteMarketplacePostPanel] = useState(false);
+  const [showDeleteSocialPostPanel, setShowDeleteSocialPostPanel] = useState(false);
+  //Selected x
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedClubId, setSelectedClubId] = useState(null);
+  const [selectedClubName, setSelectedClubName] = useState(null);
+  const [selectedClubDescription, setSelectedClubDescription] = useState(null);
+  const [selectedClubExecutiveID, setSelectedClubExecutiveID] = useState(null);
+  const [selectedMarketplacePostId, setSelectedMarketplacePostId] = useState(null);
+  const [selectedSocialPostId, setSelectedSocialPostId] = useState(null);
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
 
-const openRoleSelection = (userId) => {
-    setSelectedUserId(userId);
-};
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
+  const [users, setUsers] = useState([]);
+  const [clubs, setClubs] = useState([]);
+  const [marketplace, setMarketplace] = useState([]);
+  const [social, setSocial] = useState([]);
+  const [tickets, setTickets] = useState([]);
 
-const closeRoleSelection = () => {
+  const handleButtonClick = (tableName) => {
+    setSelectedTable(tableName);
+  };
+  
+  const openRolePanel = (userID) => {
+    setSelectedUserId(userID);
+    setShowRolePanel(true);
+  };
+
+  const closeRolePanel = () => {
     setSelectedUserId(null);
-};
+    setShowRolePanel(false);
+  };
 
-const handleRoleChange = () => {
-    if (selectedUserId && selectedRole) {
-    setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-        user.id === selectedUserId ? { ...user, role: selectedRole } : user
-        )
-    );
-    closeRoleSelection();
+  const handleRoleChange = () => {
+    console.log("selectedUserId: ", selectedUserId)
+    console.log("selectedRole: ", selectedRole)
+    try {
+      fetch("http://localhost:3500/api/auth/updateRole", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            role: selectedRole,
+            studentId: selectedUserId
+          }),
+        });
+    } catch (error) {
+      console.log("set role basarisiz")
     }
-};
+    closeRolePanel();
+    window.location.reload();
+  };
 
-const handleBanToggle = (userId) => {
-    setUsers((prevUsers) =>
-    prevUsers.map((user) =>
-        user.id === userId ? { ...user, isBanned: !user.isBanned } : user
-    )
-    );
-};
+  const openBanPanel = (userID) => {
+    setSelectedUserId(userID);
+    setShowBanPanel(true);
+  };
 
-const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
+  const closeBanPanel = () => {
+    setSelectedUserId(null);
+    setShowBanPanel(false);
+  };
 
-    if (!term) {
-    // If the search term is empty, reset to the original user list
-    setUsers(mockUsers);
-    return;
+  const handleBan = () => {
+    console.log("selectedUserId: ",selectedUserId)
+    try {
+      fetch("http://localhost:3500/api/auth/banStasusChange", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            studentId: selectedUserId
+          }),
+        });
+    } catch (error) {
+      console.log("set role basarisiz")
     }
+    closeBanPanel();
+    window.location.reload();
+  };
 
-    // Filter users based on name or email containing the search term
-    const filteredUsers = mockUsers.filter(
-    (user) =>
-        user.username.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term)
-    );
+  const openDeleteClubPanel = (clubID) => {
+    setSelectedClubId(clubID);
+    setShowDeleteClubPanel(true);
+  };
+  
+  const closeDeleteClubPanel = () => {
+    setSelectedClubId(null);
+    setShowDeleteClubPanel(false);
+  };
+  
+  const handleDeleteClub = () => {
+    console.log(selectedClubId);
+    closeDeleteClubPanel();
+  };
 
-    setUsers(filteredUsers);
-};
-
-const handleMarketplaceSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setMarketplaceSearchTerm(term);
-
-    if (!term) {
-    // If the search term is empty, reset to the original marketplace post list
-    return;
+  const openAddClubPanel = () => {
+    setShowAddClubPanel(true);
+  };
+  
+  const closeAddClubPanel = () => {
+    setSelectedClubName(null)
+    setSelectedClubDescription(null)
+    setSelectedClubExecutiveID(null)
+    setShowAddClubPanel(false);
+  };
+  
+  const handleAddClub = () => {
+    if (!selectedClubName || !selectedClubDescription || !selectedClubExecutiveID)
+    {
+      
     }
+    else 
+    {
+      console.log(selectedClubName)
+      console.log(selectedClubDescription)
+      console.log(selectedClubExecutiveID)
+      closeAddClubPanel();
+    }
+  };
 
-    // Filter marketplace posts based on name or description containing the search term
-    const filteredMarketplacePosts = mockMarketplacePosts.filter(
-    (post) =>
-        post.name.toLowerCase().includes(term) ||
-        post.description.toLowerCase().includes(term)
-    );
+  const openDeleteMarketplacePostPanel = (marketplacePostID) => {
+    setSelectedMarketplacePostId(marketplacePostID);
+    setShowDeleteMarketplacePostPanel(true);
+  };
+  
+  const closeDeleteMarketplacePostPanel = () => {
+    setSelectedMarketplacePostId(null);
+    setShowDeleteMarketplacePostPanel(false);
+  };
+  
+  const handleDeleteMarketplacePost = () => {
+    console.log(selectedMarketplacePostId);
+    try {
+      fetch("http://localhost:3500/api/product/deleteProduct", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: selectedMarketplacePostId
+          }),
+        });
+    } catch (error) {
+      console.log("delete prod basarisiz")
+    }
+    closeDeleteMarketplacePostPanel();
+    //window.location.reload();
+  };
 
-    // Update the marketplace post list with the filtered results
-    setMarketplacePosts(filteredMarketplacePosts);
-};
+  const openDeleteSocialPostPanel = (socialPostID) => {
+    setSelectedSocialPostId(socialPostID);
+    setShowDeleteSocialPostPanel(true);
+  };
+  
+  const closeDeleteSocialPostPanel = () => {
+    setSelectedSocialPostId(null);
+    setShowDeleteSocialPostPanel(false);
+  };
+  
+  const handleDeleteSocialPost = () => {
+    console.log(selectedSocialPostId);
+    try {
+      fetch("http://localhost:3500/api/social/deletePost", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            postId: selectedSocialPostId
+          }),
+        });
+    } catch (error) {
+      console.log("delete prod basarisiz")
+    }
+    closeDeleteSocialPostPanel();
+    window.location.reload();
+  };
 
-const handleDeletePost = (postId) => {
-    // Remove the post with the specified ID from the marketplace post list
-    setMarketplacePosts((prevPosts) =>
-    prevPosts.filter((post) => post.id !== postId)
-    );
-};
+  const handleTicket = (ticketID) => {
+    console.log(ticketID)
+  };
 
-return (
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/auth/getUsers",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setUsers(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  const fetchClubs = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getClubs",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setClubs(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/product/getProducts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setMarketplace(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getSocialPosts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setSocial(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUsers();
+    fetchClubs();
+    fetchProducts();
+    fetchPosts();
+    //fetchTickets();
+  }, [token]);
+  const mockData = {
+    /*users: [
+      { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: true },
+      { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', isBanned: false },
+      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', isBanned: false },
+      { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 9, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: false },
+      { id: 10, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 11, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
+      { id: 12, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', isBanned: false },
+      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Instructor', isBanned: false },
+      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', isBanned: true },
+      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', isBanned: false },
+      { id: 19, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', isBanned: true },
+    ],
+    clubs: [
+      { id: 1, name: 'Bilkent YES' },
+      { id: 2, name: 'Wizards' },
+      marketplace: [
+        { id: 1, name: 'Basys 3', description: 'EA 201deyim' },
+        { id: 2, name: 'CS 223 Kitabi', description: '1200TL' },
+      ],
+      social: [
+        { id: 1, name: 'Arabam!', content: 'Mescit otoparkta arabami çizmişler.' },
+        { id: 2, name: 'Yemekhanedeki çocuk', content: 'Tanişmak isterim saat 10da gördüm.' },
+      ],
+    ],*/
+    tickets: [
+      { _id: 1, owner: 'Serhan Turan', message: 'İletişim butonu çalişmiyor' , status: false},
+      { _id: 2, owner: 'Kachow', message: 'Şifremi unuttum' , status: true},
+    ],
+  };
+
+  return (
     <div>
-    <Navbar />
+      <Navbar />
 
-    <h1>User Management</h1>
-    <div className="search-bar" style={{ color: 'black' }}>
-        <input
-        type="text"
-        placeholder="Search by name or email"
-        value={searchTerm}
-        onChange={handleSearch}
-        />
-    </div>
-    <div className="table-container">
-        <table>
-        <thead style={{ background: 'black', color: 'white' }}>
-            <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Banned</th>
-            <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {users.map((user, index) => (
-            <tr key={user.id} style={{ background: 'white', color: 'black' }}>
-                <td>{user.id}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>{user.isBanned ? 'Yes' : 'No'}</td>
-                <td>
-                <button
-                    className="set-role-btn"
-                    onClick={() => openRoleSelection(user.id)}
-                >
-                    Set Role
-                </button>
-                <button
-                    className="ban-user-btn"
-                    onClick={() => handleBanToggle(user.id)}
-                >
-                    {user.isBanned ? 'Unban' : 'Ban'}
-                </button>
-                </td>
-            </tr>
-            ))}
-        </tbody>
-        </table>
-    </div>
-
-    {selectedUserId && (
-        <div className="role-selection-panel">
-        <h2>Select Role</h2>
-        <RoleDropdown
-            initialValue={selectedRole}
-            onSelect={(role) => setSelectedRole(role)}
-        />
-        <button className="green-btn" onClick={handleRoleChange}>
-            Save
-        </button>
-        <button className="red-btn" onClick={closeRoleSelection}>
-            Cancel
-        </button>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+  <button
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
+    onClick={() => handleButtonClick('users')}
+  >
+    Manage Users
+  </button>
+  <button
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
+    onClick={() => handleButtonClick('clubs')}
+  >
+    Manage Clubs
+  </button>
+  <button
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
+    onClick={() => handleButtonClick('marketplace')}
+  >
+    Manage Marketplace Posts
+  </button>
+  <button
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
+    onClick={() => handleButtonClick('social')}
+  >
+    Manage Social Posts
+  </button>
+  <button
+    style={{ backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '55px'}}
+    onClick={() => handleButtonClick('tickets')}
+  >
+    Manage Tickets
+  </button>
+</div>
+      {selectedTable === 'users' && (
+        <div>
+          <Form>
+            <InputGroup>
+              <FormControl
+                onChange={(e) => setSearchUser(e.target.value)}
+                placeholder = 'Search User by name or email'
+              />
+            </InputGroup>
+          </Form>
+          <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Users</h1>
+          <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
+            <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ backgroundColor: 'black', color: 'white' }}>
+                  <th style={{ width: '20%', padding: '8px' }}>ID</th>
+                  <th style={{ width: '20%', padding: '8px' }}>Name</th>
+                  <th style={{ width: '30%', padding: '8px' }}>Email</th>
+                  <th style={{ width: '20%', padding: '8px' }}>Role</th>  
+                  <th style={{ width: '7%', padding: '8px' }}>Banned</th>
+                  <th style={{ width: '30%', padding: '8px' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user._id}</td>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.username}</td>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.email}</td>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.role}</td>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.isBanned ? 'Yes' : 'No'}</td> 
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
+                      {}
+                      <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
+                      onClick={() => window.location.href = "/profilePage/" + user._id}>See User
+                      </button>
+                      <button 
+                      style={{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
+                      onClick={() => openRolePanel(user._id)}
+                      >Set Role
+                      </button>
+                      <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '100px', height: '30px'}}
+                      onClick={()=> openBanPanel(user._id)}>{user.isBanned ? 'Unban' : 'Ban'}
+                      </button>
+                        
+                      </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>  
         </div>
-    )}
+      )}
+{showRolePanel && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' ,backgroundColor: '#fff',
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+          <label style={{color: 'black'}}>Select Role:</label>
+          <select style={{color: 'black'}} value={selectedRole} onChange={(e) => setSelectedRole(e.target.value)}>
+            <option value="" selected="selected" hidden="hidden">Choose here</option>
+            <option value="Admin">Admin</option>
+            <option value="Student">Student</option>
+            <option value="Instructor">Instructor</option>
+            <option value="Staff">Staff</option>
+          </select>
+          <button
+                            style = {{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+                            onClick={handleRoleChange}>Save
+                            </button>
+                            <button 
+                            style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                            onClick={closeRolePanel}>Cancel
+                            </button>
+        </div>
+)}
 
-    <h1>Marketplace Posts</h1>
-    <div className="search-bar" style={{ color: 'black' }}>
+{showBanPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleBan()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeBanPanel}>Cancel
+  </button>
+  </div>
+)}
+
+{selectedTable === 'clubs' && (
+      <div>
         <input
-        type="text"
-        placeholder="Search by name or description"
-        value={marketplaceSearchTerm}
-        onChange={handleMarketplaceSearch}
-        />
+            type="text"
+            placeholder="Search by name"
+            value={searchTerm}
+            //onChange={handleSearch}
+            style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
+          />          
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Clubs</h1>
+        <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
+          <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: 'black', color: 'white' }}>
+                <th style={{ width: '8%', padding: '8px' }}>ID</th>
+                <th style={{ width: '10%', padding: '8px' }}>Name</th>
+                <th style={{ width: '20%', padding: '8px' }}>Description</th>
+                <th style={{ width: '10%', padding: '8px' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clubs.map(club => (
+                <tr key={club.id}>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{club._id}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{club.name}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{club.description}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
+                    {}
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={() => window.location.href = "/clubdetailspage/" + club._id}>See Club Page</button>
+                    <button
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={() => openDeleteClubPanel(club.id)}>Delete Club</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button 
+            style={{backgroundColor: 'green', color: 'white', marginTop: '20px', marginRight: '10px' , width: '130px', height: '30px', margin: '0 auto', display: 'block'}}
+            onClick={openAddClubPanel}>Add Club</button>
+        </div>
+        </div>
+      )}
+{showDeleteClubPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure to delete club?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleDeleteClub()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeDeleteClubPanel}>Cancel
+  </button>
+  </div>
+)}
+
+{showAddClubPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '40px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <h2>Create New Club</h2>
+      <label>
+        Club Name:
+        <input style={{marginLeft: '59px', width: '300px'}} type="text" placeholder="Enter club name here" value={selectedClubName} onChange={(e) => setSelectedClubName(e.target.value)} />
+      </label>
+      <br />
+      <label>
+        Club Description:
+        <input style={{marginLeft: '16px', width: '300px'}} type="text" placeholder="Enter club description here" value={selectedClubDescription} onChange={(e) => setSelectedClubDescription(e.target.value)} />
+      </label>
+      <br />
+      <label>
+        Club Executive ID:
+        <input style={{marginLeft: '10px', width: '300px'}} type="text" placeholder="Enter club executive's id here" value={selectedClubExecutiveID} onChange={(e) => setSelectedClubExecutiveID(e.target.value)} />
+      </label>
+      <br />
+  <button
+  style = {{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleAddClub()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeAddClubPanel}>Cancel
+  </button>
+  </div>
+)}
+      {selectedTable === 'marketplace' && (
+        <div>
+        <input
+            type="text"
+            placeholder="Search by name or description"
+            value={searchTerm}
+            //onChange={handleSearch}
+            style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
+          />
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Marketplace Posts</h1>
+        <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+          <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: 'black', color: 'white' }}>
+                <th style={{ width: '20%', padding: '8px' }}>ID</th>
+                <th style={{ width: '30%', padding: '8px' }}>Title</th>
+                <th style={{ width: '50%', padding: '8px' }}>Description</th>
+                <th style={{ width: '30%', padding: '8px' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {marketplace.map(item => (
+                <tr key={item.id}>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item._id}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item.title}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item.description}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
+                    {}
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
+                      onClick={() => window.location.href = "/marketplace/" + item._id}>See Marketplace Post
+                      </button>
+                    <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={() => openDeleteMarketplacePostPanel(item._id)}
+                      >Delete Post</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        </div>
+      )}
+{showDeleteMarketplacePostPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure to delete marketplace post?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleDeleteMarketplacePost()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeDeleteMarketplacePostPanel}>Cancel
+  </button>
+  </div>
+)}
+      {selectedTable === 'social' && (
+        <div>
+        <input
+            type="text"
+            placeholder="Search by name or content"
+            value={searchTerm}
+            //onChange={handleSearch}
+            style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
+          />
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Social Posts</h1>
+        <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+          <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: 'black', color: 'white' }}>
+                <th style={{ width: '20%', padding: '8px' }}>ID</th>
+                <th style={{ width: '20%', padding: '8px' }}>Title</th>
+                <th style={{ width: '60%', padding: '8px' }}>Content</th>
+                <th style={{ width: '30%', padding: '8px' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {social.map(post => (
+                <tr key={post.id}>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post._id}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.title}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.content}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
+                    {}          
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
+                      onClick={() => window.location.href = "/feed/" + post._id}>See Social Post</button>
+                    <button 
+                      style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+                      onClick={() => openDeleteSocialPostPanel(post._id)}
+                      >Delete Post</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        </div>
+      )}
+{showDeleteSocialPostPanel && (
+        <div style={{position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#fff',  
+        padding: '20px',
+        border: '1px solid #ccc',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        zIndex: 1000}}>
+  <label style={{color: 'black', marginRight: '100px'}}>Are you sure to delete social post?</label>
+  <button
+  style = {{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}} 
+  onClick={() => handleDeleteSocialPost()}>Confirm
+  </button>
+  <button 
+  style = {{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
+  onClick={closeDeleteSocialPostPanel}>Cancel
+  </button>
+  </div>
+)}
+
+      {selectedTable === 'tickets' && (
+        <div>
+        <input
+            type="text"
+            placeholder="Search by owner or message"
+            value={searchTerm}
+            //onChange={handleSearch}
+            style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
+          />
+        <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Tickets</h1>
+        <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+          <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: 'black', color: 'white' }}>
+                <th style={{ width: '10%', padding: '8px' }}>ID</th>
+                <th style={{ width: '30%', padding: '8px' }}>Owner</th>
+                <th style={{ width: '60%', padding: '8px' }}>Message</th>
+                <th style={{ width: '10%', padding: '8px' }}>Handled</th>
+                <th style={{ width: '20%', padding: '8px' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mockData.tickets.map(ticket => (
+                <tr key={ticket.id}>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket._id}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.owner}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.message}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.status ? 'Yes': 'No'}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
+                    {}
+                    <button 
+                      style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '200px', height: '30px'}}
+                      onClick={() => handleTicket(ticket._id)}>{ticket.status ? 'Flag as Unhandled': 'Flag as Handled'}
+                      </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        </div>
+      )}
     </div>
-    <div className="table-container">
-        <table>
-        <thead style={{ background: 'blue', color: 'white' }}>
-            <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {mockMarketplacePosts.map((post) => (
-            <tr key={post.id} style={{ background: 'white', color: 'black' }}>
-                <td>{post.id}</td>
-                <td>{post.name}</td>
-                <td>{post.description}</td>
-                <td>
-                <button
-                    className="see-post-btn"
-                    onClick={() => window.location.href = '/marketplace/id'}
-                >
-                    See Post
-                </button>
-                <button
-                    className="delete-post-btn"
-                    onClick={() => handleDeletePost(post.id)}
-                >
-                    Delete Post
-                </button>
-                </td>
-            </tr>
-            ))}
-        </tbody>
-        </table>
-    </div>
-
-    <style jsx>{`
-        .search-bar {
-        margin-bottom: 20px;
-        }
-
-        input {
-        padding: 8px;
-        width: 300px;
-        }
-
-        .table-container {
-        max-height: 400px;
-        overflow-y: auto;
-        }
-
-        table {
-        border-collapse: collapse;
-        width: 100%;
-        }
-
-        th, td {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-        }
-
-        th {
-        background-color: black;
-        color: white;
-        }
-
-        .role-selection-panel {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: white;
-        padding: 20px;
-        border: 1px solid #ccc;
-        color: black;
-        }
-
-        .set-role-btn {
-        background-color: green;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        margin-right: 5px;
-        }
-
-        .delete-post-btn {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .ban-user-btn {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .green-btn {
-        background-color: green;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        margin-right: 5px;
-        }
-
-        .red-btn {
-        background-color: red;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        }
-
-        .marketplace-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        }
-
-        .marketplace-post {
-        border: 1px solid #ddd;
-        padding: 10px;
-        width: 300px;
-        }
-
-        .marketplace-post button {
-        background-color: blue;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        margin-top: 10px;
-        }
-
-        .see-post-btn {
-        background-color: blue;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        }
-    `}</style>
-    </div>
-);
+  );
 };
 
 export default Admin;
