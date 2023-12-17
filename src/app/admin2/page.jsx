@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { Form, FormControl, InputGroup } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+
 //change
 const Admin = () => {
   //Table Selection
@@ -25,6 +27,9 @@ const Admin = () => {
   const [selectedSocialPostId, setSelectedSocialPostId] = useState(null);
   const [selectedTicketId, setSelectedTicketId] = useState(null);
 
+  const { data: session } = useSession();
+  const token = session?.backendTokens?.accessToken;
+  const [users, setUsers] = useState([]);
   const handleButtonClick = (tableName) => {
     setSelectedTable(tableName);
   };
@@ -40,14 +45,25 @@ const Admin = () => {
   };
 
   const handleRoleChange = () => {
-    if (selectedUserId && selectedRole) {
-      setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-          user.id === selectedUserId ? { ...user, role: selectedRole } : user
-          )
-      );
-      }
+    console.log("selectedUserId: ", selectedUserId)
+    console.log("selectedRole: ", selectedRole)
+    try {
+      fetch("http://localhost:3500/api/auth/updateRole", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            role: selectedRole,
+            studentId: selectedUserId
+          }),
+        });
+    } catch (error) {
+      console.log("set role basarisiz")
+    }
     closeRolePanel();
+    //window.location.reload();
   };
 
   const openBanPanel = (userID) => {
@@ -132,6 +148,34 @@ const Admin = () => {
     
   };
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/auth/getUsers",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setUsers(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchUsers();
+    //fetchLikedPosts();
+  }, [token]);
   const mockData = {
     users: [
       { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: true },
@@ -229,29 +273,27 @@ const Admin = () => {
                 </tr>
               </thead>
               <tbody>
-                {mockData.users.filter((user) => {
-                    return searchUser.toLowerCase() == '' ? user : user.name.toLowerCase().includes(searchUser);
-                }).map((user) => (
+                {users.map((user) => (
                   <tr key={user.id}>
-                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.id}</td>
-                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.name}</td>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user._id}</td>
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.username}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.email}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.role}</td>
-                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.isBanned ? 'Yes' : 'No'}</td> 
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.created_at ? 'Yes' : 'No'}</td> 
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                       {}
                       <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
-                      onClick={() => window.location.href = "/profilePage/" + user.id}>See User
+                      onClick={() => window.location.href = "/profilePage/" + user._id}>See User
                       </button>
                       <button 
                       style={{backgroundColor: 'green', color: 'white', marginRight: '10px' , width: '90px', height: '30px'}}
-                      onClick={() => openRolePanel(user.id)}
+                      onClick={() => openRolePanel(user._id)}
                       >Set Role
                       </button>
                       <button 
                       style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '100px', height: '30px'}}
-                      onClick={()=> openBanPanel(user.id)}>{user.isBanned ? 'Unban' : 'Ban'}
+                      onClick={()=> openBanPanel(user._id)}>{user.created_at ? 'Unban' : 'Ban'}
                       </button>
                         
                       </td>
