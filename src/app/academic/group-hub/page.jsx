@@ -49,18 +49,19 @@ const GroupPage = () => {
   return (
     <div>
       <Navbar />
-      <div style={{ padding: "20px" }}>
+      <div className="card justify-content-center titleColor text-white align-items-center" style={{ padding: "20px",marginTop:"50px",maxWidth:"500px",marginLeft:"700px" }}>
         <div
           style={{
             fontSize: "32px",
-            color: "black",
+            color: "white",
             marginTop: "0px",
-            marginBottom: "10px",
+            marginBottom: "30px",
+            
           }}
         >
-          {"My Groups"}
+          My Groups
         </div>
-
+          <div className="">
         {currentGroups.map((group) => (
           <button
             key={group._id}
@@ -74,17 +75,27 @@ const GroupPage = () => {
               border: "1px solid #ccc",
               backgroundColor: "#f0f0f0",
               textAlign: "left",
-              width: "50%",
+              width: "450px",
               fontSize: "16px",
               color: "black",
+              whiteSpace:"nowrap"
             }}
           >
             {group.groupName}
           </button>
         ))}
+        </div>
       </div>
+      <style jsx>{`
+      .titleColor{
+        background-color: #0B1356;
+      }
+      
+      
+      `}</style>
     </div>
   );
 };
 
 export default GroupPage;
+

@@ -57,12 +57,12 @@ const ClubsPage = () => {
         <Navbar />
         
         <div className="container">
-        <h1 style={{ marginLeft: '45%' }}>Student Clubs</h1>
-        <div style={{ marginLeft: '10%' }}>
-        <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+        <h1 className="card text-center titleColor text-white" style={{ marginLeft: '33%',fontSize:"20px",maxWidth:"500px" }}>Student Clubs</h1>
+        <div style={{ marginLeft: '15%',maxWidth:"1000px" }}>
+        <ul className="card m-2 titleColor " style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0px' }}>
         {clubData.map((club) => (
           
-            <li key={club.id} style={{ marginTop: '100px', marginLeft:'20px' }}>
+            <li className="card m-2" key={club.id} style={{ marginTop: '30px', marginLeft:'0px' }}>
                 <p>{club.name}</p>
                 {/* <Link href={`/clubdetailspage/${club.id}`}> */} 
                 <img src={club.imageURL} alt={club.name} onClick={() => handleClubClick(club)} />
@@ -92,6 +92,13 @@ const ClubsPage = () => {
         </Modal>
       </div>
       </div>
+      <style jsx>{`
+      .titleColor{
+        background-color: #0B1356;
+      }
+      
+      
+      `}</style>
       </div>
     );
   };

@@ -36,15 +36,26 @@ const ClubPostCard = ({
       <h5 className="card-title">{title}</h5>
       {/*<p className="card-text">Club Id: {clubid}</p>
         <p className="card-text">Event Id: {eventid}</p>*/}
-      <img
-        src={imageURL}
-        alt="Event Image"
-        style={{
-          width: "100%",
-          objectFit: "cover",
-          maxHeight: "100%",
-        }}
-      />
+      <div
+          className="card-img-top"
+          style={{
+            height: "200px", // Set a fixed height for uniformity
+            overflow: "hidden", // Hide overflowing content
+          }}
+          
+        >
+          <img
+            src={imageURL}
+            alt="Product Image"
+            style={{
+              width: "100%", // Ensure the image covers the container width
+              objectFit: "cover", // Crop the image while maintaining aspect ratio
+              height: "100%",
+              maxHeight: "100%", // Ensure the image covers the container height
+            }}
+            
+          />
+        </div>
       <div className="card-body">
         <p className="row justify-content-left align-items-left">
           Content: {content}
@@ -391,7 +402,8 @@ const ClubDetailPage = ({ params }) => {
             <div className="text-center mb-2">Past Events</div>
             <div>
               {eventData && (
-                <div className="row justify-content-center align-items-center">
+                <div className="row card titleColor ">
+                  <div className="list" style={{ marginTop:"30px",marginLeft:"30px",display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px' }}>
                   {eventData.map((post, index) => (
                     <ClubPostCard
 
@@ -408,13 +420,20 @@ const ClubDetailPage = ({ params }) => {
                       ge25xpoints={post.points}
                     />
                   ))}
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
-      <style jsx>{``}</style>
+      <style jsx>{`
+      .titleColor{
+        background-color: #0B1356;
+      }
+      
+      
+      `}</style>
     </div>
   );
 };

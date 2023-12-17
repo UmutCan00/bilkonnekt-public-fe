@@ -7,11 +7,15 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-      <Container fluid>
-        <Row className="justify-content-center">
-          <Col md={6} className="mt-4">
+      <header  className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px",marginBottom:"-500px" }}>
+          <h1>Welcome to Bilkonnekt Academic </h1>
+          <p>Collaborate with other students.</p>
+        </header>
+      <Container className=" text-center   text-white" style={{whiteSpace:"nowrap",}} >
+        <div className="  row " >
+          <div  className=" card titleColor col mt-4" style={{marginLeft:"435px"}}>
             <Link href="academic/group-hub">
-              <Card className="mb-3 w-100">
+              <Card className="mb-3 mt-3  w-100">
                 <Card.Body>See Your Groups</Card.Body>
               </Card>
             </Link>
@@ -35,11 +39,11 @@ export default function Home() {
                 <Card.Body>Swap Sections with Friends</Card.Body>
               </Card>
             </Link>
-          </Col>
-          <Col md={6}>
+          </div>
+          <div className="col" md={6}>
             {/* Add any additional content or design for the right-side section */}
-          </Col>
-        </Row>
+          </div>
+        </div>
       </Container>
       <style jsx>{`
         .mt-4 {
@@ -54,6 +58,9 @@ export default function Home() {
         .w-100:hover {
           cursor: pointer;
           /* Add any additional hover effects */
+        }
+        .titleColor{
+          background-color: #0B1356;
         }
       `}</style>
     </div>

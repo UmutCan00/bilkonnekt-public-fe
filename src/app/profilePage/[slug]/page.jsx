@@ -172,7 +172,7 @@ function ProfilePage({ params }) {
       <Navbar />
       <div className="container-fluid">
         <div className="row content d-flex">
-          <div className="col-sm bg-secondary">
+          <div className="col-sm ">
             <div className="d-flex flex-row  ms-5">
               <div className="ms-5"></div>
               <div className="ms-5"></div>
@@ -185,7 +185,7 @@ function ProfilePage({ params }) {
             </div>
             {session?.user?._id === params.slug &&
               <div className="d-flex justify-content-center ">
-                <div className="col-md-6 d-flex flex-column">
+                <div className="col-md-6 d-flex flex-column" style={{marginLeft:"120px"}}>
                   <label htmlFor="avatar">Choose a profile picture:</label>
                   <input
                     type="file"
@@ -205,7 +205,7 @@ function ProfilePage({ params }) {
             }
           </div>
 
-          <div className="col-sm bg-secondary">
+          <div className="col-sm ">
             <div className="d-flex flex-column  mt-5">
               <p className=" display-4">{userData.fullName}</p>
               <p className=" fs-4">{userData.bio}</p>
