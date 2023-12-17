@@ -367,6 +367,8 @@ const MessagingPage = () => {
                           borderRadius: "8px",
                           padding: "8px 12px",
                           maxWidth: "70%",
+                          wordWrap: "break-word",
+                          overflowWrap: "break-word",
                         }}
                       >
                         {message.description}
