@@ -578,7 +578,8 @@ const MessagingPage = () => {
               color: "black",
             }}
           >
-            {chat.sellerName} "|" {chat.buyerName} "|" {chat.dialogType}
+            {chat.sellerName} {"\u2013"} {chat.buyerName}, Item:{" "}
+            {chat.dialogType}
           </button>
         ))}
       </div>
