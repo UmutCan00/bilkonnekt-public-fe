@@ -45,14 +45,10 @@ function ProfilePage({ params }) {
 
   function UserInfo({ userData }) {
     return (
-      <div className="card" style={{ width: "40rem" }}>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item fs-4">
-            UserName: {userData.username}
-          </li>
-          <li className="list-group-item fs-4">Email: {userData.email}</li>
-          <li className="list-group-item fs-4">Rating: {userData.rating}</li>
-        </ul>
+      <div className="card bg-custom1" style={{ width: "40rem", color:"#0B1356" }}>
+        <h3 className=" text-center text-white" style={{ fontSize: "2rem" }}>UserName: {userData.username}</h3>
+        <h3 className=" text-center text-white" style={{ fontSize: "2rem" }}>Email: {userData.email}</h3>
+        
       </div>
     );
   }
@@ -171,7 +167,7 @@ function ProfilePage({ params }) {
     <div>
       <Navbar />
       <div className="container-fluid">
-        <div className="row content d-flex">
+        <div className="row content d-flex bg-custom1" >
           <div className="col-sm ">
             <div className="d-flex flex-row  ms-5">
               <div className="ms-5"></div>
@@ -186,8 +182,9 @@ function ProfilePage({ params }) {
             {session?.user?._id === params.slug &&
               <div className="d-flex justify-content-center ">
                 <div className="col-md-6 d-flex flex-column" style={{marginLeft:"120px"}}>
-                  <label htmlFor="avatar">Choose a profile picture:</label>
+                  <label htmlFor="avatar" style= {{color: "white", padding: "10px"}}>Choose a profile picture:</label>
                   <input
+                    style= {{ padding: "10px"}}
                     type="file"
                     id="avatar"
                     name="avatar"
@@ -197,7 +194,7 @@ function ProfilePage({ params }) {
                       handleSubmit();
                     }}
                   />
-                  <button variant="primary" class="btn btn-dark" onClick={handleSubmit}>
+                  <button variant="primary" class="btn btn-light" onClick={handleSubmit}>
                   Update
                   </button>
                 </div>
@@ -207,8 +204,7 @@ function ProfilePage({ params }) {
 
           <div className="col-sm ">
             <div className="d-flex flex-column  mt-5">
-              <p className=" display-4">{userData.fullName}</p>
-              <p className=" fs-4">{userData.bio}</p>
+
               <div className="mt-5">
                 <UserInfo userData={userData} />
               </div>
@@ -319,6 +315,10 @@ function ProfilePage({ params }) {
       </div>
       <style>
         {` 
+        .bg-custom1 {
+          background-color: #0B1356;
+          
+        }
           .row.content {
             height: 798px
           }

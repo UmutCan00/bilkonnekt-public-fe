@@ -280,9 +280,9 @@ export default function Home() {
           <div className="col-md-9" style={{ marginLeft: "0px" }}>
             {/* Center-align the content */}
             <header className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px" }}>
-          <h1>Welcome to Bilkonnekt Social </h1>
-          <p>Don&apos;t Miss Anything on Campus</p>
-        </header>
+              <h1>Welcome to Bilkonnekt Social </h1>
+              <p>Don&apos;t Miss Anything on Campus</p>
+            </header>
             
 
             
@@ -290,25 +290,25 @@ export default function Home() {
             <main style={{ marginTop: "20px" }}>
               {/* Social post container */}
               <div className="social-post-container card bg-custom1">
-              <div className="list  " style={{ marginTop:"10px",display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '0px' }}>
-                {filteredPosts.map((post, index) => (
-                  <Link key={index} href={`/feed/${post._id}`} passHref>
-                    <div className="socialpost-card">
-                      <SocialPostCard
-                        id={post._id}
-                        sharer={post.publisherId}
-                        sharerName={post.publisherName}
-                        title={post.title}
-                        type={null}
-                        content={post.content}
-                        imageURL={post.imageURL}
-                        likeCount={post.likeCount}
-                        userLikedPosts={userLikedIdsArray}
-                      />
-                    </div>
-                  </Link>
-                ))}
-              </div>
+                <div className="list  " style={{ marginTop:"10px",display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '0px' }}>
+                  {filteredPosts.map((post, index) => (
+                    <Link key={index} href={`/feed/${post._id}`} passHref>
+                      <div className="socialpost-card">
+                        <SocialPostCard
+                          id={post._id}
+                          sharer={post.publisherId}
+                          sharerName={post.publisherName}
+                          title={post.title}
+                          type={null}
+                          content={post.content}
+                          imageURL={post.imageURL}
+                          likeCount={post.likeCount}
+                          userLikedPosts={userLikedIdsArray}
+                        />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
 
             </main>

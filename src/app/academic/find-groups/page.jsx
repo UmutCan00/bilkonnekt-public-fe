@@ -2,6 +2,65 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
+import Button from "react-bootstrap/Button";
+
+const GroupCard = ({
+  id, groupName, courseCode, handleGroupClick,
+}) => {
+
+  return (
+    <>
+      <style jsx global>{`
+        /* Global styles to remove underlines from links */
+        a {
+          text-decoration: none;
+        }
+      `}</style>
+
+      <div className="card mb-3 position-relative">
+        <div className="card-body">
+          <div
+            style={{
+              marginLeft: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: "row",
+            }}
+          >
+            <h5
+              className="card-title"
+              style={{ marginTop: "8px", marginLeft: "-10px" }}
+            >
+              {courseCode}
+            </h5>
+
+          </div>
+          <p className="card-text text-left">GroupName: {groupName}</p>
+
+          <div className="card-body" style={{ paddingBottom: "0px" }}>
+            <div className="row" style={{ marginTop: "-5px" }}>
+              <div className="col">
+                  <Button
+                    className="btn btn-primary  "
+                    variant="info"
+                    style={{ whiteSpace: "nowrap" }}
+                    onClick={() => handleGroupClick(id)}
+                  > Join Group
+                  </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+
+
+
+
+
+}
 
 const GroupPage = () => {
   const [currentGroup, setCurrentGroup] = useState(null);
@@ -9,75 +68,7 @@ const GroupPage = () => {
   const [applicationDescription, setApplicationDescription] = useState("");
 
   const currentDate = new Date();
-  const groups = [
-    {
-      _id: 1,
-      name: "Group 1",
-      description: "Description for Group 1",
-      members: [
-        "member1@example.com",
-        "member2@example.com",
-        "member3@example.com",
-        "member4@example.com",
-      ],
-      todoList: [
-        {
-          createdBy: "member1@example.com",
-          assignedTo: "member2@example.com",
-          description: "Task 1 description",
-        },
-        {
-          createdBy: "member2@example.com",
-          assignedTo: "member3@example.com",
-          description: "Task 2 description",
-        },
-        {
-          createdBy: "member3@example.com",
-          assignedTo: "member4@example.com",
-          description: "Task 3 description",
-        },
-        // ... Add more to-do tasks as needed
-      ],
-      lesson: "CS315",
-    },
-    {
-      _id: 2,
-      name: "Group 2",
-      description: "Description for Group 2",
-      lesson: "CS315",
-    },
-    {
-      _id: 3,
-      name: "Group 3",
-      description: "Description for Group 3",
-      lesson: "CS315",
-    },
-    {
-      _id: 4,
-      name: "Group 4",
-      description: "Description for Group 4",
-      lesson: "CS315",
-    },
-    {
-      _id: 5,
-      name: "Group 5",
-      description: "Description for Group 5",
-      lesson: "CS315",
-    },
-    {
-      _id: 6,
-      name: "Group 6",
-      description: "Description for Group 6",
-      lesson: "CS315",
-    },
-    {
-      _id: 7,
-      name: "Group 7",
-      description: "Description for Group 7",
-      lesson: "CS315",
-    },
-    // ... Add more groups as needed
-  ];
+  
 
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
@@ -157,142 +148,247 @@ const GroupPage = () => {
     return (
       <div>
         <Navbar />
-        <div
-          style={{ display: "flex", flexDirection: "column", height: "90vh" }}
-        >
-          <button
+        <div className="col-md-9" style={{ marginLeft: "170px" }}>
+            <header className=" card text-center mx-auto titleColor m-2 text-white bg-custom1" style={{ maxWidth:"500px" }}>
+              <h1>Join Group </h1>
+            </header>
+          <Button
+            className="btn btn-primary  "
+            variant="info"
+            style={{ whiteSpace: "nowrap" }}
             onClick={handleBackButtonClick}
-            style={{
-              cursor: "pointer",
-              display: "block",
-              marginBottom: "10px",
-              padding: "10px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              backgroundColor: "#f0f0f0",
-              textAlign: "left",
-              width: "5%",
-              fontSize: "16px",
-              color: "black",
-              alignItems: "right",
-            }}
-          >
-            Back
-          </button>
-          <div
-            style={{
-              flex: 1,
-              overflowY: "scroll",
-              padding: "20px",
-            }}
-          >
-            {currentGroup.groupName}
-            <br />
-            {currentGroup.description}
-            <br />
-            {currentGroup.lesson}
-            {/*currentGroup.members.map((member) => )*/}
-            {currentGroup?.members?.map((member, index) => (
-              <div key={index}>
-                <div>
-                  <p>{member}</p>
+          > Back
+          </Button>
+          <div className="card mb-3 position-relative bg-custom1">
+            <div className="card-body">
+             
+                <h5
+                  className="card-title text-white text-center"
+                  style={{color: "white" }}
+                >
+                  {currentGroup.groupName}
+                </h5>
+              
+              <p className="card-text text-center text-white">Group Description: {currentGroup.description}</p>
+
+              <div className="card-body" style={{ paddingBottom: "0px" }}>
+                
+                {currentGroup?.members?.map((member, index) => (
+                  <div key={index}>
+                    <div>
+                      <p>{member}</p>
+                    </div>
+                  </div>
+                ))}
+                <textarea
+                  placeholder="Enter description"
+                  value={applicationDescription}
+                  onChange={(e) => setApplicationDescription(e.target.value)}
+                  style={{
+                    display: "block",
+                    marginBottom: "10px",
+                    padding: "10px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    width: "100%",
+                    fontSize: "16px",
+                    minHeight: "100px",
+                  }}
+                />
+              
+                <div className="row" style={{ marginTop: "-5px" }}>
+                  <div className="col">
+                    <Button className="btn btn-primary" onClick={() => handleJoinButtonClick(currentGroup._id)}>
+                      Join
+                    </Button>
+                  </div>
                 </div>
               </div>
-            ))}
-            <textarea
-              placeholder="Enter application description"
-              value={applicationDescription}
-              onChange={(e) => setApplicationDescription(e.target.value)}
-              style={{
-                display: "block",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                width: "100%",
-                fontSize: "16px",
-                minHeight: "100px",
-              }}
-            />
-            <button
-              onClick={() => handleJoinButtonClick(currentGroup._id)}
-              style={{
-                cursor: "pointer",
-                display: "block",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                backgroundColor: "#f0f0f0",
-                textAlign: "center",
-                width: "10%",
-                fontSize: "16px",
-                color: "black",
-                alignItems: "right",
-              }}
-            >
-              Join Request
-            </button>
+            </div>
           </div>
+
+          
         </div>
+        <style jsx>{`
+
+      .social-post-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .socialpost-card {
+        width: 100%;
+        max-width: 600px;
+        margin-left: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+        
+        .bg-custom1 {
+          background-color: #0B1356;
+          
+        }
+
+        .sidebar {
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 5px;
+          width: 200px;
+          height: 300px;
+          margin-top: 160px;
+        }
+
+        .sidebar h3 {
+          font-size: 18px;
+          margin-bottom: 10px;
+        }
+
+        .sidebar ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        .sidebar li {
+          margin-bottom: 5px;
+        }
+
+        .sidebar button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          padding: 0;
+          font-size: 14px;
+        }
+
+        .sidebar button:hover {
+          text-decoration: underline;
+        }
+
+        .search-bar {
+          text-align: center;
+          margin-top: 20px;
+        }
+
+      `}</style>
       </div>
+    );
+  }
+
+  const numColumns = 4;
+  const itemsPerColumn = Math.ceil(currentGroups.length / numColumns);
+
+  const columns = [];
+  for (let i = 0; i < numColumns; i++) {
+    columns.push(
+      currentGroups.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
 
   return (
     <div>
       <Navbar />
-      <div style={{ padding: "20px" }}>
-        <div
-          style={{
-            fontSize: "32px",
-            color: "black",
-            marginTop: "0px",
-            marginBottom: "10px",
-          }}
-        >
-          {"Groups with Missing Members"}
-        </div>
-
-        {currentGroups.map((group) => (
-          <div key={group._id}>
-            {" "}
-            {/* Add the key prop here */}
-            <div
-              style={{
-                cursor: "pointer",
-                display: "block",
-                marginBottom: "10px",
-                padding: "10px",
-                borderRadius: "5px",
-                backgroundColor: "#f0f0f0",
-                textAlign: "left",
-                width: "50%",
-                fontSize: "16px",
-                color: "black",
-              }}
-            >
-              Group Name:
-              {" " + group.groupName + ", "}
-              Course:
-              {" " + group.courseCode}
+      <div className="col-md-9" style={{ marginLeft: "170px" }}>
+        <header className=" card text-center mx-auto titleColor m-2 text-white bg-custom1" style={{ maxWidth:"500px" }}>
+          <h1>Groups with Missing Members </h1>
+        </header>
+        <main style={{ marginTop: "20px" }}>
+          <div className="social-post-container card bg-custom1">
+          <div className="list " style={{ marginTop:"10px",display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+            {columns.map((column, columnIndex) => (
+              <div key={columnIndex} className="column">
+                {column.map((group, index) => (
+                  <div key={index}>
+                    {" "}
+                    {/* Add the key prop here */}
+                    <div className="socialpost-card">
+                      <GroupCard
+                        id={group._id}
+                        groupName={group.groupName}
+                        courseCode={group.courseCode}
+                        handleGroupClick={handleGroupClick}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
             </div>
-            <button
-              onClick={() => handleGroupClick(group._id)}
-              style={{
-                cursor: "pointer",
-                display: "block",
-                marginBottom: "10px",
-                fontSize: "16px",
-                color: "black",
-              }}
-            >
-              Join Request
-            </button>
           </div>
-        ))}
+          
+        </main>
+          <footer className="text-center mt-4">
+            <p>&copy; {new Date().getFullYear()} Bilkonnekt Marketplace</p>
+          </footer>
       </div>
+      <style jsx>{`
+
+      .social-post-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .socialpost-card {
+        width: 100%;
+        max-width: 600px;
+        margin-left: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+        
+        .bg-custom1 {
+          background-color: #0B1356;
+          
+        }
+
+        .sidebar {
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 5px;
+          width: 200px;
+          height: 300px;
+          margin-top: 160px;
+        }
+
+        .sidebar h3 {
+          font-size: 18px;
+          margin-bottom: 10px;
+        }
+
+        .sidebar ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        .sidebar li {
+          margin-bottom: 5px;
+        }
+
+        .sidebar button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-align: left;
+          padding: 0;
+          font-size: 14px;
+        }
+
+        .sidebar button:hover {
+          text-decoration: underline;
+        }
+
+        .search-bar {
+          text-align: center;
+          margin-top: 20px;
+        }
+
+      `}</style>
     </div>
+    
   );
 };
 
