@@ -2,18 +2,34 @@
 import Link from "next/link";
 import { Container, Row, Col, Card } from "react-bootstrap";
 import Navbar from "../components/Navbar";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const { data: session } = useSession();
+  const isBanned = session?.user?.isBanned;
+  const router = useRouter();
+  if (isBanned) router.push("/");
+
   return (
     <div>
       <Navbar />
-      <header  className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px",marginBottom:"-500px" }}>
-          <h1>Welcome to Bilkonnekt Academic </h1>
-          <p>Collaborate with other students.</p>
-        </header>
-      <Container className=" text-center   text-white" style={{whiteSpace:"nowrap",}} >
-        <div className="  row " >
-          <div  className=" card titleColor col mt-4" style={{marginLeft:"435px"}}>
+      <header
+        className=" card text-center mx-auto titleColor m-2 text-white"
+        style={{ maxWidth: "500px", marginBottom: "-500px" }}
+      >
+        <h1>Welcome to Bilkonnekt Academic </h1>
+        <p>Collaborate with other students.</p>
+      </header>
+      <Container
+        className=" text-center   text-white"
+        style={{ whiteSpace: "nowrap" }}
+      >
+        <div className="  row ">
+          <div
+            className=" card titleColor col mt-4"
+            style={{ marginLeft: "435px" }}
+          >
             <Link href="academic/group-hub">
               <Card className="mb-3 mt-3  w-100">
                 <Card.Body>See Your Groups</Card.Body>
@@ -59,8 +75,8 @@ export default function Home() {
           cursor: pointer;
           /* Add any additional hover effects */
         }
-        .titleColor{
-          background-color: #0B1356;
+        .titleColor {
+          background-color: #0b1356;
         }
       `}</style>
     </div>

@@ -29,6 +29,8 @@ function ProfilePage({ params }) {
   const [deleteUserEmail, setDeleteUserEmail] = useState("");
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [imageUpload, setImageUpload] = useState(null);
+  const isBanned = session?.user?.isBanned;
+  if (isBanned) router.push("/");
   let uploadedImageURL = "false";
 
   function ImageSpace() {

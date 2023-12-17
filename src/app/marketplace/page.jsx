@@ -10,6 +10,7 @@ import SaleProductCard from "../components/SaleProductCard";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import { useRouter } from "next/navigation";
 
 import { useEffect } from "react";
 import { v4 } from "uuid";
@@ -21,7 +22,9 @@ export default function Home() {
   const token = session?.backendTokens?.accessToken;
   const [productdata, setproductdata] = useState([]);
   const [initialProducts, setinitialProducts] = useState([]);
-
+  const isBanned = session?.user?.isBanned;
+  const router = useRouter();
+  if (isBanned) router.push("/");
   console.log("initialProducts", initialProducts);
 
   // State for search input, selected type, and products
@@ -176,42 +179,57 @@ export default function Home() {
           {/* Sidebar for type filtering */}
           <div className="col-md-3 ">
             <div className="fixed-element">
-            <div className="sidebar titleColor text-white">
-              <div>
-                <h3 style={{ marginBottom: '30px' }}>Filter by Type</h3>
-                <ul>
-                  <li>
-                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("")}>All</button>
-                  </li>
-                  <li>
-                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("selling")}>
-                      Selling
-                    </button>
-                  </li>
-                  <li>
-                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("donating")}>
-                      Donating
-                    </button>
-                  </li>
-                  <li>
-                    <button style={{ fontSize: '20px',marginBottom:"10px" }} onClick={() => setSelectedType("borrowing")}>
-                      Borrowing
-                    </button>
-                  </li>
-                </ul>
+              <div className="sidebar titleColor text-white">
+                <div>
+                  <h3 style={{ marginBottom: "30px" }}>Filter by Type</h3>
+                  <ul>
+                    <li>
+                      <button
+                        style={{ fontSize: "20px", marginBottom: "10px" }}
+                        onClick={() => setSelectedType("")}
+                      >
+                        All
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        style={{ fontSize: "20px", marginBottom: "10px" }}
+                        onClick={() => setSelectedType("selling")}
+                      >
+                        Selling
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        style={{ fontSize: "20px", marginBottom: "10px" }}
+                        onClick={() => setSelectedType("donating")}
+                      >
+                        Donating
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        style={{ fontSize: "20px", marginBottom: "10px" }}
+                        onClick={() => setSelectedType("borrowing")}
+                      >
+                        Borrowing
+                      </button>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-            <button
-              className="btn btn-success text-nowrap"
-              onClick={openModal}
-              style={{ fontSize: '20px',
-                maxWidth: "200px",
-                maxHeight: "70px",
-                marginTop: "20px",
-              }}
-            >
-              Add Product
-            </button>
+              <button
+                className="btn btn-success text-nowrap"
+                onClick={openModal}
+                style={{
+                  fontSize: "20px",
+                  maxWidth: "200px",
+                  maxHeight: "70px",
+                  marginTop: "20px",
+                }}
+              >
+                Add Product
+              </button>
             </div>
             <Modal show={showModal} onHide={closeModal}>
               <Modal.Header closeButton>
@@ -226,17 +244,16 @@ export default function Home() {
                       value={newProductType}
                       onChange={(e) => {
                         setNewProductType(e.target.value);
-                        if(e.target.value == "borrowing"){
+                        if (e.target.value == "borrowing") {
                           setNewProductPrice(null);
                         }
-                        if(e.target.value == "selling"){
+                        if (e.target.value == "selling") {
                           setNewProductDuration(null);
                         }
-                        if(e.target.value == "donating"){
+                        if (e.target.value == "donating") {
                           setNewProductPrice(null);
                           setNewProductDuration(null);
                         }
-
                       }}
                     >
                       <option value="selling">Selling</option>
@@ -253,7 +270,7 @@ export default function Home() {
                       onChange={(e) => setNewProductTitle(e.target.value)}
                     />
                   </Form.Group>
-                  {(newProductType == "borrowing") && (
+                  {newProductType == "borrowing" && (
                     <Form.Group controlId="title">
                       <Form.Label>Days to Borrow</Form.Label>
                       <Form.Control
@@ -270,7 +287,7 @@ export default function Home() {
                       />
                     </Form.Group>
                   )}
-                  {(newProductType == "selling") && (
+                  {newProductType == "selling" && (
                     <Form.Group controlId="price">
                       <Form.Label>Price</Form.Label>
                       <Form.Control
@@ -325,10 +342,13 @@ export default function Home() {
           </div>
           <div className="col-md-9" style={{ marginLeft: "-160px" }}>
             {/* Center-align the content */}
-            <header  className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px" }}>
-          <h1>Welcome to Bilkonnekt Marketplace </h1>
-          <p>Find great deals on items near you</p>
-        </header>
+            <header
+              className=" card text-center mx-auto titleColor m-2 text-white"
+              style={{ maxWidth: "500px" }}
+            >
+              <h1>Welcome to Bilkonnekt Marketplace </h1>
+              <p>Find great deals on items near you</p>
+            </header>
 
             <div className="search-bar">
               <input
@@ -343,24 +363,32 @@ export default function Home() {
 
             <main style={{ marginTop: "20px" }}>
               <div className="container-fluid card bg-custom1 ">
-              {/* Product grid */}
-             <div className="list" style={{ marginTop: "10px", display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
-              {filteredProducts.map((product, index) => (
-              <div key={index} className="product-card">
-                <SaleProductCard
-                  seller={product.sellerid}
-                  sellerName={product.sellerName}
-                  productid={product._id}
-                  title={product.title}
-                  price={product.price}
-                  location={product.address}
-                  type={product.type}
-                  description={product.description}
-                  imageURL={product.imageURL}
-                />
-              </div>
-              ))}
-              </div>
+                {/* Product grid */}
+                <div
+                  className="list"
+                  style={{
+                    marginTop: "10px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "15px",
+                  }}
+                >
+                  {filteredProducts.map((product, index) => (
+                    <div key={index} className="product-card">
+                      <SaleProductCard
+                        seller={product.sellerid}
+                        sellerName={product.sellerName}
+                        productid={product._id}
+                        title={product.title}
+                        price={product.price}
+                        location={product.address}
+                        type={product.type}
+                        description={product.description}
+                        imageURL={product.imageURL}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </main>
 
@@ -385,8 +413,7 @@ export default function Home() {
           cursor: pointer;
         }
         .bg-custom1 {
-          background-color: #0B1356;
-          ; 
+          background-color: #0b1356;
         }
         .sidebar {
           background: #f8f9fa;
@@ -428,15 +455,15 @@ export default function Home() {
           text-align: center;
           margin-top: 20px;
         }
-        .titleColor{
-          background-color: #0B1356;
+        .titleColor {
+          background-color: #0b1356;
         }
         .fixed-element {
           position: fixed;
           margin-top: 600; /* Stick to the top of the viewport */
           left: 10; /* Stick to the left of the viewport */
           width: 15%; /* Take up the full width of the viewport */
-          
+
           z-index: 1000; /* Set a high z-index to ensure it's on top of other elements */
         }
       `}</style>

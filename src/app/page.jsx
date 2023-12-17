@@ -13,6 +13,7 @@ import Link from "next/link";
 
 export default function Home() {
   const { data: session } = useSession();
+  const isBanned = session?.user?.isBanned;
   const token = session?.backendTokens?.accessToken;
   console.log("session", session);
   console.log("user", session?.user?.username);
@@ -102,6 +103,16 @@ export default function Home() {
       console.error("Error fetching data:", error);
     }
   };
+  if (isBanned)
+    return (
+      <div className="banned-page">
+        {" "}
+        <Navbar />
+        <h1>You are banned!</h1>
+        <p>If you wish to appeal, please contact the administrators.</p>
+        <p>You Can Still Use Contact Admin</p>
+      </div>
+    );
 
   return (
     <div>

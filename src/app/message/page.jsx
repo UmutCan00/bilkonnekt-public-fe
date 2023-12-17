@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-
+import { useRouter } from "next/navigation";
 const MessagingPage = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -32,7 +32,7 @@ const MessagingPage = () => {
     console.log("Contract Accepted");
     window.location.reload();
   };
-
+  const { data: session } = useSession();
   const handleDeclineContract = () => {
     // Logic to handle declining the contract
     console.log("Contract Declined");
@@ -42,6 +42,9 @@ const MessagingPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   const currentDate = new Date();
+  const isBanned = session?.user?.isBanned;
+  const router = useRouter();
+  if (isBanned) router.push("/");
 
   const getDialogContracts = async (chatId) => {
     try {
@@ -137,7 +140,6 @@ const MessagingPage = () => {
     scrollToBottom(); // Scroll to the bottom when messages change
   }, [messages]);
   const [chats, setChats] = useState([]);
-  const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
   const currentuserid = session?.user?._id;
   useEffect(() => {

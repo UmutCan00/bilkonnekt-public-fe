@@ -12,13 +12,16 @@ import SocialPostCard from "../components/SocialPostCard";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-
+import { useRouter } from "next/navigation";
 import { v4 } from "uuid";
 
 import { storage } from "../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 export default function Home() {
   const { data: session } = useSession();
+  const isBanned = session?.user?.isBanned;
+  const router = useRouter();
+  if (isBanned) router.push("/");
   const token = session?.backendTokens?.accessToken;
   const [productdata, setproductdata] = useState([]);
   const [initialProducts, setinitialProducts] = useState([]);
@@ -200,97 +203,118 @@ export default function Home() {
         <div className="row">
           {/* Sidebar for type filtering */}
           <div className="col-md-2">
-            <div className="card bg-custom1 fixed-element"  style={{marginTop:"215px",maxHeight:"200px",maxWidth:"300px",height:"150px"}}>
-          <div className="search-bar ml-1 mr-1 " style={{marginBottom:"-210px",marginTop:"30px"}}>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search for posts..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-              />
-              <button className="btn btn-primary">Search</button>
-            </div>
-            <button
-              className="btn btn-success"
-              onClick={openModal}
+            <div
+              className="card bg-custom1 fixed-element"
               style={{
-                maxWidth: "100%",
-                maxHeight: "70px",
-                marginTop: "220px",
-                marginLeft: "10px",
-                marginRight: "10px",
+                marginTop: "215px",
+                maxHeight: "200px",
+                maxWidth: "300px",
+                height: "150px",
               }}
             >
-              Share
-            </button>
-            <Modal show={showModal} onHide={closeModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Add New Post</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form>
-                  <Form.Group controlId="title">
-                    <Form.Label>Header</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter title"
-                      value={newProductTitle}
-                      onChange={(e) => setNewProductTitle(e.target.value)}
-                    />
-                  </Form.Group>
-
-                  <Form.Group controlId="description">
-                    <Form.Label>Content</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      placeholder="Enter description"
-                      value={newProductDescription}
-                      onChange={(e) => setNewProductDescription(e.target.value)}
-                    />
-                  </Form.Group>
-
-                  <Form.Group controlId="Anonymous">
-                    <Form.Check
-                      type="checkbox"
-                      label="Make my post Anonymous"
-                      checked={isAnonymous}
-                      onChange={(e) => {
-                        setIsAnonymous(e.target.checked);
-                        console.log("isAnon: ", isAnonymous);
-                      }}
-                    />
-                  </Form.Group>
-                </Form>
+              <div
+                className="search-bar ml-1 mr-1 "
+                style={{ marginBottom: "-210px", marginTop: "30px" }}
+              >
                 <input
-                  type="file"
-                  onChange={(event) => {
-                    setImageUpload(event.target.files[0]);
-                  }}
+                  type="text"
+                  className="form-control"
+                  placeholder="Search for posts..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                 />
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="primary" onClick={handleSubmit}>
-                  Share
-                </Button>
-              </Modal.Footer>
-            </Modal>
+                <button className="btn btn-primary">Search</button>
+              </div>
+              <button
+                className="btn btn-success"
+                onClick={openModal}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "70px",
+                  marginTop: "220px",
+                  marginLeft: "10px",
+                  marginRight: "10px",
+                }}
+              >
+                Share
+              </button>
+              <Modal show={showModal} onHide={closeModal}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Add New Post</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form>
+                    <Form.Group controlId="title">
+                      <Form.Label>Header</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter title"
+                        value={newProductTitle}
+                        onChange={(e) => setNewProductTitle(e.target.value)}
+                      />
+                    </Form.Group>
+
+                    <Form.Group controlId="description">
+                      <Form.Label>Content</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        placeholder="Enter description"
+                        value={newProductDescription}
+                        onChange={(e) =>
+                          setNewProductDescription(e.target.value)
+                        }
+                      />
+                    </Form.Group>
+
+                    <Form.Group controlId="Anonymous">
+                      <Form.Check
+                        type="checkbox"
+                        label="Make my post Anonymous"
+                        checked={isAnonymous}
+                        onChange={(e) => {
+                          setIsAnonymous(e.target.checked);
+                          console.log("isAnon: ", isAnonymous);
+                        }}
+                      />
+                    </Form.Group>
+                  </Form>
+                  <input
+                    type="file"
+                    onChange={(event) => {
+                      setImageUpload(event.target.files[0]);
+                    }}
+                  />
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="primary" onClick={handleSubmit}>
+                    Share
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             </div>
           </div>
           <div className="col-md-9" style={{ marginLeft: "0px" }}>
             {/* Center-align the content */}
-            <header className=" card text-center mx-auto titleColor m-2 text-white" style={{ maxWidth:"500px" }}>
+            <header
+              className=" card text-center mx-auto titleColor m-2 text-white"
+              style={{ maxWidth: "500px" }}
+            >
               <h1>Welcome to Bilkonnekt Social </h1>
               <p>Don&apos;t Miss Anything on Campus</p>
             </header>
-            
-
-            
 
             <main style={{ marginTop: "20px" }}>
               {/* Social post container */}
               <div className="social-post-container card bg-custom1">
-                <div className="list  " style={{ marginTop:"10px",display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '0px' }}>
+                <div
+                  className="list  "
+                  style={{
+                    marginTop: "10px",
+                    display: "grid",
+                    gridTemplateColumns: "repeat(1, 1fr)",
+                    gap: "0px",
+                  }}
+                >
                   {filteredPosts.map((post, index) => (
                     <Link key={index} href={`/feed/${post._id}`} passHref>
                       <div className="socialpost-card">
@@ -310,7 +334,6 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-
             </main>
 
             <footer className="text-center mt-4">
@@ -320,20 +343,19 @@ export default function Home() {
         </div>
       </div>
       <style jsx>{`
-      .fixed-element {
-        position: fixed;
-        margin-top: 600; /* Stick to the top of the viewport */
-        left: 10; /* Stick to the left of the viewport */
-        width: 15%; /* Take up the full width of the viewport */
-        
-        z-index: 1000; /* Set a high z-index to ensure it's on top of other elements */
-      }
+        .fixed-element {
+          position: fixed;
+          margin-top: 600; /* Stick to the top of the viewport */
+          left: 10; /* Stick to the left of the viewport */
+          width: 15%; /* Take up the full width of the viewport */
+
+          z-index: 1000; /* Set a high z-index to ensure it's on top of other elements */
+        }
         a {
           text-decoration: none;
         }
         .bg-custom1 {
-          background-color: #0B1356;
-          ; 
+          background-color: #0b1356;
         }
         .product-grid {
           display: grid;
@@ -357,8 +379,8 @@ export default function Home() {
         .socialpost-card:hover {
           cursor: pointer;
         }
-        .titleColor{
-          background-color: #0B1356;
+        .titleColor {
+          background-color: #0b1356;
         }
         .sidebar {
           background: #f8f9fa;
