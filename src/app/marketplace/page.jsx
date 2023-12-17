@@ -344,23 +344,23 @@ export default function Home() {
             <main style={{ marginTop: "20px" }}>
               <div className="container-fluid card bg-custom1 ">
               {/* Product grid */}
-              <div className="list" style={{ marginTop: "10px", display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
-  {products.map((product, index) => (
-    <div key={index} className="product-card">
-      <SaleProductCard
-        seller={product.sellerid}
-        sellerName={product.sellerName}
-        productid={product._id}
-        title={product.title}
-        price={product.price}
-        location={product.address}
-        type={product.type}
-        description={product.description}
-        imageURL={product.imageURL}
-      />
-    </div>
-  ))}
-</div>
+             <div className="list" style={{ marginTop: "10px", display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+              {filteredProducts.map((product, index) => (
+              <div key={index} className="product-card">
+                <SaleProductCard
+                  seller={product.sellerid}
+                  sellerName={product.sellerName}
+                  productid={product._id}
+                  title={product.title}
+                  price={product.price}
+                  location={product.address}
+                  type={product.type}
+                  description={product.description}
+                  imageURL={product.imageURL}
+                />
+              </div>
+              ))}
+              </div>
               </div>
             </main>
 
