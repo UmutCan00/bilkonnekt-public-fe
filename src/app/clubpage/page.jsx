@@ -55,6 +55,34 @@ const ClubsPage = () => {
     console.log("Selected Club in effect:", selectedClub);
   }, [selectedClub]);
 
+  const handleJoinClub = async () => {
+    console.log("id", selectedClub._id);
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/followClub",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            clubId: selectedClub._id,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error joining club:", error);
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -112,7 +140,10 @@ const ClubsPage = () => {
                   type="button"
                   className="btn btn-success"
                   style={{ color: "black" }}
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    handleJoinClub();
+                  }}
                 >
                   Join Club
                 </button>{" "}
