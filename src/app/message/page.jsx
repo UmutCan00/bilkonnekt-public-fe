@@ -2,18 +2,137 @@
 import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import { useSession } from "next-auth/react";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const MessagingPage = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
   const prevMessagesLength = useRef(0);
-  // Function to scroll to the bottom of the messages container
+  const [showModal, setShowModal] = useState(false);
+  const [contractData, setContractData] = useState({
+    location: "",
+    date: "",
+    isfinal: false,
+    // Other fields for the contract
+  });
+  const [currentContract, setCurrentContract] = useState({});
+  const [isBuyer, setIsBuyer] = useState(false);
+  const [showFinalContract, setShowFinalContract] = useState(false);
+
+  const hasContract =
+    currentContract && Object.keys(currentContract).length > 0;
+
+  const handleAcceptContract = (id) => {
+    // Logic to handle accepting the contract
+    console.log("Contract accept called");
+    acceptContract(id);
+    console.log("Contract Accepted");
+    window.location.reload();
+  };
+
+  const handleDeclineContract = () => {
+    // Logic to handle declining the contract
+    console.log("Contract Declined");
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   const currentDate = new Date();
 
+  const getDialogContracts = async (chatId) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/dialog/getDialogContracts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            dialogId: chatId,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("dialogcontracts", data.results);
+        setCurrentContract(data.results[data.results.length - 1]);
+        console.log(data.results[data.results.length - 1]);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const createContract = async (chatId) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/dialog/createContract",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            dialogId: chatId,
+            returnLocation: contractData.location,
+            returnDate: contractData.date,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data", data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const acceptContract = async (contractId) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/dialog/acceptContract",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            contractId: contractId,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("data", data);
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const handleModalSubmit = () => {
+    console.log("Contract Data:", contractData);
+    createContract(currentChat._id);
+    setShowModal(false);
+  };
   useEffect(() => {
     scrollToBottom(); // Scroll to the bottom when messages change
   }, [messages]);
@@ -55,6 +174,7 @@ const MessagingPage = () => {
   useEffect(() => {
     let intervalId;
     if (currentChat) {
+      getDialogContracts(currentChat._id);
       intervalId = setInterval(() => {
         fetchmessage(currentChat._id); // Fetch messages every 2 seconds
       }, 2000);
@@ -92,9 +212,11 @@ const MessagingPage = () => {
         const data = await response.json();
         console.log("Loaded message!");
         console.log(data);
+
         if (data.length > prevMessagesLength.current) {
           setMessages(data);
           prevMessagesLength.current = data.length; // Update previous message length
+          setIsBuyer(currentChat.sellerId == currentuserid);
         }
       } else {
         console.error("Failed to load");
@@ -179,7 +301,7 @@ const MessagingPage = () => {
   };
 
   if (currentChat) {
-    console.log("current chat", messages);
+    console.log("current chat", currentChat);
     return (
       <div>
         <Navbar />
@@ -262,6 +384,66 @@ const MessagingPage = () => {
                   </div>
                 ))
               : null}
+            {hasContract && (
+              <div style={{ marginTop: "20px", textAlign: "center" }}>
+                {!isBuyer && !currentContract.isSellerAccepted ? (
+                  <>
+                    <h4>
+                      You Should Accept Your Proposed Contract or Create a New
+                      One:
+                    </h4>
+                    {/* Display contract info */}
+                    <p>Unique Contract ID: {currentContract._id}</p>
+                    <p>Date YYYY-MM-DD: {currentContract.returnDate}</p>
+                    <p>Return Location: {currentContract.returnLocation}</p>
+                    {/* Show See Contract button */}
+                    <Button
+                      variant="success"
+                      onClick={() => handleAcceptContract(currentContract._id)}
+                    >
+                      Accept
+                    </Button>
+                  </>
+                ) : currentContract.isSellerAccepted &&
+                  currentContract.isBuyerAccepted ? (
+                  <>
+                    <h4>You Have a Finalized Contract:</h4>
+                    <p>Unique Contract ID: {currentContract._id}</p>
+                    <p>Date YYYY-MM-DD: {currentContract.returnDate}</p>
+                    <p>Return Location: {currentContract.returnLocation}</p>
+                  </>
+                ) : isBuyer &&
+                  currentContract.isSellerAccepted &&
+                  !currentContract.isBuyerAccepted ? (
+                  <>
+                    <h4>
+                      You Can Accept the Proposed Contract or Create a New One:
+                    </h4>
+                    {/* Display contract info */}
+                    <p>Unique Contract ID: {currentContract._id}</p>
+                    <p>Date YYYY-MM-DD: {currentContract.returnDate}</p>
+                    <p>Return Location: {currentContract.returnLocation}</p>
+                    {/* Buttons */}
+                    <Button
+                      variant="success"
+                      onClick={() => handleAcceptContract(currentContract._id)}
+                    >
+                      Accept
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <h4>
+                      Waiting For Other Party to Accept the Contract, You Can
+                      Create a New Contract in the Meantime
+                    </h4>
+                    <p>Unique Contract ID: {currentContract._id}</p>
+                    <p>Date YYYY-MM-DD: {currentContract.returnDate}</p>
+                    <p>Return Location: {currentContract.returnLocation}</p>
+                  </>
+                )}
+              </div>
+            )}
             <div ref={messagesEndRef} /> {/* Reference for scrolling */}
           </div>
           <div style={{ borderTop: "1px solid #ccc", padding: "20px" }}>
@@ -292,6 +474,69 @@ const MessagingPage = () => {
             >
               Send
             </button>
+            {!(
+              currentContract?.isSellerAccepted &&
+              currentContract?.isBuyerAccepted
+            ) && (
+              <button
+                onClick={() => setShowModal(true)}
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "5px",
+                  backgroundColor: "#4CAF50",
+                  color: "#fff",
+                  border: "none",
+                  cursor: "pointer",
+                  marginLeft: "10px",
+                }}
+              >
+                Create Contract
+              </button>
+            )}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Create Contract</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group controlId="location">
+                    <Form.Label>Location</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={contractData.location}
+                      onChange={(e) =>
+                        setContractData({
+                          ...contractData,
+                          location: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="date">
+                    <Form.Label>Date</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={contractData.date}
+                      onChange={(e) =>
+                        setContractData({
+                          ...contractData,
+                          date: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={handleModalSubmit}>
+                  Submit
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </div>
         </div>
       </div>
