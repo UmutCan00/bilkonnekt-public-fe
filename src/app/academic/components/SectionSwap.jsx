@@ -2,31 +2,40 @@ import React, {useState} from 'react';
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { useSession } from "next-auth/react";
 
 const SectionSwap = ({showModal, closeModal, posts, setSWPost}) => {
     const [newSWCourseCode, setNewSWCourseCode] = useState("");
     const [newSWInitialSection, setNewSWInitialSection] = useState("");
     const [newSWRequestedSection, setNewSWRequestedSection] = useState("");
     const [newProductType, setNewProductType] = useState("");
+    const { data: session } = useSession();
+    const token = session?.backendTokens?.accessToken;
 
     const handleSubmit = () => {
         // Create a new product object with the entered values
 
         if (newSWInitialSection == newSWRequestedSection){
-
+            return;
         }
-        const newSWPost = {
-            postCreaterID: "new-post-creator-id",
-            courseCode: newSWCourseCode,
-            initialSection: newSWInitialSection,
-            requestedSection: newSWRequestedSection,
-            type: "section swap",
-        };
+        try {
+            fetch("http://localhost:3500/api/group/createSectionChange", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    courseCode: newSWCourseCode,
+                    currentSection: newSWInitialSection,
+                    aimedSection: newSWRequestedSection
+                }),
+            });
+            window.location.reload();
+        } catch (error) {
+            console.log("section change failed: ", error);
+        }
 
-        // Add the new product to the products array
-        setSWPost([...posts, newSWPost]);
-
-        // Close the modal
         closeModal();
     };
 

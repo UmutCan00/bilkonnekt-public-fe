@@ -104,18 +104,19 @@ const EventsPage = () => {
       <Navbar />
     <Container> 
             
-      <h1>Events</h1>
-      <Row>
+      <h1 className="card titleColor text-white text-center" style={{fontSize:"20px"}}>Events</h1>
+
+      <div className="row card titleColor" style={{marginTop:"50px",display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0px'}}>
         {eventsData.map((event) => (
-          <Col key={event.id} xs={12} md={6} lg={4}>
+          <div className="card m-2" key={event.id} xs={12} md={6} lg={4}>
             <div className="event-card" onClick={() => handleEventClick(event)}>
               <img src={event.imageURL} alt={event.title} className="img-fluid" />
               <h3>{event.title}</h3>
               <p>{event.eventDate}</p>
             </div>
-          </Col>
+          </div>
         ))}
-      </Row>
+      </div>
 
       <Modal show={selectedEvent !== null} onHide={handleCloseModal}>
         <Modal.Header closeButton>
@@ -132,6 +133,12 @@ const EventsPage = () => {
         </Modal.Footer>
       </Modal>
     </Container>
+    <style>{`
+          
+          .titleColor{
+            background-color: #0B1356;
+          }
+        `}</style>
     </div>
   );
 };

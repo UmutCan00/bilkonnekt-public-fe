@@ -2,7 +2,7 @@
 "use client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useSession } from "next-auth/react";
 import academicPostData from "../../mockdata/academicPostData";
 import Navbar from "../../components/Navbar";
@@ -16,7 +16,7 @@ export default function Home() {
   // State for search input, selected type, and posts
   const [searchInput, setSearchInput] = useState("");
   const [selectedType, setSelectedType] = useState("");
-  const [posts, setSWPost] = useState(initialProducts);
+  const [posts, setSWPost] = useState([]);
 
   // Function to filter posts based on search and type
   const filteredProducts = posts.filter((post) => {
@@ -52,6 +52,35 @@ export default function Home() {
       filteredProducts.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn)
     );
   }
+
+  //-----------------------------------------
+  useEffect(() => {
+    const fetchSW = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3500/api/group/getSWs",
+          {
+            method: "GET"
+          }
+        );
+        if (response.ok) {
+          console.log("Fetch all sw info fetch successful");
+          const data = await response.json();
+
+          console.log("data: ", data);
+          setSWPost(data);
+        } else {
+          console.error("Fetch post info fetch failed, response: ", response);
+        }
+      } catch (error) {
+        console.log("fetch post info basarisiz, ", error);
+      }
+    };
+
+    fetchSW();
+  }, []);
+
+  //-----------------------------------------
 
   return (
     <div>
@@ -111,10 +140,10 @@ export default function Home() {
                     {column.map((post, index) => (
                       <div key={index} className="product-card">
                         <AcademicPostCard
-                          writer={post.postCreaterID}
+                          writer={post.userId}
                           courseCode={post.courseCode}
-                          initialSection={post.initialSection}
-                          requestedSection={post.requestedSection}
+                          initialSection={post.currentSection}
+                          requestedSection={post.aimedSection}
                         />
                       </div>
                     ))}
