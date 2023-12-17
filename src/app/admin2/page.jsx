@@ -30,6 +30,10 @@ const Admin = () => {
   const { data: session } = useSession();
   const token = session?.backendTokens?.accessToken;
   const [users, setUsers] = useState([]);
+  const [clubs, setClubs] = useState([]);
+  const [marketplace, setMarketplace] = useState([]);
+  const [social, setSocial] = useState([]);
+
   const handleButtonClick = (tableName) => {
     setSelectedTable(tableName);
   };
@@ -63,7 +67,7 @@ const Admin = () => {
       console.log("set role basarisiz")
     }
     closeRolePanel();
-    //window.location.reload();
+    window.location.reload();
   };
 
   const openBanPanel = (userID) => {
@@ -77,14 +81,23 @@ const Admin = () => {
   };
 
   const handleBan = (isBanned) => {
-    if (selectedUserId && selectedRole) {
-      setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-          user.id === selectedUserId ? { ...user, isBanned: !isBanned } : user
-          )
-      );
-      }
+    console.log("selectedUserId: ",selectedUserId)
+    try {
+      fetch("http://localhost:3500/api/auth/banStasusChange", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            studentId: selectedUserId
+          }),
+        });
+    } catch (error) {
+      console.log("set role basarisiz")
+    }
     closeBanPanel();
+    window.location.reload();
   };
 
   const openDeleteClubPanel = (clubID) => {
@@ -126,7 +139,22 @@ const Admin = () => {
   
   const handleDeleteMarketplacePost = () => {
     console.log(selectedMarketplacePostId);
+    try {
+      fetch("http://localhost:3500/api/product/deleteProduct", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productId: selectedMarketplacePostId
+          }),
+        });
+    } catch (error) {
+      console.log("delete prod basarisiz")
+    }
     closeDeleteMarketplacePostPanel();
+    //window.location.reload();
   };
 
   const openDeleteSocialPostPanel = (socialPostID) => {
@@ -141,7 +169,22 @@ const Admin = () => {
   
   const handleDeleteSocialPost = () => {
     console.log(selectedSocialPostId);
+    try {
+      fetch("http://localhost:3500/api/social/deletePost", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            postId: selectedSocialPostId
+          }),
+        });
+    } catch (error) {
+      console.log("delete prod basarisiz")
+    }
     closeDeleteSocialPostPanel();
+    window.location.reload();
   };
 
   const handleTicket = (ticketID) => {
@@ -172,12 +215,89 @@ const Admin = () => {
       console.error("Error fetching data:", error);
     }
   };
+  const fetchClubs = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getClubs",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setClubs(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/product/getProducts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setMarketplace(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/social/getSocialPosts",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setSocial(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   useEffect(() => {
     fetchUsers();
+    fetchClubs();
+    fetchProducts();
+    fetchPosts();
     //fetchLikedPosts();
   }, [token]);
   const mockData = {
-    users: [
+    /*users: [
       { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: true },
       { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
       { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
@@ -198,15 +318,15 @@ const Admin = () => {
     clubs: [
       { id: 1, name: 'Bilkent YES' },
       { id: 2, name: 'Wizards' },
-    ],
-    marketplace: [
-      { id: 1, name: 'Basys 3', description: 'EA 201deyim' },
-      { id: 2, name: 'CS 223 Kitabi', description: '1200TL' },
-    ],
-    social: [
-      { id: 1, name: 'Arabam!', content: 'Mescit otoparkta arabami çizmişler.' },
-      { id: 2, name: 'Yemekhanedeki çocuk', content: 'Tanişmak isterim saat 10da gördüm.' },
-    ],
+      marketplace: [
+        { id: 1, name: 'Basys 3', description: 'EA 201deyim' },
+        { id: 2, name: 'CS 223 Kitabi', description: '1200TL' },
+      ],
+      social: [
+        { id: 1, name: 'Arabam!', content: 'Mescit otoparkta arabami çizmişler.' },
+        { id: 2, name: 'Yemekhanedeki çocuk', content: 'Tanişmak isterim saat 10da gördüm.' },
+      ],
+    ],*/
     tickets: [
       { id: 1, owner: 'Serhan Turan', message: 'İletişim butonu çalişmiyor' , status: false},
       { id: 2, owner: 'Kachow', message: 'Şifremi unuttum' , status: true},
@@ -279,7 +399,7 @@ const Admin = () => {
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.username}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.email}</td>
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.role}</td>
-                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.created_at ? 'Yes' : 'No'}</td> 
+                    <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{user.isBanned ? 'Yes' : 'No'}</td> 
                     <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                       {}
                       <button 
@@ -293,7 +413,7 @@ const Admin = () => {
                       </button>
                       <button 
                       style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '100px', height: '30px'}}
-                      onClick={()=> openBanPanel(user._id)}>{user.created_at ? 'Unban' : 'Ban'}
+                      onClick={()=> openBanPanel(user._id)}>{user.isBanned ? 'Unban' : 'Ban'}
                       </button>
                         
                       </td>
@@ -370,15 +490,15 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {mockData.clubs.map(club => (
+              {clubs.map(club => (
                 <tr key={club.id}>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{club.id}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{club._id}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{club.name}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
                     <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
-                      onClick={() => window.location.href = "/clubpage/" + club.id}>See Club Page</button>
+                      onClick={() => window.location.href = "/clubdetailspage/" + club._id}>See Club Page</button>
                     <button
                       style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
                       onClick={() => openDeleteClubPanel(club.id)}>Delete Club</button>
@@ -457,20 +577,20 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {mockData.marketplace.map(item => (
+              {marketplace.map(item => (
                 <tr key={item.id}>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item.id}</td>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item.name}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item._id}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item.title}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{item.description}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
                     <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
-                      onClick={() => window.location.href = "/marketplace/" + item.id}>See Marketplace Post
+                      onClick={() => window.location.href = "/marketplace/" + item._id}>See Marketplace Post
                       </button>
                     <button 
                       style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
-                      onClick={() => openDeleteMarketplacePostPanel(item.id)}
+                      onClick={() => openDeleteMarketplacePostPanel(item._id)}
                       >Delete Post</button>
                   </td>
                 </tr>
@@ -522,19 +642,19 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {mockData.social.map(post => (
+              {social.map(post => (
                 <tr key={post.id}>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.id}</td>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.name}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post._id}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.title}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{post.content}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}          
                     <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '180px', height: '30px'}}
-                      onClick={() => window.location.href = "/social/" + post.id}>See Social Post</button>
+                      onClick={() => window.location.href = "/feed/" + post._id}>See Social Post</button>
                     <button 
                       style={{backgroundColor: 'red', color: 'white', marginRight: '10px' , width: '130px', height: '30px'}}
-                      onClick={() => openDeleteSocialPostPanel(post.id)}
+                      onClick={() => openDeleteSocialPostPanel(post._id)}
                       >Delete Post</button>
                   </td>
                 </tr>
