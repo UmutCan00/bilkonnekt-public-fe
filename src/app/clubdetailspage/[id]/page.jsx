@@ -5,16 +5,15 @@ import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
 import { useEffect } from "react";
 
-import clubsData from '../../mockdata/clubData';
+import clubsData from "../../mockdata/clubData";
 //import eventData from '../../mockdata/eventData';
-import React from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { Modal, FormControl} from 'react-bootstrap';
-import TimePicker from 'react-time-picker';
-import 'react-datepicker/dist/react-datepicker.css';
-import 'react-time-picker/dist/TimePicker.css';
-
+import React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Modal, FormControl } from "react-bootstrap";
+import TimePicker from "react-time-picker";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-time-picker/dist/TimePicker.css";
 
 import { v4 } from "uuid";
 import { storage } from "../../firebase";
@@ -37,25 +36,23 @@ const ClubPostCard = ({
       {/*<p className="card-text">Club Id: {clubid}</p>
         <p className="card-text">Event Id: {eventid}</p>*/}
       <div
-          className="card-img-top"
+        className="card-img-top"
+        style={{
+          height: "200px", // Set a fixed height for uniformity
+          overflow: "hidden", // Hide overflowing content
+        }}
+      >
+        <img
+          src={imageURL}
+          alt="Product Image"
           style={{
-            height: "200px", // Set a fixed height for uniformity
-            overflow: "hidden", // Hide overflowing content
+            width: "100%", // Ensure the image covers the container width
+            objectFit: "cover", // Crop the image while maintaining aspect ratio
+            height: "100%",
+            maxHeight: "100%", // Ensure the image covers the container height
           }}
-          
-        >
-          <img
-            src={imageURL}
-            alt="Product Image"
-            style={{
-              width: "100%", // Ensure the image covers the container width
-              objectFit: "cover", // Crop the image while maintaining aspect ratio
-              height: "100%",
-              maxHeight: "100%", // Ensure the image covers the container height
-            }}
-            
-          />
-        </div>
+        />
+      </div>
       <div className="card-body">
         <p className="row justify-content-left align-items-left">
           Content: {content}
@@ -77,56 +74,52 @@ const ClubDetailPage = ({ params }) => {
   const currentuserid = session?.user?._id;
   const [clubData, setClubData] = useState([]);
 
-  const [newDescription,setNewDescription]=useState([]);
-  const [newEventTitle,setNewEventTitle]=useState([]);
-  const [newEventPicture,setNewEventPicture]=useState([]);
-  const [newEventLocation,setNewEventLocation]=useState([]);
-  const [newEventDate,setNewEventDate]=useState(new Date());
-  const [newEventHour,setNewEventHour]=useState('12:00');
-  const [newEventPoints,setNewEventPoints]=useState([]);
-  const [newEventContent,setNewEventContent]=useState([]);
-  const [isThisClubExe,setIsThisClubExe]=useState([]);
+  const [newDescription, setNewDescription] = useState([]);
+  const [newEventTitle, setNewEventTitle] = useState([]);
+  const [newEventPicture, setNewEventPicture] = useState([]);
+  const [newEventLocation, setNewEventLocation] = useState([]);
+  const [newEventDate, setNewEventDate] = useState(new Date());
+  const [newEventHour, setNewEventHour] = useState("12:00");
+  const [newEventPoints, setNewEventPoints] = useState([]);
+  const [newEventContent, setNewEventContent] = useState([]);
+  const [isThisClubExe, setIsThisClubExe] = useState(false);
   const [imageUpload, setImageUpload] = useState(null);
-  
-  const [eventData,setEventData]=useState([]);
 
-  const id  = params.id;
+  const [eventData, setEventData] = useState([]);
+
+  const id = params.id;
   console.log(id);
   const club = clubsData.find((c) => c.id === parseInt(id, 10));
 
   const [showModal, setShowModal] = useState(false);
   const [showPostModal, setShowPostModal] = useState(false);
   let uploadedImageURL = "false";
-  const handleSaveDescription = (newDescription,club) => {
-
+  const handleSaveDescription = (newDescription, club) => {
     // Perform the logic to save the new description
     club.description = newDescription;
     console.log(`Saving new description: ${newDescription}`);
 
     try {
       fetch("http://localhost:3500/api/social/updateClub", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            clubId:params.id,
-            description: newDescription
-          }),
-        });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          clubId: params.id,
+          description: newDescription,
+        }),
+      });
     } catch (error) {
-      console.log("delete prod basarisiz")
+      console.log("delete prod basarisiz");
     }
 
     // Close the modal after saving (if that's the desired behavior)
     setShowModal(false);
   };
 
-
-  
-
-  const uploadImage = async (title,content,location,date,hour,points) => {
+  const uploadImage = async (title, content, location, date, hour, points) => {
     if (imageUpload == null) return;
     const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
     uploadBytes(imageRef, imageUpload)
@@ -152,26 +145,39 @@ const ClubDetailPage = ({ params }) => {
             content: content,
             imageURL: uploadedImageURL,
             location: location,
-            date:date,
-            hour:hour,
-            points:points
+            date: date,
+            hour: hour,
+            points: points,
           }),
         });
       })
       .catch((error) => {
         console.error("Error uploading image:", error);
       });
-      console.log("uploadedImageURL: ", uploadedImageURL)
+    console.log("uploadedImageURL: ", uploadedImageURL);
   };
 
-  const handlePostClick = async (title,content,location,date,hour,points) => {
+  const handlePostClick = async (
+    title,
+    content,
+    location,
+    date,
+    hour,
+    points
+  ) => {
     // BURAYA KOY CENKER
     try {
-      uploadedImageURL = await uploadImage(title,content,location,date,hour,points);
+      uploadedImageURL = await uploadImage(
+        title,
+        content,
+        location,
+        date,
+        hour,
+        points
+      );
     } catch (error) {
       console.log("firebase error: ", error);
     }
-
 
     console.log(`Saving new event: ${title}`);
 
@@ -201,30 +207,31 @@ const ClubDetailPage = ({ params }) => {
           console.log(data);
           setClubData(data);
 
-          console.log("clubData: ",clubData)
-          setIsThisClubExe(clubData.executiveId == currentuserid )
-          console.log("is this club Exe: ",isThisClubExe)
-
+          console.log("clubData: ", clubData);
+          setIsThisClubExe(data.executiveId == currentuserid);
+          console.log("is this club Exe: ", isThisClubExe);
         } else {
           console.error("Failed to fetch data");
         }
       } catch (error) {
         console.log("get all clubs operation error: ", error);
       }
-
-    }
-    const fetchClubPosts = async ()=>{
+    };
+    const fetchClubPosts = async () => {
       try {
-        const response = await fetch("http://localhost:3500/api/social/getClubPostByClub", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            clubId: params.id
-          }),
-        });
+        const response = await fetch(
+          "http://localhost:3500/api/social/getClubPostByClub",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              clubId: params.id,
+            }),
+          }
+        );
         if (response.ok) {
           const data = await response.json();
           console.log(data);
@@ -233,13 +240,14 @@ const ClubDetailPage = ({ params }) => {
           console.error("Failed to fetch data");
         }
       } catch (error) {
-        console.log("get clubs events operation error: ", error)
+        console.log("get clubs events operation error: ", error);
       }
-    }
+    };
 
     fetchClubs();
     fetchClubPosts();
-  }, []);
+    setIsThisClubExe(clubData.executiveId == currentuserid);
+  }, [clubData]);
 
   if (!clubData) {
     return <p>Club not found</p>;
@@ -380,46 +388,69 @@ const ClubDetailPage = ({ params }) => {
                   <FormControl
                     type="text"
                     placeholder="Enter Post Points"
-
-                    value={newEventPoints} 
-                    onChange={(e) => setNewEventPoints(e.target.value)}  
-                    />
-                      <input
-                        type="file"
-                        onChange={(event) => {
-                          setImageUpload(event.target.files[0]);
-                        }}
-                      />
-                    
-                   </Modal.Body>
-                   <Modal.Footer>
-                   <button className="btn btn-success" onClick={() => handlePostClick(newEventTitle,newEventContent,newEventLocation,newEventDate,newEventHour,newEventPoints,newEventPicture)}>Post New Event</button>
-                   <button className="btn btn-danger" onClick={() => setShowPostModal(false)}>Close</button>                  
-                   </Modal.Footer>
-                   </Modal>
-
+                    value={newEventPoints}
+                    onChange={(e) => setNewEventPoints(e.target.value)}
+                  />
+                  <input
+                    type="file"
+                    onChange={(event) => {
+                      setImageUpload(event.target.files[0]);
+                    }}
+                  />
+                </Modal.Body>
+                <Modal.Footer>
+                  <button
+                    className="btn btn-success"
+                    onClick={() =>
+                      handlePostClick(
+                        newEventTitle,
+                        newEventContent,
+                        newEventLocation,
+                        newEventDate,
+                        newEventHour,
+                        newEventPoints,
+                        newEventPicture
+                      )
+                    }
+                  >
+                    Post New Event
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => setShowPostModal(false)}
+                  >
+                    Close
+                  </button>
+                </Modal.Footer>
+              </Modal>
             </div>
             <div className="text-center mb-2">Past Events</div>
             <div>
               {eventData && (
                 <div className="row card titleColor ">
-                  <div className="list" style={{ marginTop:"30px",marginLeft:"30px",display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px' }}>
-                  {eventData.map((post, index) => (
-                    <ClubPostCard
-
-                      
-                      clubid={post.clubId}
-                      eventid={post._id}
-
-                      title={post.title}
-                      content={post.content}
-                      imageURL={post.imageURL}
-                      date={post.eventDate}
-                      hour={post.eventhour}
-                      place={post.location}
-                      ge25xpoints={post.points}
-                    />
-                  ))}
+                  <div
+                    className="list"
+                    style={{
+                      marginTop: "30px",
+                      marginLeft: "30px",
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, 1fr)",
+                      gap: "30px",
+                    }}
+                  >
+                    {eventData.map((post, index) => (
+                      <ClubPostCard
+                        clubid={post.clubId}
+                        eventid={post._id}
+                        title={post.title}
+                        content={post.content}
+                        imageURL={post.imageURL}
+                        date={post.eventDate}
+                        hour={post.eventhour}
+                        place={post.location}
+                        ge25xpoints={post.points}
+                      />
+                    ))}
                   </div>
                 </div>
               )}
@@ -428,11 +459,9 @@ const ClubDetailPage = ({ params }) => {
         </div>
       </div>
       <style jsx>{`
-      .titleColor{
-        background-color: #0B1356;
-      }
-      
-      
+        .titleColor {
+          background-color: #0b1356;
+        }
       `}</style>
     </div>
   );
