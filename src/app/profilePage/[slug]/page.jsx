@@ -5,14 +5,11 @@ import Navbar from "../../components/Navbar";
 import { useSession } from "next-auth/react";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import "../../globals.css";
 import { useRouter } from "next/navigation";
-
 
 import { v4 } from "uuid";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
-
 
 function ProfilePage({ params }) {
   const router = useRouter();
@@ -24,7 +21,7 @@ function ProfilePage({ params }) {
     email: "",
     bio: "3. Sinif CS öğrencisi",
     rating: "Güvenilir",
-    imageURL: "none"
+    imageURL: "none",
   });
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -39,16 +36,21 @@ function ProfilePage({ params }) {
       <div className="imgSpace border rounded text-center">
         <img src={userData.imageURL} />
       </div>
-      
     );
   }
 
   function UserInfo({ userData }) {
     return (
-      <div className="card bg-custom1" style={{ width: "40rem", color:"#0B1356" }}>
-        <h3 className=" text-center text-white" style={{ fontSize: "2rem" }}>UserName: {userData.username}</h3>
-        <h3 className=" text-center text-white" style={{ fontSize: "2rem" }}>Email: {userData.email}</h3>
-        
+      <div
+        className="card bg-custom1"
+        style={{ width: "40rem", color: "#0B1356" }}
+      >
+        <h3 className=" text-center text-white" style={{ fontSize: "2rem" }}>
+          UserName: {userData.username}
+        </h3>
+        <h3 className=" text-center text-white" style={{ fontSize: "2rem" }}>
+          Email: {userData.email}
+        </h3>
       </div>
     );
   }
@@ -117,7 +119,7 @@ function ProfilePage({ params }) {
           rating: "Güvenilir",
           imageURL: userDataResponse.imageURL,
         });
-        ImageSpace()
+        ImageSpace();
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -154,20 +156,20 @@ function ProfilePage({ params }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            imageURL: uploadedImageURL
+            imageURL: uploadedImageURL,
           }),
         });
       })
       .catch((error) => {
         console.error("Error uploading image:", error);
       });
-      console.log("uploadedImageURL: ", uploadedImageURL)
+    console.log("uploadedImageURL: ", uploadedImageURL);
   };
   return (
     <div>
       <Navbar />
       <div className="container-fluid">
-        <div className="row content d-flex bg-custom1" >
+        <div className="row content d-flex bg-custom1">
           <div className="col-sm ">
             <div className="d-flex flex-row  ms-5">
               <div className="ms-5"></div>
@@ -179,12 +181,20 @@ function ProfilePage({ params }) {
                 <ImageSpace image={imageUpload} />
               </div>
             </div>
-            {session?.user?._id === params.slug &&
+            {session?.user?._id === params.slug && (
               <div className="d-flex justify-content-center ">
-                <div className="col-md-6 d-flex flex-column" style={{marginLeft:"120px"}}>
-                  <label htmlFor="avatar" style= {{color: "white", padding: "10px"}}>Choose a profile picture:</label>
+                <div
+                  className="col-md-6 d-flex flex-column"
+                  style={{ marginLeft: "120px" }}
+                >
+                  <label
+                    htmlFor="avatar"
+                    style={{ color: "white", padding: "10px" }}
+                  >
+                    Choose a profile picture:
+                  </label>
                   <input
-                    style= {{ padding: "10px"}}
+                    style={{ padding: "10px" }}
                     type="file"
                     id="avatar"
                     name="avatar"
@@ -194,17 +204,20 @@ function ProfilePage({ params }) {
                       handleSubmit();
                     }}
                   />
-                  <button variant="primary" class="btn btn-light" onClick={handleSubmit}>
-                  Update
+                  <button
+                    variant="primary"
+                    class="btn btn-light"
+                    onClick={handleSubmit}
+                  >
+                    Update
                   </button>
                 </div>
               </div>
-            }
+            )}
           </div>
 
           <div className="col-sm ">
             <div className="d-flex flex-column  mt-5">
-
               <div className="mt-5">
                 <UserInfo userData={userData} />
               </div>
@@ -214,7 +227,9 @@ function ProfilePage({ params }) {
                 </button>
                 <button
                   className="btn btn-info m-2"
-                  onClick={() => { router.push("/marketplace/seller/" + params.slug) }}
+                  onClick={() => {
+                    router.push("/marketplace/seller/" + params.slug);
+                  }}
                 >
                   <i class="bi bi-shop-window"></i> Go to Shop
                 </button>

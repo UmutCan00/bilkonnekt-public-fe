@@ -212,11 +212,10 @@ const MessagingPage = () => {
         const data = await response.json();
         console.log("Loaded message!");
         console.log(data);
-
+        setIsBuyer(currentChat.buyerId == currentuserid);
         if (data.length > prevMessagesLength.current) {
           setMessages(data);
           prevMessagesLength.current = data.length; // Update previous message length
-          setIsBuyer(currentChat.sellerId == currentuserid);
         }
       } else {
         console.error("Failed to load");
