@@ -18,7 +18,7 @@ export default function ReportToAdmin() {
             <Navbar />
             <div className="container">
                 <h1 className="text-center mt-4">Message to the Administrator</h1>
-                <p className="text-center">Feel free to write your message below. Upon hitting the "Send" button, your message will be dispatched to the admin.</p>
+                <p className="text-center">Feel free to write your message below. Upon hitting the &quot;Send&quot; button, your message will be dispatched to the admin.</p>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <textarea
