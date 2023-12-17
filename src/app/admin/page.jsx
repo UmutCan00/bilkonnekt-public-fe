@@ -604,7 +604,7 @@ const Admin = () => {
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
           />
         <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Marketplace Posts</h1>
-        <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+        <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
           <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: 'black', color: 'white' }}>
@@ -669,7 +669,7 @@ const Admin = () => {
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
           />
         <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Social Posts</h1>
-        <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+        <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
           <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: 'black', color: 'white' }}>
@@ -734,7 +734,7 @@ const Admin = () => {
             style={{ color: 'black', width: '500px', margin: '0 auto', marginBottom: '10px', display: 'block'}}
           />
         <h1 style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '150px', height: '30px', backgroundColor: 'gray', marginBottom: '20px'}}>Tickets</h1>
-        <div style={{ overflowX: 'auto', maxHeight: '400px' }}>
+        <div style={{ overflowX: 'auto', maxHeight: '600px' }}>
           <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: 'black', color: 'white' }}>
