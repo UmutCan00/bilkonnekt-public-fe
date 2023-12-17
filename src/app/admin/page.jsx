@@ -136,10 +136,22 @@ const Admin = () => {
   const handleAddClub = () => {
     if (!selectedClubName || !selectedClubDescription || !selectedClubExecutiveID)
     {
-      
+      console.log("fill the fields");
     }
     else 
     {
+      fetch("http://localhost:3500/api/social/createClub", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: selectedClubName,
+            executiveId: selectedClubExecutiveID,
+            description: selectedClubDescription
+          }),
+      });
       console.log(selectedClubName)
       console.log(selectedClubDescription)
       console.log(selectedClubExecutiveID)
@@ -208,7 +220,22 @@ const Admin = () => {
   };
 
   const handleTicket = (ticketID) => {
+    try {
+      fetch("http://localhost:3500/api/auth/handleTicket", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ticketId: ticketID
+          }),
+        });
+    } catch (error) {
+      console.log("handle ticket basarisiz")
+    }
     console.log(ticketID)
+    window.location.reload();
   };
 
   const fetchUsers = async () => {
@@ -309,12 +336,35 @@ const Admin = () => {
       console.error("Error fetching data:", error);
     }
   };
+  const fetchTickets = async ()=>{
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/auth/getTickets",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setTickets(data);
+        console.log("data: ",data)
+      } else {
+        console.error("Failed to fetch data");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
   useEffect(() => {
     fetchUsers();
     fetchClubs();
     fetchProducts();
     fetchPosts();
-    //fetchTickets();
+    fetchTickets();
   }, [token]);
   const mockData = {
     /*users: [
@@ -346,11 +396,11 @@ const Admin = () => {
         { id: 1, name: 'Arabam!', content: 'Mescit otoparkta arabami çizmişler.' },
         { id: 2, name: 'Yemekhanedeki çocuk', content: 'Tanişmak isterim saat 10da gördüm.' },
       ],
+      tickets: [
+        { _id: 1, owner: 'Serhan Turan', message: 'İletişim butonu çalişmiyor' , status: false},
+        { _id: 2, owner: 'Kachow', message: 'Şifremi unuttum' , status: true},
+      ],
     ],*/
-    tickets: [
-      { _id: 1, owner: 'Serhan Turan', message: 'İletişim butonu çalişmiyor' , status: false},
-      { _id: 2, owner: 'Kachow', message: 'Şifremi unuttum' , status: true},
-    ],
   };
 
   return (
@@ -746,17 +796,17 @@ const Admin = () => {
               </tr>
             </thead>
             <tbody>
-              {mockData.tickets.map(ticket => (
+              {tickets.map(ticket => (
                 <tr key={ticket.id}>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket._id}</td>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.owner}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.senderId}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.senderName}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.message}</td>
-                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.status ? 'Yes': 'No'}</td>
+                  <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>{ticket.isResponded ? 'Yes': 'No'}</td>
                   <td style={{ backgroundColor: 'white', color: 'black', border: '1px solid gray', padding: '8px' }}>
                     {}
                     <button 
                       style={{backgroundColor: 'blue', color: 'white', marginRight: '10px' , width: '200px', height: '30px'}}
-                      onClick={() => handleTicket(ticket._id)}>{ticket.status ? 'Flag as Unhandled': 'Flag as Handled'}
+                      onClick={() => handleTicket(ticket._id)}>{ticket.isResponded ? 'Flag as Unhandled': 'Flag as Handled'}
                       </button>
                   </td>
                 </tr>

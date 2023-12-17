@@ -2,15 +2,33 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from '../components/Navbar';
+import { useSession } from "next-auth/react";
 
 export default function ReportToAdmin() {
     const [value, setValue] = useState('');
     const [isSent, setIsSent] = useState(false);
-
-    const handleSubmit = (event) => {
+    const { data: session } = useSession();
+    const [product, setProduct] = useState({});
+    const token = session?.backendTokens?.accessToken;
+    
+    const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("message:", value)
         setIsSent(true);
+        try {
+            const response = await fetch("http://localhost:3500/api/auth/createTicket", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    message: value
+                }),
+            });   
+        } catch (error) {
+            console.log("ticket creation error: ",error)
+        }
     };
 
     return (
