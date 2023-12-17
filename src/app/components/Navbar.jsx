@@ -74,11 +74,7 @@ const Navbar = () => {
               <i className="bi bi-calendar-fill"></i> Today in Bilkent
             </Button>
 
-            <Button
-              className="btn btn-dark"
-              variant=""
-              href={"/todayinbilkent"}
-            >
+            <Button className="btn btn-dark" variant="" href={"/social"}>
               <i className="bi bi-calendar-fill"></i> Feed
             </Button>
           </div>
