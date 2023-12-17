@@ -2,6 +2,10 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import Provider from "./components/Provider";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
