@@ -4,15 +4,21 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Navbar from "../../components/Navbar";
 import { useEffect } from "react";
-import clubsData from "../../mockdata/clubData";
-import eventData from "../../mockdata/eventData";
-import React from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { Modal, FormControl } from "react-bootstrap";
-import TimePicker from "react-time-picker";
-import "react-datepicker/dist/react-datepicker.css";
-import "react-time-picker/dist/TimePicker.css";
+
+import clubsData from '../../mockdata/clubData';
+//import eventData from '../../mockdata/eventData';
+import React from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Modal, FormControl} from 'react-bootstrap';
+import TimePicker from 'react-time-picker';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'react-time-picker/dist/TimePicker.css';
+
+
+import { v4 } from "uuid";
+import { storage } from "../../firebase";
+import { ref, uploadBytes, listAll, getDownloadURL } from "firebase/storage";
 
 const ClubPostCard = ({
   clubid,
@@ -59,43 +65,102 @@ const ClubDetailPage = ({ params }) => {
   const token = session?.backendTokens?.accessToken;
   const currentuserid = session?.user?._id;
   const [clubData, setClubData] = useState([]);
-  const [newDescription, setNewDescription] = useState([]);
-  const [newEventTitle, setNewEventTitle] = useState([]);
-  const [newEventPicture, setNewEventPicture] = useState([]);
-  const [newEventLocation, setNewEventLocation] = useState([]);
-  const [newEventDate, setNewEventDate] = useState(new Date());
-  const [newEventHour, setNewEventHour] = useState("12:00");
-  const [newEventPoints, setNewEventPoints] = useState([]);
-  const [newEventContent, setNewEventContent] = useState([]);
-  const id = params.id;
+
+  const [newDescription,setNewDescription]=useState([]);
+  const [newEventTitle,setNewEventTitle]=useState([]);
+  const [newEventPicture,setNewEventPicture]=useState([]);
+  const [newEventLocation,setNewEventLocation]=useState([]);
+  const [newEventDate,setNewEventDate]=useState(new Date());
+  const [newEventHour,setNewEventHour]=useState('12:00');
+  const [newEventPoints,setNewEventPoints]=useState([]);
+  const [newEventContent,setNewEventContent]=useState([]);
+  const [isThisClubExe,setIsThisClubExe]=useState([]);
+  const [imageUpload, setImageUpload] = useState(null);
+  
+  const [eventData,setEventData]=useState([]);
+
+  const id  = params.id;
   console.log(id);
   const club = clubsData.find((c) => c.id === parseInt(id, 10));
-  const isThisClubExe = currentuserid == clubData.executiveId;
 
   const [showModal, setShowModal] = useState(false);
   const [showPostModal, setShowPostModal] = useState(false);
+  let uploadedImageURL = "false";
+  const handleSaveDescription = (newDescription,club) => {
 
-  const handleSaveDescription = (newDescription, club) => {
     // Perform the logic to save the new description
     club.description = newDescription;
     console.log(`Saving new description: ${newDescription}`);
+
+    try {
+      fetch("http://localhost:3500/api/social/updateClub", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            clubId:params.id,
+            description: newDescription
+          }),
+        });
+    } catch (error) {
+      console.log("delete prod basarisiz")
+    }
 
     // Close the modal after saving (if that's the desired behavior)
     setShowModal(false);
   };
 
-  const handlePostClick = (
-    clubid,
-    eventid,
-    title,
-    content,
-    location,
-    date,
-    hour,
-    points,
-    picture
-  ) => {
+
+  
+
+  const uploadImage = async (title,content,location,date,hour,points) => {
+    if (imageUpload == null) return;
+    const imageRef = ref(storage, `images/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload)
+      .then(() => {
+        return getDownloadURL(imageRef);
+      })
+      .then((downloadURL) => {
+        uploadedImageURL = downloadURL;
+        console.log("Image URL:", uploadedImageURL);
+        alert("Image uploaded");
+        return downloadURL;
+      })
+      .then(() => {
+        fetch("http://localhost:3500/api/social/createClubPost", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: title,
+            clubId: params.id,
+            content: content,
+            imageURL: uploadedImageURL,
+            location: location,
+            date:date,
+            hour:hour,
+            points:points
+          }),
+        });
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+      });
+      console.log("uploadedImageURL: ", uploadedImageURL)
+  };
+
+  const handlePostClick = async (title,content,location,date,hour,points) => {
     // BURAYA KOY CENKER
+    try {
+      uploadedImageURL = await uploadImage(title,content,location,date,hour,points);
+    } catch (error) {
+      console.log("firebase error: ", error);
+    }
+
 
     console.log(`Saving new event: ${title}`);
 
@@ -124,16 +189,45 @@ const ClubDetailPage = ({ params }) => {
           const data = await response.json();
           console.log(data);
           setClubData(data);
-          console.log("clubData: ", clubData);
-          console.log("is this club Exe: ", isThisClubExe);
+
+          console.log("clubData: ",clubData)
+          setIsThisClubExe(clubData.executiveId == currentuserid )
+          console.log("is this club Exe: ",isThisClubExe)
+
         } else {
           console.error("Failed to fetch data");
         }
       } catch (error) {
         console.log("get all clubs operation error: ", error);
       }
-    };
+
+    }
+    const fetchClubPosts = async ()=>{
+      try {
+        const response = await fetch("http://localhost:3500/api/social/getClubPostByClub", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            clubId: params.id
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setEventData(data);
+        } else {
+          console.error("Failed to fetch data");
+        }
+      } catch (error) {
+        console.log("get clubs events operation error: ", error)
+      }
+    }
+
     fetchClubs();
+    fetchClubPosts();
   }, []);
 
   if (!clubData) {
@@ -275,41 +369,24 @@ const ClubDetailPage = ({ params }) => {
                   <FormControl
                     type="text"
                     placeholder="Enter Post Points"
-                    value={newEventPoints}
-                    onChange={(e) => setNewEventPoints(e.target.value)}
-                  />
-                  <FormControl
-                    type="text"
-                    placeholder="Enter Post Picture"
-                    value={newEventPicture}
-                    onChange={(e) => setNewEventPicture(e.target.value)}
-                  />
-                </Modal.Body>
-                <Modal.Footer>
-                  <button
-                    className="btn btn-success"
-                    onClick={() =>
-                      handlePostClick(
-                        newEventTitle,
-                        newEventContent,
-                        newEventLocation,
-                        newEventDate,
-                        newEventHour,
-                        newEventPoints,
-                        newEventPicture
-                      )
-                    }
-                  >
-                    Post New Event
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => setShowPostModal(false)}
-                  >
-                    Close
-                  </button>
-                </Modal.Footer>
-              </Modal>
+
+                    value={newEventPoints} 
+                    onChange={(e) => setNewEventPoints(e.target.value)}  
+                    />
+                      <input
+                        type="file"
+                        onChange={(event) => {
+                          setImageUpload(event.target.files[0]);
+                        }}
+                      />
+                    
+                   </Modal.Body>
+                   <Modal.Footer>
+                   <button className="btn btn-success" onClick={() => handlePostClick(newEventTitle,newEventContent,newEventLocation,newEventDate,newEventHour,newEventPoints,newEventPicture)}>Post New Event</button>
+                   <button className="btn btn-danger" onClick={() => setShowPostModal(false)}>Close</button>                  
+                   </Modal.Footer>
+                   </Modal>
+
             </div>
             <div className="text-center mb-2">Past Events</div>
             <div>
@@ -317,16 +394,18 @@ const ClubDetailPage = ({ params }) => {
                 <div className="row justify-content-center align-items-center">
                   {eventData.map((post, index) => (
                     <ClubPostCard
-                      key={index}
-                      clubid={post.clubid}
-                      eventid={post.eventid}
+
+                      
+                      clubid={post.clubId}
+                      eventid={post._id}
+
                       title={post.title}
                       content={post.content}
                       imageURL={post.imageURL}
-                      date={post.date}
-                      hour={post.hour}
-                      place={post.place}
-                      ge25xpoints={post.ge25xpoints}
+                      date={post.eventDate}
+                      hour={post.eventhour}
+                      place={post.location}
+                      ge25xpoints={post.points}
                     />
                   ))}
                 </div>
