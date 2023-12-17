@@ -16,8 +16,9 @@ function productInfo(products) {
         
       </div>
       <div class="productInfo">
-        <h2>Seller: {products?.sellerName} </h2>
-        
+        <h2>Seller: 
+          <a href={`/profilePage/${products?.sellerid}`}>{products?.sellerName}</a>
+        </h2>
       </div>
       <div class="productInfo">
         <h2>Address: {products?.address}</h2>
