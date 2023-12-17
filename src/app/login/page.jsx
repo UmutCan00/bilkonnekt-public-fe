@@ -24,6 +24,33 @@ export default function Login() {
       router.push("/");
     }
   };
+
+  const handleForgotPassword = async () => {
+    console.log("email", email);
+
+    try {
+      const response = await fetch(
+        "http://localhost:3500/api/auth/forgotPassword",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        console.log("Password reset email sent!");
+      } else {
+        console.error("Failed to send reset email");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   return (
     <div>
       <Navbar />
@@ -102,6 +129,22 @@ export default function Login() {
             }}
           >
             Log In
+          </button>
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            style={{
+              width: "100%",
+              padding: "10px",
+              backgroundColor: "#dc3545",
+              color: "#fff",
+              border: "none",
+              borderRadius: "3px",
+              cursor: "pointer",
+              marginTop: "10px",
+            }}
+          >
+            Forgot Password
           </button>
         </div>
       </div>
