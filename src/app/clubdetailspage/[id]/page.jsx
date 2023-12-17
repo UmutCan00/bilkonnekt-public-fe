@@ -322,7 +322,6 @@ const ClubDetailPage = ({ params }) => {
                 <button
                   className="btn btn-danger"
                   onClick={() => setShowPostModal(true)}
-                  
                 >
                   Post some Events!
                 </button>
@@ -425,7 +424,7 @@ const ClubDetailPage = ({ params }) => {
                 </Modal.Footer>
               </Modal>
             </div>
-            
+
             <div className="text-center mb-2">Past Events</div>
             <div>
               {eventData && (
@@ -442,6 +441,7 @@ const ClubDetailPage = ({ params }) => {
                   >
                     {eventData.map((post, index) => (
                       <ClubPostCard
+                        key={index}
                         clubid={post.clubId}
                         eventid={post._id}
                         title={post.title}
