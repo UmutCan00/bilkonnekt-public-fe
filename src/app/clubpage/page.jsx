@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Navbar from "../components/Navbar";
 import { useEffect } from "react";
-
+import "bootstrap/dist/css/bootstrap.min.css";
 //import clubData from '../mockdata/clubData';
 
 import Link from 'next/link';
@@ -80,9 +80,9 @@ const ClubsPage = () => {
             <img src={selectedClub.imageURL} alt={selectedClub.name} />
             <h1>Club Bio goes here: {selectedClub.description}</h1>
     </div>
-    <div> <button type="button" class="btn btn-success" style={{ color: "black" }} onClick={() => setShowModal(false)}>   Join Club</button> </div>
-    <div><button type="button" class="btn btn-danger" style={{ color: "black" }} onClick={() => setShowModal(false)}>Edit Club Page</button></div>
-    <div><button type="button" class="btn btn-primary" style={{ color: "black" }} onClick={() => setShowModal(false)}> <div>
+    <div> <button type="button" className="btn btn-success" style={{ color: "black" }} onClick={() => setShowModal(false)}>Join Club</button> </div>
+    <div><button type="button" className="btn btn-danger" style={{ color: "black" }} onClick={() => setShowModal(false)}>Edit Club Page</button></div>
+    <div><button type="button" className="btn btn-primary" style={{ color: "black" }} onClick={() => setShowModal(false)}> <div>
     <Link href={`/clubdetailspage/${selectedClub._id}`}>Go To Club Profile</Link>
     </div></button></div>
           </Modal.Body>

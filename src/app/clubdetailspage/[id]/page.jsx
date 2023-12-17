@@ -309,11 +309,12 @@ const ClubDetailPage = ({ params }) => {
                 </Modal.Footer>
               </Modal>
             </div>
-            <div className="text-center mb-4">
+            <div className=" text-center mb-4">
               {isThisClubExe && (
                 <button
                   className="btn btn-danger"
                   onClick={() => setShowPostModal(true)}
+                  
                 >
                   Post some Events!
                 </button>
@@ -399,6 +400,7 @@ const ClubDetailPage = ({ params }) => {
                    </Modal>
 
             </div>
+            
             <div className="text-center mb-2">Past Events</div>
             <div>
               {eventData && (
