@@ -55,47 +55,51 @@ const CreateGroupPage = () => {
     <div>
       <Navbar />
       <div>
-        <h1>Create a Group</h1>
+        <h1 className="card titleColor text-center text-white mx-auto" style={{maxWidth:"500px"}}>Create a Group</h1>
+        <div className="card titleColor text-white mx-auto " style={{maxWidth:"750px"}}>
         <form onSubmit={handleCreateGroup}>
           <div>
-            <label>
-              Group Name:
-              <input
+            <label className="m-2">
+              Group Name:   
+              <input className="text-black"
                 type="text"
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
+                style={{marginLeft:"10px",width:"540px"}}
               />
             </label>
           </div>
           <label></label>
           <div>
-            <label>
+            <label className="m-2">
               Group Description:
-              <textarea
+              <textarea className="text-black"
                 value={groupDescription}
                 onChange={(e) => setGroupDescription(e.target.value)}
-                style={{ resize: "none", height: "2rem", overflowY: "scroll" }}
+                style={{ resize: "none", height: "2rem", overflowY: "scroll",marginLeft:"10px",width:"500px" }}
               />
             </label>
           </div>
           <label></label>
           <div>
-            <label>
-              Choose a Lesson:
-              <input
+            <label className="m-2">
+              Choose a Lesson:   
+              <input className="text-black"
                 type="text"
                 value={selectedLesson}
                 onChange={(e) => {
                   const capitalizedText = e.target.value.toUpperCase(); // Capitalize input
                   setSelectedLesson(capitalizedText);
+                  
                 }}
-                maxLength={7}
+                
+                style={{marginLeft:"10px",width:"510px"}}
               />
             </label>
           </div>
 
-          <div style={{ paddingTop: "10px" }}>
-            <button
+          <div className="text-center m-2" style={{ paddingTop: "10px" }}>
+            <button 
               type="submit"
               style={{
                 padding: "10px",
@@ -110,7 +114,14 @@ const CreateGroupPage = () => {
             </button>
           </div>
         </form>
+        </div>
       </div>
+      <style>{`
+          
+          .titleColor{
+            background-color: #0B1356;
+          }
+        `}</style>
     </div>
   );
 };
