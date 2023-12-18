@@ -127,7 +127,22 @@ const Admin = () => {
 
   const handleDeleteClub = () => {
     console.log(selectedClubId);
+    /*try {
+      fetch("http://localhost:3500/api/social/deleteClub", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          clubId: selectedClubId,
+        }),
+      });
+    } catch (error) {
+      console.log("delete club basarisiz");
+    }*/
     closeDeleteClubPanel();
+    window.location.reload();
   };
 
   const openAddClubPanel = () => {
@@ -165,6 +180,7 @@ const Admin = () => {
       console.log(selectedClubDescription);
       console.log(selectedClubExecutiveID);
       closeAddClubPanel();
+      window.location.reload();
     }
   };
 
@@ -195,7 +211,7 @@ const Admin = () => {
       console.log("delete prod basarisiz");
     }
     closeDeleteMarketplacePostPanel();
-    //window.location.reload();
+    window.location.reload();
   };
 
   const openDeleteSocialPostPanel = (socialPostID) => {
@@ -372,42 +388,6 @@ const Admin = () => {
     fetchPosts();
     fetchTickets();
   }, [token]);
-  const mockData = {
-    /*users: [
-      { id: 1, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: true },
-      { id: 2, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
-      { id: 3, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
-      { id: 4, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', isBanned: false },
-      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
-      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
-      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', isBanned: false },
-      { id: 8, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
-      { id: 9, name: 'Serhan Turan', email: 'serhan.turan@ug.bilkent.edu.tr', role: 'Admin', isBanned: false },
-      { id: 10, name: 'Umut Can Bolat', email: 'umut.cbolat@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
-      { id: 11, name: 'Ece Beyhan', email: 'ece.beyhan@ug.bilkent.edu.tr', role: 'Student', isBanned: false },
-      { id: 12, name: 'Cenker Akan', email: 'cenker.akan@bilkent.edu.tr', role: 'Instructor', isBanned: false },
-      { id: 5, name: 'Merter', email: 'merter.ter@ug.bilkent.edu.tr', role: 'Instructor', isBanned: false },
-      { id: 6, name: 'Ege', email: 'ege.şire@ug.bilkent.edu.tr', role: 'Student', isBanned: true },
-      { id: 7, name: 'Kachow', email: 'rust.eze@bilkent.edu.tr', role: 'Staff', isBanned: false },
-      { id: 19, name: 'Merter', email: 'mert.er@ug.bilkent.edu.tr', role: 'Student', isBanned: true },
-    ],
-    clubs: [
-      { id: 1, name: 'Bilkent YES' },
-      { id: 2, name: 'Wizards' },
-      marketplace: [
-        { id: 1, name: 'Basys 3', description: 'EA 201deyim' },
-        { id: 2, name: 'CS 223 Kitabi', description: '1200TL' },
-      ],
-      social: [
-        { id: 1, name: 'Arabam!', content: 'Mescit otoparkta arabami çizmişler.' },
-        { id: 2, name: 'Yemekhanedeki çocuk', content: 'Tanişmak isterim saat 10da gördüm.' },
-      ],
-      tickets: [
-        { _id: 1, owner: 'Serhan Turan', message: 'İletişim butonu çalişmiyor' , status: false},
-        { _id: 2, owner: 'Kachow', message: 'Şifremi unuttum' , status: true},
-      ],
-    ],*/
-  };
 
   return (
     <div>
@@ -1348,8 +1328,8 @@ const Admin = () => {
             >
               <thead>
                 <tr style={{ backgroundColor: "black", color: "white" }}>
-                  <th style={{ width: "10%", padding: "8px" }}>ID</th>
-                  <th style={{ width: "30%", padding: "8px" }}>Owner</th>
+                  <th style={{ width: "20%", padding: "8px" }}>Sender ID</th>
+                  <th style={{ width: "20%", padding: "8px" }}>Sender Name</th>
                   <th style={{ width: "60%", padding: "8px" }}>Message</th>
                   <th style={{ width: "10%", padding: "8px" }}>Handled</th>
                   <th style={{ width: "20%", padding: "8px" }}>Actions</th>
