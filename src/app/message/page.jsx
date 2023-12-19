@@ -377,7 +377,7 @@ const MessagingPage = () => {
                       <div
                         style={{
                           fontSize: "10px",
-                          color: "#999",
+                          color: "black",
                           marginTop: "0px",
                         }}
                       >
