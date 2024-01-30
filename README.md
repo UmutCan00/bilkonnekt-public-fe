@@ -5,17 +5,17 @@
 
 ## Team Members:
 
-- Cenker Akan (22102295) – Backend / Frontend
+- Cenker Akan
 
-- Özgür Ege Şire (21902222) – Frontend
+- Özgür Ege Şire
 
-- Umut Can Bolat (22102414) – Frontend
+- Umut Can Bolat
 
-- Serhan Turan (22001880) – Frontend
+- Serhan Turan
 
-- Mert Terkuran (22101645) – Frontend
+- Mert Terkuran
 
-- Ece Beyhan (22003503) – Frontend
+- Ece Beyhan
 
 
 
